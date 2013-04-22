@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @package    mod
  * @subpackage easycastms

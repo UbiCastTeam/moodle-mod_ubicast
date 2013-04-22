@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Defines backup_easycastms_activity_task class
  *

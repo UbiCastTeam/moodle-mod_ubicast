@@ -1,6 +1,6 @@
 <?php
 /**
- * Private url module utility functions
+ * Private easycastms module utility functions
  *
  * @package    mod
  * @subpackage easycastms
