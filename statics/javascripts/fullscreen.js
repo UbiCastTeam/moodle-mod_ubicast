@@ -4,11 +4,15 @@
 * Author: Stephane Diemer                  *
 *******************************************/
 
-function FullscreenManager(target) {
+function FullscreenManager(target, placeholder) {
     // params
-    this.target = target;
+    this.$target = $(target);
+    this.$placeholder = null;
+    if (placeholder)
+        this.$placeholder = $(placeholder);
     this.allow_browser_fullscreen = true;
     this.iframe_mode = true;
+    this.force_size_after_quit = true;
     
     // vars
     this.fullscreen_active = false;
@@ -37,6 +41,12 @@ FullscreenManager.prototype.call_listeners = function (evtname, data) {
 FullscreenManager.prototype.init = function () {
     var obj = this;
     
+    // create placeholder if needed
+    if (!this.$placeholder) {
+        var id = this.$target.attr("id")+"_placeholder";
+        this.$target.wrap("<div id=\""+id+"\" class=\"fm-embed-placeholder\"></div>");
+        this.$placeholder = $("#"+id);
+    }
     // fullscreen browser events
     if (this.allow_browser_fullscreen) {
         try {
@@ -65,13 +75,15 @@ FullscreenManager.prototype.init = function () {
 FullscreenManager.prototype.on_resize = function () {
     if (!this.fullscreen_active)
         return;
-    var target = $(this.target);
     var width = $(window).width();
     var height = $(window).height();
+    this.$target.css("width", width+"px").css("height", height+"px");
     if (this.iframe_mode) {
-        $("iframe", target).attr("width", width).attr("height", height);
-        $("iframe", target).css("width", width+"px").css("height", height+"px");
+        $("iframe", this.$target).attr("width", width).attr("height", height);
+        $("iframe", this.$target).css("width", width+"px").css("height", height+"px");
     }
+    else
+        this.$target.css("line-height", height+"px");
 };
 
 /* fullscreen */
@@ -92,27 +104,20 @@ FullscreenManager.prototype.enable_fullscreen = function () {
     this.fullscreen_changing = true;
     this.fullscreen_active = true;
     
-    var wrapper = $("<div id=\"fullscreen_wrapper\"></div>");
-    var target = $(this.target);
-    target.wrap(wrapper);
-    
-    var original_width = target.width();
-    var original_height = target.height();
-    $("#fullscreen_wrapper").css("width", original_width+"px").css("height", original_height+"px");
-    
-    target.detach();
-    target.attr("pwidth", original_width).attr("pheight", original_height);
-    target.addClass("fullscreen");
-    target.removeAttr("width").removeAttr("height");
+    this.original_width = this.$target.width();
+    this.original_height = this.$target.height();
     var width = $(window).width();
     var height = $(window).height();
-    target.css("width", "").css("height", "");
+    if (this.$placeholder)
+        this.$placeholder.css("width", this.original_width+"px").css("height", this.original_height+"px");
+    this.$target.addClass("fullscreen");
+    this.$target.css("width", width+"px").css("height", height+"px");
     if (this.iframe_mode) {
-        $("iframe", target).attr("width", width).attr("height", height);
-        $("iframe", target).css("width", width+"px").css("height", height+"px");
+        $("iframe", this.$target).attr("width", width).attr("height", height);
+        $("iframe", this.$target).css("width", width+"px").css("height", height+"px");
     }
-    
-    $("body").append(target);
+    else
+        this.$target.css("line-height", height+"px");
     
     if (this.allow_browser_fullscreen) {
         // open browser fullscreen
@@ -139,23 +144,19 @@ FullscreenManager.prototype.disable_fullscreen = function () {
     this.fullscreen_changing = true;
     this.fullscreen_active = false;
     
-    var wrapper = $("#fullscreen_wrapper");
-    var target = $(this.target);
-    
-    target.detach();
-    target.removeClass("fullscreen");
+    this.$target.removeClass("fullscreen");
     if (this.iframe_mode) {
-        var width = target.attr("pwidth");
-        var height = target.attr("pheight");
-        target.css("width", width+"px").css("height", height+"px");
-        $("iframe", target).attr("width", width).attr("height", height);
-        $("iframe", target).css("width", width+"px").css("height", height+"px");
+        if (this.force_size_after_quit)
+            this.$target.css("width", this.original_width+"px").css("height", this.original_height+"px");
+        else
+            this.$target.css("width", "").css("height", "").css("line-height", "");
+        $("iframe", this.$target).attr("width", this.original_width).attr("height", this.original_height);
+        $("iframe", this.$target).css("width", this.original_width+"px").css("height", this.original_height+"px");
     }
     else
-        target.css("width", "").css("height", "");
-    
-    wrapper.after(target);
-    wrapper.remove();
+        this.$target.css("width", "").css("height", "").css("line-height", "");
+    if (this.$placeholder)
+        this.$placeholder.css("width", "").css("height", "");
     
     if (this.allow_browser_fullscreen) {
         // close browser fullscreen

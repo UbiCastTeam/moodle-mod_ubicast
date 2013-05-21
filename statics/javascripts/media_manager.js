@@ -12,6 +12,7 @@ function MediaManager(media_id) {
     this.min_height = 350;
     this.$iframe = null;
     this.fullscreen_manager = new FullscreenManager("#easycastms_"+this.media_id);
+    this.fullscreen_manager.force_size_after_quit = false;
     
     var obj = this;
     $(document).ready(function () {

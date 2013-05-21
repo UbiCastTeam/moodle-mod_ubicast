@@ -1,9 +1,15 @@
 /* CSS for embed codes */
+.easycastms-embed-placeholder {
+    margin: 0;
+    padding: 0;
+    display: block;
+}
 .easycastms-embed {
     margin: 0 auto;
     padding: 0;
     position: relative;
     text-align: left;
+    display: block;
 }
 .easycastms-embed.fullscreen {
     margin: 0 !important;
@@ -13,7 +19,7 @@
     right: 0;
     position: fixed;
     background: #000;
-    z-index: 10;
+    z-index: 30;
 }
 .easycastms-embed .easycastms-btn-place {
     margin: 0;
@@ -21,6 +27,7 @@
     top: 2px;
     right: 2px;
     position: absolute;
+    display: block;
     overflow: hidden;
     background: #fff;
     border: 1px solid #ccc;

@@ -16,4 +16,5 @@ Description:
 
 Install:
     Just put a dir named "easycastms" with all files of this repository in your moodle mod dir.
+    This plugin requires Moodle > 2.3.
 
