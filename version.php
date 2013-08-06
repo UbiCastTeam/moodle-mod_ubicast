@@ -10,9 +10,9 @@
 
 if (!defined('MOODLE_INTERNAL')) { die('Direct access to this script is forbidden.'); }
 
-$module->version   = 2013042200;                // The current module version (Date: YYYYMMDDXX)
+$module->version   = 2013080600;                // The current module version (Date: YYYYMMDDXX)
 $module->requires  = 2012062500;                // Requires this Moodle version
 $module->component = 'mod_easycastms';          // Full name of the plugin (used for diagnostics)
 $module->cron      = 0;
-$module->release   = '1.8 (Build: 2013042200)'; // Human-readable version name
+$module->release   = '1.9 (Build: 2013080600)'; // Human-readable version name
 $module->maturity  = MATURITY_STABLE;           // Maturity of module

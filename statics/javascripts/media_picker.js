@@ -200,11 +200,11 @@ MediaPicker.prototype._display_tree = function (data) {
             sub_channels = this._display_tree(channel);
             button = "<span onclick=\"javascript: "+this.name+".toggle_channel('"+channel.id+"');\" class=\"list-entry\"></span>";
         }
-        html += "<li id=\"channel_"+channel.id+"_link\">";
+        html += "<li><span id=\"channel_"+channel.id+"_link\">";
         html +=     button;
-        html +=     "<a href=\"javascript: "+this.name+".display_channel('"+channel.id+"');\" title=\""+this.translate("Click to display the content of this channel")+"\">"+channel.name+"</a>";
-        html += "</li>";
+        html +=     "<a href=\"javascript: "+this.name+".display_channel('"+channel.id+"');\" title=\""+this.translate("Click to display the content of this channel")+"\">"+channel.name+"</a></span>";
         html += sub_channels;
+        html += "</li>";
     }
     html += "</ul>";
     return html;
@@ -307,8 +307,6 @@ MediaPicker.prototype.get_content_entry = function (item_type, item) {
     html +=             "<span class=\"item-entry-top-bar\">";
     html +=                 "<span class=\"item-entry-title\">"+item.title+"</span>";
     if (item.can_edit) {
-        if (!item.visible)
-            html +=             "<span class=\"item-entry-visibility\" title=\""+this.translate("This media will not appear in the catalog")+"\"></span>";
         if (item.validated)
             html +=             "<span class=\"item-entry-publication published\" title=\""+this.translate("This media is published")+"\"></span>";
         else
@@ -316,7 +314,8 @@ MediaPicker.prototype.get_content_entry = function (item_type, item) {
         if (item_type == "video" && !item.ready)
             html +=             "<span class=\"item-entry-state\" title=\""+this.translate("This video is not ready")+"\"></span>";
     }
-    //html +=                 "{% if obj.obj.metadata.get_video_duration %}<span class=\"item-entry-duration\">{{ obj.obj.metadata.get_video_hashed_duration.formatted }}</span>{% endif %}";
+    if (item.duration)
+        html +=             "<span class=\"item-entry-duration\">"+item.duration+"</span>";
     html +=             "</span>";
     html +=             "<span class=\"item-entry-bottom-bar\">";
     html +=                 "<span class=\"item-entry-creation\">"+this.get_date_display(item.creation)+"</span>";
@@ -325,10 +324,6 @@ MediaPicker.prototype.get_content_entry = function (item_type, item) {
     html +=     "</a>";
     html +=     "<div class=\"item-entry-links\">";
     html +=         "<a class=\"std-btn\" href=\"javascript: "+this.name+".pick_media('"+item.media_id+"');\">"+this.translate("Select this media")+"</a>";
-    //if (item.can_edit)
-    //    html +=     "<a class=\"std-btn\" href=\"{% url forumedia-editor_main obj.obj.metadata.media_id %}\">"+this.translate("Edit")+"</a>";
-    //if (item.can_delete)
-    //    html +=     "<a class=\"std-btn\" href=\"javascript: delete_form_manager.show('"+item_type+"', '"+item.media_id+"', "+item.can_delete_resources+");\">"+this.translate("Delete")+"</a>";
     html +=     "</div>";
     html += "</div>";
     return html;
