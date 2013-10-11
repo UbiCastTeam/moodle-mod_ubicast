@@ -22,16 +22,20 @@ class mod_easycastms_mod_form extends moodleform_mod {
         
         $mform->addElement('html', '
             <link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.'/mod/easycastms/statics/stylesheets/overlay-displayer.css"/>
-            <link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.'/mod/easycastms/statics/stylesheets/media-picker.css"/>
+            <link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.'/mod/easycastms/statics/stylesheets/catalog_browser.css"/>
+            <link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.'/mod/easycastms/statics/stylesheets/form.css"/>
             <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/javascripts/jquery-latest.min.js"></script>
             <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/javascripts/overlay_displayer.js"></script>
-            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/javascripts/media_picker.js"></script>
+            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/javascripts/catalog_browser.js"></script>
             <script type="text/javascript">
-                var media_picker = new MediaPicker({
-                    name: "media_picker",
+                var catalog_browser = new CatalogBrowser({
                     base_url: "'.$CFG->wwwroot.'/mod/easycastms/proxy.php",
+                    use_proxy: true,
+                    title: "'.get_string('form_pick_media', 'easycastms').'",
                     course_id: "'.$COURSE->id.'",
-                    default_media_icon: "'.$CFG->wwwroot.'/mod/easycastms/statics/images/media.png",
+                    parent_link_icon: "'.$CFG->wwwroot.'/mod/easycastms/statics/images/category_parent.png",
+                    input: "#id_mediaid",
+                    preview: "#catalog_browser_preview",
                     language: "'.get_string('language_code', 'easycastms').'"
                 });
             </script>
@@ -55,10 +59,10 @@ class mod_easycastms_mod_form extends moodleform_mod {
         $mform->addElement('html', '
             <div class="fitem">
                 <div class="felement">
-                    <div id="media_picker_preview">
+                    <div id="catalog_browser_preview">
                         <img src="'.$CFG->wwwroot.'/mod/easycastms/statics/images/media.png"/>
                         <div></div>
-                        <a href="javascript: media_picker.open();">'.get_string('form_pick_media', 'easycastms').'</a>
+                        <a href="javascript: catalog_browser.open();">'.get_string('form_pick_media', 'easycastms').'</a>
                     </div>
                 </div>
             </div>

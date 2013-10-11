@@ -1,0 +1,367 @@
+/* CSS for catalog browser */
+.catalogbrowser {
+    margin: 0;
+    padding: 0;
+    display: block;
+    width: 900px;
+    height: 100%;
+    position: relative;
+    text-align: left;
+}
+
+/* base */
+.catalogbrowser html,
+.catalogbrowser body,
+.catalogbrowser div,
+.catalogbrowser table,
+.catalogbrowser h1,
+.catalogbrowser h2,
+.catalogbrowser h3,
+.catalogbrowser h4,
+.catalogbrowser tr,
+.catalogbrowser th,
+.catalogbrowser td,
+.catalogbrowser img,
+.catalogbrowser ul,
+.catalogbrowser ol,
+.catalogbrowser li,
+.catalogbrowser form { margin: 0; padding: 0; }
+
+.catalogbrowser a {       color: #102b62; text-decoration: none; }
+.catalogbrowser a:hover { color: #1f90cb; text-decoration: none; }
+
+.catalogbrowser img { vertical-align: middle; border: 0 none; }
+
+.catalogbrowser ul,
+.catalogbrowser ol { padding-left: 16px; }
+.catalogbrowser li { margin-top: 4px; margin-bottom: 4px; }
+
+.catalogbrowser table { border-spacing: 0; border-collapse: collapse; }
+
+.catalogbrowser p { margin: 8px 0; }
+
+.catalogbrowser fieldset { margin: 4px; border-radius: 4px; }
+.catalogbrowser legend { padding: 0 5px; }
+
+
+/* structure */
+.catalogbrowser .cb-left {
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 30%;
+    position: absolute;
+}
+.catalogbrowser .cb-right {
+    top: 0;
+    bottom: 0;
+    right: 0;
+    width: 70%;
+    position: absolute;
+}
+.catalogbrowser .cb-column {
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    position: absolute;
+}
+.catalogbrowser .cb-left .cb-column {
+    border-right: 1px solid #888;
+}
+.catalogbrowser .cb-right .cb-column {
+    border-left: 1px solid #ccc;
+    display: none;
+}
+.catalogbrowser.cb-display-list .cb-right .cb-column.cb-column-list,
+.catalogbrowser.cb-display-search .cb-right .cb-column.cb-column-search {
+    display: block;
+}
+.catalogbrowser .cb-title {
+    padding: 4px 8px;
+    top: 0;
+    left: 0;
+    right: 0;
+    position: absolute;
+    height: 24px;
+    line-height: 24px;
+    font-weight: bold;
+    background: #ddd;
+    background: -moz-linear-gradient(top, #eee, #ccc);
+    background: -webkit-gradient(linear, left top, left bottom, from(#eee), to(#ccc));
+    overflow: hidden;
+}
+.catalogbrowser .cb-title .cb-tab {
+    padding: 0 8px;
+    float: left;
+    display: block;
+    cursor: pointer;
+}
+.catalogbrowser .cb-title .cb-tab + .cb-tab {
+    margin-left: 16px;
+}
+.catalogbrowser.cb-display-list .cb-title .cb-tab-list,
+.catalogbrowser.cb-display-search .cb-title .cb-tab-search {
+    background: #888;
+    color: #fff;
+    cursor: default;
+    border-radius: 4px;
+}
+.catalogbrowser .cb-column-search .cb-title span {
+    margin-left: 24px;
+    color: #444;
+    font-style: italic;
+} 
+.catalogbrowser .cb-container {
+    padding: 4px;
+    top: 32px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    position: absolute;
+    overflow: auto;
+}
+.catalogbrowser .cb-left .cb-container {
+    display: none;
+}
+.catalogbrowser.cb-display-list .cb-left .cb-container.cb-left-list,
+.catalogbrowser.cb-display-search .cb-left .cb-container.cb-left-search {
+    display: block;
+}
+.catalogbrowser .cb-search-title,
+.catalogbrowser .cb-section {
+    font-size: 125%;
+    font-weight: bold;
+    text-decoration: italic;
+    color: #666;
+}
+.catalogbrowser .cb-search-title {
+    margin-left: -8px;
+    margin-bottom: 4px;
+}
+.catalogbrowser .cb-search-block {
+    margin-left: 24px;
+    margin-bottom: 16px;
+}
+.catalogbrowser .cb-search-input {
+    margin-top: 8px;
+}
+.catalogbrowser .cb-search-input input {
+    width: 20%;
+}
+.catalogbrowser .cb-search-input #catalog_browser_search {
+    width: 72%;
+}
+
+
+/* messages */
+.catalogbrowser .info,
+.catalogbrowser .success,
+.catalogbrowser .warning,
+.catalogbrowser .error,
+.catalogbrowser .loading {
+    margin: 5px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    padding-left: 38px;
+    padding-right: 4px;
+    line-height: 20px;
+    min-height: 20px;
+    display: block;
+    border: 1px solid transparent;
+    overflow: hidden;
+    border-radius: 6px;
+}
+.catalogbrowser .info {
+    color: #143447;
+    border-color: #388fc4;
+    background: #ebfaff url("../images/icons/messages/icon_24_info.png") 6px 50% no-repeat;
+}
+.catalogbrowser .success {
+    color: #223205;
+    border-color: #76ae12;
+    background: #f2ffdb url("../images/icons/messages/icon_24_tick.png") 6px 50% no-repeat;
+}
+.catalogbrowser .warning {
+    color: #150c03;
+    border-color: #e47f25;
+    background: #ffeddc url("../images/icons/messages/icon_24_warning.png") 6px 50% no-repeat;
+}
+.catalogbrowser .error {
+    color: #390a0a;
+    border-color: #e42626;
+    background: #ffefef url("../images/icons/messages/icon_24_error.png") 6px 50% no-repeat;
+}
+.catalogbrowser .loading {
+    line-height: 28px;
+    min-height: 28px;
+    padding-left: 48px;
+    color: #000;
+    border-color: #808080;
+    background: #e0e0e0 url("../images/icons/messages/icon_32_loading.gif") 4px 50% no-repeat;
+}
+
+
+/* channels tree */
+.catalogbrowser .cb-tree ul {
+    padding-left: 0;
+}
+.catalogbrowser .cb-tree li {
+    list-style: none;
+    line-height: 17px;
+    overflow: hidden;
+}
+.catalogbrowser .cb-tree ul ul {
+    display: none;
+    padding-left: 20px;
+}
+.catalogbrowser .cb-tree li span.list-none,
+.catalogbrowser .cb-tree li span.list-entry {
+    width: 17px;
+    height: 17px;
+    float: left;
+    display: block;
+    background: transparent none 50% 50% no-repeat; 
+}
+.catalogbrowser .cb-tree li span.list-none {
+    background-image: url("../images/list_none.png"); 
+}
+.catalogbrowser .cb-tree li span.list-entry {
+    padding-left: 0;
+    cursor: pointer;
+    background-image: url("../images/list_right.png");
+}
+.catalogbrowser .cb-tree li span.list-entry.opened {
+    background-image: url("../images/list_down.png");
+}
+.catalogbrowser .cb-tree span.channel-btn {
+    display: block;
+    color: #102b62;
+    cursor: pointer;
+}
+.catalogbrowser .cb-tree li span.channel-btn {
+    margin-left: 21px;
+}
+.catalogbrowser .cb-tree span.channel-btn:hover,
+.catalogbrowser .cb-tree .channel-active span.channel-btn {
+    color: #1f90cb;
+}
+.catalogbrowser .cb-tree .channel-locked,
+.catalogbrowser .cb-tree .channel-empty,
+.catalogbrowser .cb-tree .channel-empty span.channel-btn {
+    color: #666;
+}
+
+
+/* channel content list */
+.catalogbrowser .item-entry {
+    margin: 4px;
+    margin-bottom: 8px;
+    display: block;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid #ccc;
+    background: #eee;
+    background: -moz-linear-gradient(top, #fff, #ddd);
+    background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#ddd));
+    border-radius: 5px;
+}
+.catalogbrowser .item-entry-preview {
+    float: left;
+    display: block;
+    width: 120px;
+    line-height: 86px;
+    min-height: 86px;
+}
+.catalogbrowser .item-entry-preview img {
+    margin: -2px 0;
+    width: 120px;
+    vertical-align: middle;
+}
+.catalogbrowser .item-entry-link {
+    overflow: hidden;
+    display: block;
+}
+.catalogbrowser .item-entry-link.clickable {
+    color: #102b62;
+    cursor: pointer;
+}
+.catalogbrowser .item-entry-link.clickable:hover {
+    color: #1f90cb;
+}
+.catalogbrowser .item-entry-content {
+    padding: 10px;
+    padding-left: 130px;
+    display: block;
+}
+
+.catalogbrowser .item-entry-top-bar {
+    padding-bottom: 4px;
+    margin-bottom: 4px;
+    display: block;
+    font-size: 14px;
+    font-weight: bold;
+    border-bottom: 1px solid #888;
+    overflow: hidden;
+}
+.catalogbrowser .item-entry-duration {
+    margin-left: 10px;
+    float: right;
+    display: block;
+    color: #666;
+}
+.catalogbrowser .item-entry-visibility,
+.catalogbrowser .item-entry-accessibility,
+.catalogbrowser .item-entry-publication,
+.catalogbrowser .item-entry-state {
+    margin-left: 10px;
+    float: right;
+    display: block;
+    width: 16px;
+    height: 16px;
+    background: transparent none 0 0 no-repeat;
+}
+.catalogbrowser .item-entry-visibility,
+.catalogbrowser .item-entry-accessibility { background-image: url("../images/icons/16/cancel.png"); }
+.catalogbrowser .item-entry-visibility.all,
+.catalogbrowser .item-entry-accessibility.all { background-image: url("../images/icons/16/users.png"); }
+.catalogbrowser .item-entry-visibility.auth,
+.catalogbrowser .item-entry-accessibility.auth { background-image: url("../images/icons/16/user.png"); }
+.catalogbrowser .item-entry-visibility.perm,
+.catalogbrowser .item-entry-accessibility.perm { background-image: url("../images/icons/16/rights.png"); }
+.catalogbrowser .item-entry-publication { background-image: url("../images/icons/16/no.png"); }
+.catalogbrowser .item-entry-publication.published { background-image: url("../images/icons/16/yes.png"); }
+.catalogbrowser .item-entry-state { background-image: url("../images/icons/16/warning.png"); }
+.catalogbrowser .item-entry-state.ready { background-image: none; }
+
+.catalogbrowser .item-entry-bottom-bar {
+    padding-bottom: 4px;
+    margin-bottom: 4px;
+    display: block;
+}
+.catalogbrowser .item-entry-views,
+.catalogbrowser .item-entry-comments {
+    margin-left: 10px;
+    float: right;
+    display: block;
+    color: #666;
+}
+.catalogbrowser .item-entry-creation,
+.catalogbrowser .item-entry-status {
+    color: #666;
+    font-style: italic;
+}
+
+.catalogbrowser .item-entry-links {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    display: none;
+}
+.catalogbrowser .item-entry:hover .item-entry-links {
+    display: block;
+}
+.catalogbrowser .item-entry-links .std-btn {
+    cursor: pointer;
+}
+

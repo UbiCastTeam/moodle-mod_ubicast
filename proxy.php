@@ -44,15 +44,11 @@ $action = $_REQUEST['action'];
 
 // API call on easycastms
 $config = get_config('easycastms');
-$data = array('api_key' => $config->easycastms_apikey, 'username' => $USER->username);
-if ($action == '/api/v2/channels/content/') {
-    if (isset($_REQUEST['parent_id']))
-        $data['parent_id'] = $_REQUEST['parent_id'];
-}
-else if ($action == '/api/v2/medias/get/') {
-    if (isset($_REQUEST['media_id']))
-        $data['media_id'] = $_REQUEST['media_id'];
-}
+$data = $_REQUEST;
+unset($data['action']);
+unset($data['course_id']);
+$data['api_key'] = $config->easycastms_apikey;
+$data['username'] = $USER->username;
 $req = new HttpRequest($config->easycastms_url.$action, 'GET', $data);
 try {
     $req->send();
