@@ -266,17 +266,47 @@
     background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#ddd));
     border-radius: 5px;
 }
+.catalogbrowser .item-entry {
+
+}
+.catalogbrowser .item-entry.selected {
+    border-color: #cdc;
+    background: #efe;
+    background: -moz-linear-gradient(top, #fff, #dfd);
+    background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#dfd));
+}
 .catalogbrowser .item-entry-preview {
     float: left;
-    display: block;
     width: 120px;
     line-height: 86px;
     min-height: 86px;
+    display: block;
+    position: relative;
+}
+.catalogbrowser .item-entry-small .item-entry-preview {
+    width: 60px;
+    line-height: 40px;
+    min-height: 40px;
 }
 .catalogbrowser .item-entry-preview img {
     margin: -2px 0;
-    width: 120px;
+    width: 100%;
     vertical-align: middle;
+}
+.catalogbrowser .item-entry-preview span {
+    top: 0;
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    width: 100%;
+    display: block;
+    background: transparent none 50% 50% no-repeat;
+}
+.catalogbrowser .item-entry-preview .item-current-icon {
+    background-image: url("../images/icons/32/channel.png");
+}
+.catalogbrowser .item-entry-preview .item-parent-icon {
+    background-image: url("../images/icons/32/parent.png");
 }
 .catalogbrowser .item-entry-link {
     overflow: hidden;
@@ -294,6 +324,11 @@
     padding-left: 130px;
     display: block;
 }
+.catalogbrowser .item-entry-small .item-entry-content {
+    padding: 0;
+    padding-left: 64px;
+    line-height: 40px;
+}
 
 .catalogbrowser .item-entry-top-bar {
     padding-bottom: 4px;
@@ -303,6 +338,11 @@
     font-weight: bold;
     border-bottom: 1px solid #888;
     overflow: hidden;
+}
+.catalogbrowser .item-entry-small .item-entry-content .item-entry-top-bar {
+    padding-bottom: 0;
+    margin-bottom: 0;
+    border: 0 none;
 }
 .catalogbrowser .item-entry-duration {
     margin-left: 10px;
@@ -357,6 +397,11 @@
     bottom: 10px;
     right: 10px;
     display: none;
+}
+.catalogbrowser .item-entry-small .item-entry-links {
+    top: 0;
+    bottom: 0;
+    line-height: 40px;
 }
 .catalogbrowser .item-entry:hover .item-entry-links {
     display: block;

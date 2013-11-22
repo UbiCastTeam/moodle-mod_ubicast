@@ -9,13 +9,12 @@ function CatalogBrowser(options) {
     this.title = "";
     this.base_url = "";
     this.use_proxy = false;
-    this.course_id = "";
+    this.request_data = null;
     this.selectable_content = "vlp"; // v for videos, l for lives, p for photos group and c for channels
     this.displayable_content = "cvlp";
     this.filter_validated = null;
-    this.parent_link_icon = "";
-    this.input = "";
-    this.preview = "";
+    this.allowed_oids = null; // must be an object like { "the_oid": true, ... }
+    this.initial_oid = null;
     this.on_pick = null;
     this.language = "en";
     
@@ -29,9 +28,9 @@ function CatalogBrowser(options) {
     this.api_search = "/api/v2/search/";
     this.messages_displayed = { tree: true, list: true, search: true };
     this.catalog = {};
-    this.current_category = null;
-    this.last_pick = null;
     this.displayed = "list";
+    this.current_category_oid = null;
+    this.current_selection = null;
     this.$widgets = {};
     
     // set options
@@ -39,13 +38,12 @@ function CatalogBrowser(options) {
         "title",
         "base_url",
         "use_proxy",
-        "course_id",
+        "request_data",
         "selectable_content",
         "displayable_content",
         "filter_validated",
-        "parent_link_icon",
-        "input",
-        "preview",
+        "allowed_oids",
+        "initial_oid",
         "on_pick",
         "language"
     ];
@@ -124,7 +122,7 @@ CatalogBrowser.prototype.init = function () {
         html +=             "<div class=\"cb-search-title\">"+this.translate("Search for:")+"</div>";
         if (this.displayable_content.indexOf("c") != -1) {
             html +=         " <div><input id=\"catalog_browser_search_for_categories\" type=\"checkbox\" checked=\"checked\">";
-            html +=         " <label for=\"catalog_browser_search_for_categories\">"+this.translate("categories")+"</label></div>";
+            html +=         " <label for=\"catalog_browser_search_for_categories\">"+this.translate("channels")+"</label></div>";
         }
         if (this.displayable_content.indexOf("v") != -1) {
             html +=         " <div><input id=\"catalog_browser_search_for_videos\" type=\"checkbox\" checked=\"checked\">";
@@ -177,28 +175,25 @@ CatalogBrowser.prototype.init = function () {
     this.$widgets.message_search = $(".cb-message", this.$widgets.column_search);
     this.$widgets.search_form = $(".cb-left-search", this.$widgets.main);
     this.$widgets.search_results = $(".cb-title span", this.$widgets.column_search);
-    if (this.input)
-        this.$widgets.input = $(this.input);
-    if (this.preview) {
-        this.$widgets.preview = $(this.preview);
-        this.$widgets.preview_img = $("img", this.$widgets.preview);
-        this.$widgets.preview_title = $("div", this.$widgets.preview);
-    }
     
-    // get current media info
-    if (this.input) {
-        var identifier = this.$widgets.input.val();
-        if (identifier) {
-            var callback = function (result) {
-                if (result.success) {
-                    obj.catalog[identifier] = result.info;
-                    obj.pick(identifier);
-                }
+    // get initial media or channel info
+    if (this.initial_oid) {
+        var oid = this.initial_oid;
+        var callback = function (result) {
+            if (result.success) {
+                obj.update_catalog(result.info);
+                obj.pick(oid);
+                if (oid.indexOf("c") == 0 || !isNaN(parseInt(oid, 10)))
+                    obj.current_category_oid = oid;
                 else
-                    obj.$widgets.preview_title.html(result.error);
-            };
-            this.get_info(identifier, false, callback);
-        }
+                    obj.current_category_oid = result.info.parent_oid;
+                if (obj.current_category_oid)
+                    obj.expand_tree(obj.current_category_oid);
+            }
+            else
+                console.log("Unable to get info about initial selection: "+result.error);
+        };
+        this.get_info(oid, false, callback);
     }
     
     // events
@@ -224,8 +219,8 @@ CatalogBrowser.prototype.open = function () {
         // init tree
         this.get_tree();
         // load catalog root
-        if (this.current_category === null && this.displayable_content.indexOf("c") != -1)
-            this.display_channel("0");
+        if (this.displayable_content.indexOf("c") != -1)
+            this.display_channel(this.current_category_oid === null ? "0" : this.current_category_oid);
     }
     var obj = this;
     this.overlay.show({
@@ -236,19 +231,28 @@ CatalogBrowser.prototype.open = function () {
     });
 };
 
+CatalogBrowser.prototype.update_catalog = function (item) {
+    if (!item.oid)
+        return;
+    if (!this.catalog[item.oid])
+        this.catalog[item.oid] = item;
+    else {
+        for (var field in item) {
+            this.catalog[item.oid][field] = item[field];
+        }
+    }
+};
 
-CatalogBrowser.prototype.get_info = function (identifier, full, callback) {
-    if (!identifier || !callback)
+
+CatalogBrowser.prototype.get_info = function (oid, full, callback) {
+    if (!oid || !callback)
         return;
     var url = this.base_url;
-    var data = {};
+    var data = { oid: oid };
     if (full)
         data.full = "yes";
-    if (this.use_proxy)
-        data.course_id = this.course_id;
-    if (identifier[0] == "v" || identifier[0] == "l" || identifier[0] == "p") {
+    if (oid[0] == "v" || oid[0] == "l" || oid[0] == "p") {
         // media
-        data.media_id = identifier;
         if (this.use_proxy)
             data.action = this.api_get_media;
         else
@@ -256,12 +260,15 @@ CatalogBrowser.prototype.get_info = function (identifier, full, callback) {
     }
     else {
         // category
-        data.id = identifier;
         if (this.use_proxy)
             data.action = this.api_get_category;
         else
             url += this.api_get_category;
     }
+    if (this.request_data)
+        for (var field in this.request_data) {
+            data[field] = this.request_data[field];
+        }
     var obj = this;
     $.ajax({
         url: url,
@@ -296,12 +303,14 @@ CatalogBrowser.prototype.get_info = function (identifier, full, callback) {
 CatalogBrowser.prototype.get_tree = function () {
     var url = this.base_url;
     var data = {};
-    if (this.use_proxy) {
-        data.course_id = this.course_id;
+    if (this.use_proxy)
         data.action = this.api_tree_path;
-    }
     else
         url += this.api_tree_path;
+    if (this.request_data)
+        for (var field in this.request_data) {
+            data[field] = this.request_data[field];
+        }
     var obj = this;
     $.ajax({
         url: url,
@@ -327,8 +336,11 @@ CatalogBrowser.prototype.get_tree = function () {
 CatalogBrowser.prototype.display_tree = function (data) {
     if (!data.channels)
         return;
-    var html = this._display_tree(data);
-    this.$widgets.tree.html(html);
+    this.$widgets.tree.html(this._get_tree(data));
+    // expand tree for selected category
+    if (this.current_category_oid)
+        this.expand_tree(this.current_category_oid);
+    // bind click events
     $(".channel-btn", this.$widgets.tree).click({ obj: this }, function (evt) {
         evt.data.obj.display_channel($(this).attr("ref"));
     });
@@ -336,62 +348,75 @@ CatalogBrowser.prototype.display_tree = function (data) {
         evt.data.obj.toggle_channel($(this).attr("ref"));
     });
 };
-CatalogBrowser.prototype._display_tree = function (data) {
+CatalogBrowser.prototype._get_tree = function (data, parent_oid, parent_title) {
     if (!data.channels)
         return "";
-    var id = data.id ? data.id : 0;
+    var oid = data.oid ? data.oid : 0;
     var html = "";
     // display link for catalog root if "c" in this.displayable_content
-    if (id == 0 && this.displayable_content.indexOf("c") != -1) {
-        html += "<span id=\"tree_channel_0_link\" "+(this.current_category == "0" ? "class=\"channel-active\"" : "")+">";
+    if (oid == 0 && this.displayable_content.indexOf("c") != -1) {
+        html += "<span id=\"tree_channel_0_link\" "+(this.current_category_oid == "0" ? "class=\"channel-active\"" : "")+">";
         html += "<span ref=\"0\" class=\"channel-btn\" title=\""+this.translate("Click to display all channels in catalog root")+"\">"+this.translate("Catalog root")+"</span>";
         html += "</span>";
     }
-    html += "<ul id=\"tree_channel_"+id+"\">";
+    html += "<ul id=\"tree_channel_"+oid+"\">";
     for (var i=0; i < data.channels.length; i++) {
         var channel = data.channels[i];
-        this.catalog[channel.id] = channel;
+        channel.parent_oid = parent_oid ? parent_oid : 0;
+        channel.parent_title = parent_title ? parent_title : this.translate("Catalog root");
+        this.update_catalog(channel);
         var button = "<span class=\"list-none\"></span>";
         var sub_channels = "";
         if (channel.channels && channel.channels.length > 0) {
-            sub_channels = this._display_tree(channel);
-            button = "<span ref=\""+channel.id+"\" class=\"channel-toggle list-entry\"></span>";
+            sub_channels = this._get_tree(channel, channel.oid, channel.title);
+            button = "<span ref=\""+channel.oid+"\" class=\"channel-toggle list-entry\"></span>";
         }
-        html += "<li><span id=\"tree_channel_"+channel.id+"_link\" "+(this.current_category == channel.id ? "class=\"channel-active\"" : "")+">"+button;
-        html +=     "<span ref=\""+channel.id+"\" class=\"channel-btn\" title=\""+this.translate("Click to display the content of this channel")+"\">"+channel.name+"</span></span>";
+        html += "<li><span id=\"tree_channel_"+channel.oid+"_link\" "+(this.current_category_oid == channel.oid ? "class=\"channel-active\"" : "")+">"+button;
+        html +=     "<span ref=\""+channel.oid+"\" class=\"channel-btn\" title=\""+this.translate("Click to display the content of this channel")+"\">"+channel.title+"</span></span>";
         html += sub_channels;
         html += "</li>";
     }
     html += "</ul>";
     return html;
 };
+CatalogBrowser.prototype.expand_tree = function (oid) {
+    if (!oid || !this.tree_loaded)
+        return;
+    var cat = this.catalog[oid];
+    while (cat) {
+        $("#tree_channel_"+cat.oid, this.$widgets.tree).css("display", "block");
+        $("#tree_channel_"+cat.oid+"_link .channel-toggle", this.$widgets.tree).addClass("opened");
+        cat = this.catalog[cat.parent_oid];
+    }
+};
 
-CatalogBrowser.prototype.toggle_channel = function (id) {
-    if ($("#tree_channel_"+id, this.$widgets.tree).is(":visible")) {
-        $("#tree_channel_"+id, this.$widgets.tree).css("display", "none");
-        $("#tree_channel_"+id+"_link .channel-toggle", this.$widgets.tree).removeClass("opened");
+CatalogBrowser.prototype.toggle_channel = function (oid) {
+    var $btn = $("#tree_channel_"+oid+"_link .channel-toggle", this.$widgets.tree);
+    if ($btn.hasClass("opened")) {
+        $("#tree_channel_"+oid, this.$widgets.tree).css("display", "none");
+        $btn.removeClass("opened");
     }
     else {
-        $("#tree_channel_"+id, this.$widgets.tree).css("display", "block");
-        $("#tree_channel_"+id+"_link .channel-toggle", this.$widgets.tree).addClass("opened");
+        $("#tree_channel_"+oid, this.$widgets.tree).css("display", "block");
+        $btn.addClass("opened");
     }
 };
 
 
 
 
-CatalogBrowser.prototype.display_channel = function (cat_id) {
-    if (this.current_category !== null)
-        $("#tree_channel_"+this.current_category+"_link", this.$widgets.tree).removeClass("channel-active");
+CatalogBrowser.prototype.display_channel = function (cat_oid) {
+    if (this.current_category_oid !== null)
+        $("#tree_channel_"+this.current_category_oid+"_link", this.$widgets.tree).removeClass("channel-active");
     this.change_tab("list");
-    this.current_category = cat_id;
-    $("#tree_channel_"+this.current_category+"_link", this.$widgets.tree).addClass("channel-active");
-    $("#tree_channel_"+cat_id, this.$widgets.tree).css("display", "block");
-    $("#tree_channel_"+cat_id+"_link .channel-toggle", this.$widgets.tree).addClass("opened");
+    this.current_category_oid = cat_oid;
+    $("#tree_channel_"+this.current_category_oid+"_link", this.$widgets.tree).addClass("channel-active");
+    $("#tree_channel_"+cat_oid, this.$widgets.tree).css("display", "block");
+    $("#tree_channel_"+cat_oid+"_link .channel-toggle", this.$widgets.tree).addClass("opened");
     var url = this.base_url;
     var data = {};
-    if (cat_id && cat_id != "0")
-        data.parent_id = cat_id;
+    if (cat_oid && cat_oid != "0")
+        data.parent_oid = cat_oid;
     if (this.displayable_content)
         data.content = this.displayable_content;
     if (this.filter_validated !== null) {
@@ -400,12 +425,14 @@ CatalogBrowser.prototype.display_channel = function (cat_id) {
         else
             data.validated = "no";
     }
-    if (this.use_proxy) {
-        data.course_id = this.course_id;
+    if (this.use_proxy)
         data.action = this.api_content_path;
-    }
     else
         url += this.api_content_path;
+    if (this.request_data)
+        for (var field in this.request_data) {
+            data[field] = this.request_data[field];
+        }
     var obj = this;
     this.list_loading_timeout = setTimeout(function () {
         obj.display_message("list", obj.translate("Loading")+"...", "loading");
@@ -414,7 +441,7 @@ CatalogBrowser.prototype.display_channel = function (cat_id) {
     var callback = function (response) {
         if (response.success) {
             obj.hide_message("list");
-            obj.display_content("list", response, cat_id);
+            obj.display_content("list", response, cat_oid);
         }
         else {
             obj.$widgets.content_list.html("");
@@ -453,7 +480,7 @@ CatalogBrowser.prototype.display_channel = function (cat_id) {
         }
     });
 };
-CatalogBrowser.prototype.display_content = function (target, data, cat_id) {
+CatalogBrowser.prototype.display_content = function (target, data, cat_oid) {
     var $container = this.$widgets["content_"+target];
     var selectable;
     var nb_channels = data.channels ? data.channels.length : 0;
@@ -462,7 +489,7 @@ CatalogBrowser.prototype.display_content = function (target, data, cat_id) {
     var nb_photos_groups = data.photos_groups ? data.photos_groups.length : 0;
     var sections = ((nb_channels > 0) ? 1 : 0) + ((nb_videos > 0) ? 1 : 0) + ((nb_live_streams > 0) ? 1 : 0) + ((nb_photos_groups > 0) ? 1 : 0);
     $container.html("");
-    if (cat_id === undefined) {
+    if (cat_oid === undefined) {
         if (sections > 0) {
             // search result
             var results = [];
@@ -484,47 +511,52 @@ CatalogBrowser.prototype.display_content = function (target, data, cat_id) {
     }
     else {
         // category display
-        if (cat_id != "0" && this.displayable_content.indexOf("c") != -1) {
+        selectable = this.selectable_content.indexOf("c") != -1;
+        if (cat_oid != "0") {
             // parent link
-            selectable = this.selectable_content.indexOf("c") != -1;
-            $container.append(this.get_content_entry("channel", {
-                id: (this.catalog[cat_id] && this.catalog[cat_id].parent_id) ? this.catalog[cat_id].parent_id : 0,
-                name: this.translate("Parent channel"),
-                thumb: this.parent_link_icon
+            var parent_oid = (this.catalog[cat_oid] && this.catalog[cat_oid].parent_oid) ? this.catalog[cat_oid].parent_oid : 0;
+            var parent_title = (parent_oid && this.catalog[parent_oid]) ? this.translate("Parent channel:")+" "+this.catalog[parent_oid].title : this.translate("Parent channel");
+            $container.append(this.get_content_entry("parent", {
+                oid: parent_oid,
+                title: parent_title,
+                extra_class: "item-entry-small"
+            }, parent_oid && selectable, true));
+            // current category selection button
+            $container.append(this.get_content_entry("current", {
+                oid: cat_oid,
+                title: this.translate("Channel:")+" "+this.catalog[cat_oid].title,
+                extra_class: "item-entry-small"
             }, selectable, true));
         }
         if (sections == 0) {
-            if (this.displayable_content.indexOf("c")) {
+            if (selectable) {
                 if (this.displayable_content.length > 1)
-                    this.display_message(target, this.translate("This channel contains no sub channels and no medias."), "info");
+                    $container.append("<div class=\"info\">"+this.translate("This channel contains no sub channels and no medias.")+"</div>");
                 else
-                    this.display_message(target, this.translate("This channel contains no sub channels."), "info");
+                    $container.append("<div class=\"info\">"+this.translate("This channel contains no sub channels.")+"</div>");
             }
             else
-                this.display_message(target, this.translate("This channel contains no medias."), "info");
+                $container.append("<div class=\"info\">"+this.translate("This channel contains no medias.")+"</div>");
             return;
         }
     }
     if (data.channels && data.channels.length > 0) {
         // sub categories
         selectable = this.selectable_content.indexOf("c") != -1;
-        if (sections > 1) {
-            if (cat_id === undefined)
-                $container.append("<div class=\"cb-section\">"+this.translate("Channels")+"</div>");
-            else
-                $container.append("<div class=\"cb-section\">"+this.translate("Sub channels")+"</div>");
-        }
+        if (!cat_oid)
+            $container.append("<div class=\"cb-section\">"+this.translate("Channels")+"</div>");
+        else
+            $container.append("<div class=\"cb-section\">"+this.translate("Sub channels")+"</div>");
         for (var i=0; i < data.channels.length; i++) {
-            if (!data.channels[i].parent_id !== undefined && cat_id !== undefined)
-                data.channels[i].parent_id = cat_id;
+            if (data.channels[i].parent_oid === undefined && cat_oid)
+                data.channels[i].parent_oid = cat_oid;
             $container.append(this.get_content_entry("channel", data.channels[i], selectable));
         }
     }
     if (data.live_streams && data.live_streams.length > 0) {
         // live streams
         selectable = this.selectable_content.indexOf("l") != -1;
-        if (sections > 1)
-            $container.append("<div class=\"cb-section\">"+this.translate("Lives streams")+"</div>");
+        $container.append("<div class=\"cb-section\">"+this.translate("Lives streams")+"</div>");
         for (var i=0; i < data.live_streams.length; i++) {
             $container.append(this.get_content_entry("live", data.live_streams[i], selectable));
         }
@@ -532,8 +564,7 @@ CatalogBrowser.prototype.display_content = function (target, data, cat_id) {
     if (data.videos && data.videos.length > 0) {
         // videos
         selectable = this.selectable_content.indexOf("v") != -1;
-        if (sections > 1)
-            $container.append("<div class=\"cb-section\">"+this.translate("Videos")+"</div>");
+        $container.append("<div class=\"cb-section\">"+this.translate("Videos")+"</div>");
         for (var i=0; i < data.videos.length; i++) {
             $container.append(this.get_content_entry("video", data.videos[i], selectable));
         }
@@ -541,28 +572,32 @@ CatalogBrowser.prototype.display_content = function (target, data, cat_id) {
     if (data.photos_groups && data.photos_groups.length > 0) {
         // photos groups
         selectable = this.selectable_content.indexOf("p") != -1;
-        if (sections > 1)
-            $container.append("<div class=\"cb-section\">"+this.translate("Photos groups")+"</div>");
+        $container.append("<div class=\"cb-section\">"+this.translate("Photos groups")+"</div>");
         for (var i=0; i < data.photos_groups.length; i++) {
             $container.append(this.get_content_entry("photos", data.photos_groups[i], selectable));
         }
     }
 };
-CatalogBrowser.prototype.get_content_entry = function (item_type, item, selectable, no_save) {
-    var identifier = item.media_id ? item.media_id : item.id;
+CatalogBrowser.prototype.get_content_entry = function (item_type, item, gselectable, no_save) {
+    var oid = item.oid;
     if (!no_save)
-        this.catalog[identifier] = item;
+        this.update_catalog(item);
+    var selectable = gselectable && (!this.allowed_oids || oid in this.allowed_oids);
     
-    var $entry = $("<div class=\"item-entry type-"+item_type+"\" id=\""+item_type+"_"+identifier+"\"></div>");
+    var $entry = $("<div class=\"item-entry item-type-"+item_type+"\" id=\"item_entry_"+oid+"\"></div>");
+    if (this.current_selection && this.current_selection.oid == oid)
+        $entry.addClass("selected");
+    if (item.extra_class)
+        $entry.addClass(item.extra_class);
     
-    var html = "<div class=\"item-entry-link "+(selectable || item_type == "channel" ? "clickable" : "")+"\">";
-    html +=     "<span class=\"item-entry-preview\"><img src=\""+item.thumb+"\"/></span>";
+    var html = "<div class=\"item-entry-link "+(selectable || item_type == "channel" || item_type == "parent" ? "clickable" : "")+"\">";
+    if (item.thumb)
+        html += "<span class=\"item-entry-preview\"><img src=\""+item.thumb+"\"/></span>";
+    else
+        html += "<span class=\"item-entry-preview\"><span class=\"item-"+item_type+"-icon\"></span></span>";
     html +=     "<span class=\"item-entry-content\">";
     html +=         "<span class=\"item-entry-top-bar\">";
-    if (item_type == "channel")
-        html +=         "<span class=\"item-entry-title\">"+item.name+"</span>";
-    else
-        html +=         "<span class=\"item-entry-title\">"+item.title+"</span>";
+    html +=             "<span class=\"item-entry-title\">"+item.title+"</span>";
     if (item.can_edit) {
         if (item.accessibility !== undefined) {
             var atext;
@@ -606,45 +641,43 @@ CatalogBrowser.prototype.get_content_entry = function (item_type, item, selectab
     html +=     "</span>";
     html += "</div>";
     var $entry_block = $(html);
-    if (item_type == "channel")
-        $entry_block.click({ obj: this, identifier: identifier }, function (evt) { evt.data.obj.display_channel(evt.data.identifier) });
+    if (item_type == "channel" || item_type == "parent")
+        $entry_block.click({ obj: this, oid: oid }, function (evt) { evt.data.obj.display_channel(evt.data.oid) });
     else if (selectable)
-        $entry_block.click({ obj: this, identifier: identifier }, function (evt) { evt.data.obj.pick(evt.data.identifier) });
+        $entry_block.click({ obj: this, oid: oid }, function (evt) { evt.data.obj.pick(evt.data.oid) });
     $entry.append($entry_block);
     
     html = "<div class=\"item-entry-links\">";
-    if (item_type == "channel") {
-        html +=     "<span class=\"std-btn item-entry-display\">"+this.translate("Display channel")+"</span>";
-        if (selectable)
-            html +  "<span class=\"std-btn item-entry-pick\">"+this.translate("Select this channel")+"</span>";
+    if (item_type == "channel" || item_type == "parent")
+        html += "<span class=\"std-btn item-entry-display\">"+this.translate("Display channel")+"</span>";
+    if (selectable) {
+        if (item_type == "channel" || item_type == "parent" || item_type == "current")
+            html += "<span class=\"std-btn main item-entry-pick\">"+this.translate("Select this channel")+"</span>";
+        else
+            html += "<span class=\"std-btn main item-entry-pick\">"+this.translate("Select this media")+"</span>";
     }
-    else if (selectable)
-        html +=     "<span class=\"std-btn item-entry-pick\">"+this.translate("Select this media")+"</span>";
     html += "</div>";
     var $entry_links = $(html);
-    if (item_type == "channel")
-        $(".item-entry-display", $entry_links).click({ obj: this, identifier: identifier }, function (evt) { evt.data.obj.display_channel(evt.data.identifier) });
+    if (item_type == "channel" || item_type == "parent")
+        $(".item-entry-display", $entry_links).click({ obj: this, oid: oid }, function (evt) { evt.data.obj.display_channel(evt.data.oid) });
     if (selectable)
-        $(".item-entry-pick", $entry_links).click({ obj: this, identifier: identifier }, function (evt) { evt.data.obj.pick(evt.data.identifier) });
+        $(".item-entry-pick", $entry_links).click({ obj: this, oid: oid }, function (evt) { evt.data.obj.pick(evt.data.oid) });
     $entry.append($entry_links);
     
     return $entry;
 };
 
-CatalogBrowser.prototype.pick = function (identifier) {
-    this.last_pick = this.catalog[identifier];
-    if (this.$widgets.input)
-        this.$widgets.input.val(identifier);
-    if (this.$widgets.preview) {
-        this.$widgets.preview_img.attr("src", this.catalog[identifier].thumb);
-        this.$widgets.preview_title.html(this.catalog[identifier].title);
-    }
+CatalogBrowser.prototype.pick = function (oid) {
+    if (this.current_selection && this.current_selection.oid)
+        $("#item_entry_"+this.current_selection.oid).removeClass("selected");
+    this.current_selection = this.catalog[oid];
+    $("#item_entry_"+oid).addClass("selected");
     if (this.on_pick)
-        this.on_pick(this.catalog[identifier]);
+        this.on_pick(this.catalog[oid]);
     this.overlay.hide();
 };
 CatalogBrowser.prototype.get_last_pick = function () {
-    return this.last_pick;
+    return this.current_selection;
 };
 
 
@@ -699,12 +732,14 @@ CatalogBrowser.prototype.on_search_submit = function (place, text, type) {
         else
             data.validated = "no";
     }
-    if (this.use_proxy) {
-        data.course_id = this.course_id;
+    if (this.use_proxy)
         data.action = this.api_search;
-    }
     else
         url += this.api_search;
+    if (this.request_data)
+        for (var field in this.request_data) {
+            data[field] = this.request_data[field];
+        }
     // execute search request
     var obj = this;
     this.search_loading_timeout = setTimeout(function () {
@@ -795,7 +830,9 @@ CatalogBrowser.prototype.set_language = function (lang) {
             "Search in:": "Rechercher dans&nbsp;:",
             "Search for:": "Contenu à rechercher&nbsp;:",
             "Search in progress": "Recherche en cours",
+            "Go": ">",
             "Use the input in the left column to search for something.": "Utilisez le champ de texte à gauche pour rechercher du contenu.",
+            "No results.": "Pas de résultat.",
             "titles": "titres",
             "descriptions": "descriptions",
             "keywords": "mots clés",
@@ -803,7 +840,7 @@ CatalogBrowser.prototype.set_language = function (lang) {
             "companies": "sociétés",
             "chapters": "chapitres",
             "photos": "photos",
-            "categories": "catégories",
+            "channels": "chaînes",
             "videos": "vidéos",
             "live streams": "diffusions en direct",
             "photos groups": "groupes de photos",
@@ -829,7 +866,7 @@ CatalogBrowser.prototype.set_language = function (lang) {
             "Click to display the content of this channel": "Cliquez pour afficher le le contenu de cette chaîne",
             "Unable to get channel's content. Request timed out.": "Impossible d'obtenir la liste du contenu de la chaîne. Délai d'attente de la requête écoulé.",
             "You are not logged in. Please login in Moodle and retry.": "Vous devez vous authentifier pour voir les médias. Veuillez vous authentifier dans Moodle puis réessayez.",
-            "Unable to get channel's content because you cannot access to this channel.": "Impossible d'obtenir la liste du contenu de la chaîne car vous ne possédez pas la permission d'y accéder",
+            "Unable to get channel's content because you cannot access to this channel.": "Impossible d'obtenir la liste du contenu de la chaîne car vous ne disposez pas du droit d'accès à cette chaîne.",
             "Requested channel does not exist.": "La chaîne demandée n'existe pas.",
             "This channel contains no sub channels and no medias.": "Cette chaîne ne contient pas de sous chaîne ni de média.",
             "This channel contains no sub channels.": "Cette chaîne ne contient pas de sous chaîne.",
@@ -851,6 +888,8 @@ CatalogBrowser.prototype.set_language = function (lang) {
             "Select this channel": "Sélectionner cette chaîne",
             "Select this media": "Sélectionner ce média",
             "Display channel": "Afficher cette chaîne",
+            "Channel:": "Chaîne&nbsp;:",
+            "Parent channel:": "Chaîne parente&nbsp;:",
             "Parent channel": "Chaîne parente",
             "January": "janvier",
             "February": "février",
