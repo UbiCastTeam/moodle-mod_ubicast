@@ -17,6 +17,7 @@ function CatalogBrowser(options) {
     this.initial_oid = null;
     this.on_pick = null;
     this.language = "en";
+    this.use_jquery_ui = false;
     
     // vars
     this.tree_loaded = false;
@@ -45,7 +46,8 @@ function CatalogBrowser(options) {
         "allowed_oids",
         "initial_oid",
         "on_pick",
-        "language"
+        "language",
+        "use_jquery_ui"
     ];
     if (options)
         this.set_options(options);
@@ -177,24 +179,8 @@ CatalogBrowser.prototype.init = function () {
     this.$widgets.search_results = $(".cb-title span", this.$widgets.column_search);
     
     // get initial media or channel info
-    if (this.initial_oid) {
-        var oid = this.initial_oid;
-        var callback = function (result) {
-            if (result.success) {
-                obj.update_catalog(result.info);
-                obj.pick(oid);
-                if (oid.indexOf("c") == 0 || !isNaN(parseInt(oid, 10)))
-                    obj.current_category_oid = oid;
-                else
-                    obj.current_category_oid = result.info.parent_oid;
-                if (obj.current_category_oid)
-                    obj.expand_tree(obj.current_category_oid);
-            }
-            else
-                console.log("Unable to get info about initial selection: "+result.error);
-        };
-        this.get_info(oid, false, callback);
-    }
+    if (this.initial_oid)
+        this.pick(this.initial_oid);
     
     // events
     $(".cb-tab-list", this.$widgets.main).click({ obj: this }, function (evt) { evt.data.obj.change_tab("list"); });
@@ -522,9 +508,10 @@ CatalogBrowser.prototype.display_content = function (target, data, cat_oid) {
                 extra_class: "item-entry-small"
             }, parent_oid && selectable, true));
             // current category selection button
+            var cat_title = this.catalog[cat_oid] ? this.translate("Channel:")+" "+this.catalog[cat_oid].title : "Current channel";
             $container.append(this.get_content_entry("current", {
                 oid: cat_oid,
-                title: this.translate("Channel:")+" "+this.catalog[cat_oid].title,
+                title: cat_title,
                 extra_class: "item-entry-small"
             }, selectable, true));
         }
@@ -647,14 +634,15 @@ CatalogBrowser.prototype.get_content_entry = function (item_type, item, gselecta
         $entry_block.click({ obj: this, oid: oid }, function (evt) { evt.data.obj.pick(evt.data.oid) });
     $entry.append($entry_block);
     
+    var btn_class = this.use_jquery_ui ? "ui-widget ui-state-default ui-corner-all" : "std-btn";
     html = "<div class=\"item-entry-links\">";
     if (item_type == "channel" || item_type == "parent")
-        html += "<span class=\"std-btn item-entry-display\">"+this.translate("Display channel")+"</span>";
+        html += "<span class=\""+btn_class+" item-entry-display\">"+this.translate("Display channel")+"</span>";
     if (selectable) {
         if (item_type == "channel" || item_type == "parent" || item_type == "current")
-            html += "<span class=\"std-btn main item-entry-pick\">"+this.translate("Select this channel")+"</span>";
+            html += "<span class=\""+btn_class+" main item-entry-pick\">"+this.translate("Select this channel")+"</span>";
         else
-            html += "<span class=\"std-btn main item-entry-pick\">"+this.translate("Select this media")+"</span>";
+            html += "<span class=\""+btn_class+" main item-entry-pick\">"+this.translate("Select this media")+"</span>";
     }
     html += "</div>";
     var $entry_links = $(html);
@@ -668,13 +656,47 @@ CatalogBrowser.prototype.get_content_entry = function (item_type, item, gselecta
 };
 
 CatalogBrowser.prototype.pick = function (oid) {
-    if (this.current_selection && this.current_selection.oid)
-        $("#item_entry_"+this.current_selection.oid).removeClass("selected");
-    this.current_selection = this.catalog[oid];
-    $("#item_entry_"+oid).addClass("selected");
-    if (this.on_pick)
-        this.on_pick(this.catalog[oid]);
-    this.overlay.hide();
+    if (oid === null || oid === undefined) {
+        // deselect
+        if (this.current_selection && this.current_selection.oid)
+            $("#item_entry_"+this.current_selection.oid).removeClass("selected");
+        return;
+    }
+    if (this.catalog[oid]) {
+        this._pick(oid, { success: true, info: this.catalog[oid] }, true);
+        return;
+    }
+    // load info if no info are available
+    var obj = this;
+    this.get_info(oid, false, function (result) {
+        obj._pick(oid, result);
+    });
+};
+CatalogBrowser.prototype._pick = function (oid, result, no_update) {
+    if (result.success) {
+        this.overlay.hide();
+        // update info in local catalog
+        if (!no_update)
+            this.update_catalog(result.info);
+        // change current selection
+        if (this.current_selection && this.current_selection.oid)
+            $("#item_entry_"+this.current_selection.oid).removeClass("selected");
+        this.current_selection = this.catalog[oid];
+        $("#item_entry_"+oid).addClass("selected");
+        if (this.on_pick)
+            this.on_pick(this.catalog[oid]);
+        // select and open category
+        if (oid.indexOf("c") == 0 || !isNaN(parseInt(oid, 10)))
+            this.current_category_oid = oid;
+        else
+            this.current_category_oid = result.info.parent_oid;
+        if (this.current_category_oid)
+            this.expand_tree(this.current_category_oid);
+    }
+    else {
+        // this should never happen
+        alert("Unable to get info about initial selection: "+result.error);
+    }
 };
 CatalogBrowser.prototype.get_last_pick = function () {
     return this.current_selection;
@@ -889,6 +911,7 @@ CatalogBrowser.prototype.set_language = function (lang) {
             "Select this media": "Sélectionner ce média",
             "Display channel": "Afficher cette chaîne",
             "Channel:": "Chaîne&nbsp;:",
+            "Current channel": "Chaîne courante",
             "Parent channel:": "Chaîne parente&nbsp;:",
             "Parent channel": "Chaîne parente",
             "January": "janvier",
