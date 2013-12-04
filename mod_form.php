@@ -35,11 +35,6 @@ class mod_easycastms_mod_form extends moodleform_mod {
         $mform->addElement('header', 'content', get_string('form_media_header', 'easycastms'));
         $mform->addElement('text', 'mediaid', get_string('form_media_id', 'easycastms'), array('size'=>'20'));
         $mform->addRule('mediaid', null, 'required', null, 'client');
-        // media id selection
-        $easycastms_media = $DB->get_record('easycastms', array('course'=>$COURSE->id));
-        $initial_oid = 'null';
-        if ($easycastms_media)
-            $initial_oid = $easycastms_media->mediaid;
         $mform->addElement('html', '
             <div class="fitem">
                 <div class="felement">
@@ -63,7 +58,6 @@ class mod_easycastms_mod_form extends moodleform_mod {
                     use_proxy: true,
                     request_data: { course_id: "'.$COURSE->id.'" },
                     title: "'.get_string('form_pick_media', 'easycastms').'",
-                    initial_oid: "'.$initial_oid.'",
                     on_pick: function (media) {
                         $(document).ready(function () {
                             $("#id_mediaid").val(media.oid);
@@ -72,6 +66,11 @@ class mod_easycastms_mod_form extends moodleform_mod {
                         });
                     },
                     language: "'.get_string('language_code', 'easycastms').'"
+                });
+                $(document).ready(function () {
+                    var initial_oid = $("#id_mediaid").val();
+                    if (initial_oid)
+                        catalog_browser.pick(initial_oid);
                 });
             </script>');
         
