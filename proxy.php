@@ -33,6 +33,11 @@ if (!has_capability('mod/easycastms:addinstance', $context)) {
     die;
 }
 
+// check that curl is available
+if (!function_exists("curl_init") || !function_exists("curl_setopt") || !function_exists("curl_exec") || !function_exists("curl_close")) {
+    echo json_encode(array('success' => false, 'error' => get_string('proxy_curl_missing', 'easycastms')));
+    die;
+}
 
 // get api action
 if (!isset($_REQUEST['action'])) {
@@ -41,24 +46,48 @@ if (!isset($_REQUEST['action'])) {
 }
 $action = $_REQUEST['action'];
 
-
-// API call on easycastms
+// Prepare MediaServer url
 $config = get_config('easycastms');
 $data = $_REQUEST;
 unset($data['action']);
 unset($data['course_id']);
+if (isset($data['_'])) // jquery anti caching argument
+    unset($data['_']);
 $data['api_key'] = $config->easycastms_apikey;
 $data['username'] = $USER->username;
-$req = new HttpRequest($config->easycastms_url.$action, 'GET', $data);
+
+$args = '';
+if (gettype($data) == 'array') {
+    foreach ($data as $key => $value) {
+        $args .= '&'.urlencode($key).'='.urlencode($value);
+    }
+    if (strlen($args) > 0)
+        $args[0] = '?';
+}
+$url = $config->easycastms_url.$action.$args;
+
+// Execute request
+$response_body = null;
+$http_status = 200;
 try {
-    $req->send();
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    // Set so curl_exec returns the result instead of outputting it.
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    // Set SSL options
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+    // Get the response and close the channel.
+    $response_body = curl_exec($ch);
+    $http_status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
 }
 catch (Exception $e) {
     echo json_encode(array('success' => false, 'error' => get_string('proxy_request_error', 'easycastms').' '.$e->getMessage()));
     die;
 }
+http_response_code($http_status);
 try {
-    $response_body = $req->getResponseBody();
     $response = json_decode($response_body);
     if ($response != null)
         echo $response_body;
@@ -66,7 +95,7 @@ try {
         echo json_encode(array('success' => false, 'error' => get_string('proxy_parsing_error', 'easycastms').' Code: '.json_last_error().'. Reponse: \''.$response_body.'\''));
 }
 catch (Exception $e) {
-    echo json_encode(array('success' => false, 'error' => get_string('proxy_parsing_error', 'easycastms').' '.$e.' Response: \''.$req->getResponseBody().'\''));
+    echo json_encode(array('success' => false, 'error' => get_string('proxy_parsing_error', 'easycastms').' '.$e.' Response: \''.$response_body.'\''));
 }
 die;
 

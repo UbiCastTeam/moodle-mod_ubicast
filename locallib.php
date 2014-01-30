@@ -117,180 +117,60 @@ function easycastms_display_media_edition($easycastms_media, $cm, $course) {
     die;
 }
 
-class HttpRequest {
-    public $url = null;
-    public $data = null;
-    public $method = 'GET';
-    public $body = null;
-    public $headers = array();
-    public $allow_redirect = true;
-
-    private $url_info = null;
-    private $data_string = '';
-    private $host_name = null;
-    private $host_ip = null;
-    private $response_body = null;
-    private $response_headers = array();
-    private $response_code = null;
-    private $response_message = null;
-    private $port = null;
-    private $verbose = true;
-
-    public function __construct($url, $method = 'GET', $data = null) {
-        $this->url = $url;
-        $this->method = $method;
-        $this->data = $data;
-
-        // parse url
-        $this->url_info = parse_url($url);
-        $this->host_name = $this->url_info['host'];
-        $this->host_ip = gethostbyname($this->host_name);
-        
-        // data arguments
-        $this->data_string = '';
-        if (gettype($data) == 'array') {
-            foreach ($this->data as $key => $value) {
-                $this->data_string .= '&'.urlencode($key).'='.urlencode($value);
+// Add http_response_code (this function does not exist if PHP < 5.4)
+if (!function_exists('http_response_code')) {
+    function http_response_code($code = NULL) {
+        if ($code !== NULL) {
+            switch ($code) {
+                case 100: $text = 'Continue'; break;
+                case 101: $text = 'Switching Protocols'; break;
+                case 200: $text = 'OK'; break;
+                case 201: $text = 'Created'; break;
+                case 202: $text = 'Accepted'; break;
+                case 203: $text = 'Non-Authoritative Information'; break;
+                case 204: $text = 'No Content'; break;
+                case 205: $text = 'Reset Content'; break;
+                case 206: $text = 'Partial Content'; break;
+                case 300: $text = 'Multiple Choices'; break;
+                case 301: $text = 'Moved Permanently'; break;
+                case 302: $text = 'Moved Temporarily'; break;
+                case 303: $text = 'See Other'; break;
+                case 304: $text = 'Not Modified'; break;
+                case 305: $text = 'Use Proxy'; break;
+                case 400: $text = 'Bad Request'; break;
+                case 401: $text = 'Unauthorized'; break;
+                case 402: $text = 'Payment Required'; break;
+                case 403: $text = 'Forbidden'; break;
+                case 404: $text = 'Not Found'; break;
+                case 405: $text = 'Method Not Allowed'; break;
+                case 406: $text = 'Not Acceptable'; break;
+                case 407: $text = 'Proxy Authentication Required'; break;
+                case 408: $text = 'Request Time-out'; break;
+                case 409: $text = 'Conflict'; break;
+                case 410: $text = 'Gone'; break;
+                case 411: $text = 'Length Required'; break;
+                case 412: $text = 'Precondition Failed'; break;
+                case 413: $text = 'Request Entity Too Large'; break;
+                case 414: $text = 'Request-URI Too Large'; break;
+                case 415: $text = 'Unsupported Media Type'; break;
+                case 500: $text = 'Internal Server Error'; break;
+                case 501: $text = 'Not Implemented'; break;
+                case 502: $text = 'Bad Gateway'; break;
+                case 503: $text = 'Service Unavailable'; break;
+                case 504: $text = 'Gateway Time-out'; break;
+                case 505: $text = 'HTTP Version not supported'; break;
+                default:
+                    exit('Unknown http status code "'.htmlentities($code).'"');
+                break;
             }
-            if (strlen($this->data_string) > 0)
-                $this->data_string[0] = '?';
-        }
-
-        // get port number given the scheme
-        if (!isset($this->url_info['port'])) {
-            if ($this->url_info['scheme'] == "http")
-                $this->port = 80;
-            else if ($this->url_info['scheme'] == "https")
-                $this->port = 443;
-        } else {
-            $this->port = $this->url_info['port'];
-        }
-
-        // add default headers
-        $this->headers["Host"] = "$this->host_name";
-        $this->headers["Connection"] = "close";
-    }
-
-    private function constructRequest() {
-        $path = "/";
-        if (isset($this->url_info['path']))
-            $path = $this->url_info['path'];
-
-        $req = "$this->method $path$this->data_string HTTP/1.1\r\n";
-        foreach ($this->headers as $header => $value) {
-            $req .= "$header: $value\r\n";
-        }
-        return "$req\r\n";
-    }
-
-    /// reads a line from a file
-    function readLine($fp) {
-        $line = "";
-
-        while (!feof($fp)) {
-            $line .= fgets($fp, 2048);
-            if (substr($line, -1) == "\n")
-                return rtrim($line, "\r\n");
-        }
-        return $line;
-    }
-
-    public function send() {
-        $fp = @fsockopen($this->host_ip, $this->port, $errno, $errstr, 30);
-        if (!is_resource($fp))
-            throw new Exception("$errstr ($errno)");
-
-        // construct request
-        $request = $this->constructRequest();
-
-        // write request to socket
-        fwrite($fp, $request);
-
-        // read the status line
-        $line = $this->readline($fp);
-        $status = explode(" ", $line);
-
-        // make sure the HTTP version is valid
-        if (!isset($status[0]) || !preg_match("/^HTTP\/\d+\.?\d*/", $status[0]))
-            throw new Exception("Couldn't get HTTP version from response.");
-
-        // get the response code
-        if (!isset($status[1]))
-            throw new Exception("Couldn't get HTTP response code from response.");
-        else
-            $this->response_code = $status[1];
-
-        // get the reason, e.g. "not found"
-        if (!isset($status[2]))
-            throw new Exception("Couldn't get HTTP response reason from response.");
-        else
-            $this->response_reason = $status[2];
-
-        // read the headers
-        while (!feof($fp) && $line != "") {
-            $line = $this->readLine($fp);
-            if ($line != "") {
-                $header = preg_split("/:/", $line);
-                $this->response_headers[$header[0]] = ltrim($header[1]);
-            }
-        }
-        $chunked = false;
-        if (isset($this->response_headers['Transfer-Encoding']) && $this->response_headers['Transfer-Encoding'] == 'chunked')
-            $chunked = true;
-
-        // read the body
-        $this->response_body = "";
-        if (!$chunked) {
-            while (!feof($fp)) {
-                $line = $this->readLine($fp);
-                $this->response_body .= "$line\n";
-            }
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol.' '.$code.' '.$text);
+            $GLOBALS['http_response_code'] = $code;
         }
         else {
-            // read body of chunked response
-            // http://fr.wikipedia.org/wiki/Chunked_transfer_encoding
-            $chunk_line = true;
-            $chunk_length = 0;
-            $readen = 0;
-            $chunk_content = "";
-            while (!feof($fp)) {
-                $line = $this->readLine($fp);
-                if ($chunk_line) {
-                    if ($line) {
-                        $chunk_line = false;
-                        $chunk_length = hexdec($line);
-                        $chunk_content = "";
-                        $readen = 0;
-                    }
-                }
-                else {
-                    $chunk_content .= "\n$line";
-                    $readen += strlen($line) + 1; // +1 for \n
-                    if ($readen >= $chunk_length) {
-                        $chunk_line = true;
-                        if (strlen($chunk_content) > 0)
-                            $this->response_body .= substr($chunk_content, 1);
-                    }
-                }
-            }
+            $code = (isset($GLOBALS['http_response_code']) ? $GLOBALS['http_response_code'] : 200);
         }
-
-        // close the connection
-        fclose($fp);
-        
-        return true;
-    }
-
-    public function getResponseCode() {
-        return $this->response_code;
-    }
-
-    public function getHeaders() {
-        return $this->response_headers;
-    }
-    
-    public function getResponseBody() {
-        return $this->response_body;
+        return $code;
     }
 }
 

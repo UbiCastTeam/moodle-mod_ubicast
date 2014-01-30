@@ -35,6 +35,9 @@ class mod_easycastms_mod_form extends moodleform_mod {
         $mform->addElement('header', 'content', get_string('form_media_header', 'easycastms'));
         $mform->addElement('text', 'mediaid', get_string('form_media_id', 'easycastms'), array('size'=>'20'));
         $mform->addRule('mediaid', null, 'required', null, 'client');
+        $trans_script = '';
+        if (get_string('language_code', 'easycastms') == 'fr')
+            $trans_script = '<script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/javascripts/ecms_trans_fr.js"></script>';
         $mform->addElement('html', '
             <div class="fitem">
                 <div class="felement">
@@ -47,13 +50,16 @@ class mod_easycastms_mod_form extends moodleform_mod {
             </div>
             
             <link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.'/mod/easycastms/statics/stylesheets/overlay-displayer.css"/>
-            <link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.'/mod/easycastms/statics/stylesheets/catalog_browser.css"/>
+            <link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.'/mod/easycastms/statics/stylesheets/ecms_browser.css"/>
             <link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.'/mod/easycastms/statics/stylesheets/form.css"/>
             <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/javascripts/jquery-latest.min.js"></script>
+            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/javascripts/utils.js"></script>
             <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/javascripts/overlay_displayer.js"></script>
-            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/javascripts/catalog_browser.js"></script>
+            '.$trans_script.'
+            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/javascripts/ecms_tree.js"></script>
+            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/javascripts/ecms_browser.js"></script>
             <script type="text/javascript">
-                var catalog_browser = new CatalogBrowser({
+                var catalog_browser = new ECMSCatalogBrowser({
                     base_url: "'.$CFG->wwwroot.'/mod/easycastms/proxy.php",
                     use_proxy: true,
                     request_data: { course_id: "'.$COURSE->id.'" },

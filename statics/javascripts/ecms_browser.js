@@ -1,10 +1,10 @@
 /*******************************************
-* Catalog browser                          *
+* EasyCast MediaServer - Catalog browser   *
 * Copyright: UbiCast, all rights reserved  *
 * Author: Stephane Diemer                  *
 *******************************************/
 
-function CatalogBrowser(options) {
+function ECMSCatalogBrowser(options) {
     // params
     this.title = "";
     this.base_url = "";
@@ -16,26 +16,24 @@ function CatalogBrowser(options) {
     this.allowed_oids = null; // must be an object like { "the_oid": true, ... }
     this.initial_oid = null;
     this.on_pick = null;
-    this.language = "en";
+    this.language = "";
     this.use_jquery_ui = false;
     
     // vars
-    this.tree_loaded = false;
-    this.translations = {};
-    this.api_tree_path = "/api/v2/channels/tree/";
-    this.api_content_path = "/api/v2/channels/content/";
+    this.api_content = "/api/v2/channels/content/";
     this.api_get_category = "/api/v2/channels/get/";
     this.api_get_media = "/api/v2/medias/get/";
     this.api_search = "/api/v2/search/";
-    this.messages_displayed = { tree: true, list: true, search: true };
+    this.messages_displayed = { list: true, search: true };
     this.catalog = {};
+    this.tree_manager = null;
     this.displayed = "list";
-    this.current_category_oid = null;
+    this.current_category_oid = "0";
     this.current_selection = null;
     this.$widgets = {};
     
-    // set options
-    this.allowed_options = [
+    utils.setup_class(this, options, [
+        // allowed options
         "title",
         "base_url",
         "use_proxy",
@@ -48,10 +46,9 @@ function CatalogBrowser(options) {
         "on_pick",
         "language",
         "use_jquery_ui"
-    ];
-    if (options)
-        this.set_options(options);
-    this.set_language(this.language);
+    ]);
+    if (this.language)
+        utils.use_lang(this.language);
     
     this.overlay = new OverlayDisplayer({ language: this.language });
     
@@ -61,20 +58,7 @@ function CatalogBrowser(options) {
     });
 }
 
-CatalogBrowser.prototype.set_options = function(options) {
-    for (var i = 0; i < this.allowed_options.length; i++) {
-        if (this.allowed_options[i] in options)
-            this[this.allowed_options[i]] = options[this.allowed_options[i]];
-    }
-};
-
-CatalogBrowser.prototype.translate = function (text) {
-    if (text in this.translations)
-        return this.translations[text];
-    return text;
-};
-
-CatalogBrowser.prototype.init = function () {
+ECMSCatalogBrowser.prototype.init = function () {
     var obj = this;
     // build widget structure
     var html = "<div class=\"catalogbrowser cb-display-list\">";
@@ -85,9 +69,6 @@ CatalogBrowser.prototype.init = function () {
     html +=             "<div class=\"cb-tab cb-tab-search\">"+this.translate("Search")+"</div>";
     html +=         "</div>";
     html +=         "<div class=\"cb-container cb-left-list\">";
-    html +=             "<div class=\"cb-message\">";
-    html +=                 "<div class=\"loading\">"+this.translate("Loading")+"...</div>";
-    html +=             "</div>";
     html +=             "<div class=\"cb-tree\"></div>";
     html +=         "</div>";
     html +=         "<div class=\"cb-container cb-left-search\">";
@@ -172,7 +153,6 @@ CatalogBrowser.prototype.init = function () {
     this.$widgets.column_search = $(".cb-column-search", this.$widgets.main);
     this.$widgets.content_list = $(".cb-content", this.$widgets.column_list);
     this.$widgets.content_search = $(".cb-content", this.$widgets.column_search);
-    this.$widgets.message_tree = $(".cb-left .cb-message", this.$widgets.main);
     this.$widgets.message_list = $(".cb-message", this.$widgets.column_list);
     this.$widgets.message_search = $(".cb-message", this.$widgets.column_search);
     this.$widgets.search_form = $(".cb-left-search", this.$widgets.main);
@@ -192,23 +172,29 @@ CatalogBrowser.prototype.init = function () {
     this.resize();
 };
 
-CatalogBrowser.prototype.change_tab = function (tab_id) {
+ECMSCatalogBrowser.prototype.change_tab = function (tab_id) {
     if (this.$widgets.main.hasClass("cb-display-"+tab_id))
         return;
     this.$widgets.main.removeClass("cb-display-"+this.displayed).addClass("cb-display-"+tab_id);
     this.displayed = tab_id;
 };
 
-CatalogBrowser.prototype.open = function () {
-    if (!this.tree_loaded) {
-        this.tree_loaded = true;
-        // init tree
-        this.get_tree();
-        // load catalog root
-        if (this.displayable_content.indexOf("c") != -1)
-            this.display_channel(this.current_category_oid === null ? "0" : this.current_category_oid);
-    }
+ECMSCatalogBrowser.prototype.open = function () {
     var obj = this;
+    if (!this.tree_manager) {
+        this.tree_manager = new ECMSTreeManager({
+            $place: this.$widgets.tree,
+            base_url: this.base_url,
+            use_proxy: this.use_proxy,
+            request_data: this.request_data,
+            display_root: this.displayable_content.indexOf("c") != -1,
+            current_category_oid: this.current_category_oid,
+            on_change: function (oid) { obj.display_channel(oid); },
+            on_data_retrieved: function (data) { obj.update_catalog(data); }
+        });
+        if (this.displayable_content.indexOf("c") != -1)
+            this.display_channel(this.current_category_oid);
+    }
     this.overlay.show({
         mode: "html",
         title: this.title,
@@ -217,7 +203,7 @@ CatalogBrowser.prototype.open = function () {
     });
 };
 
-CatalogBrowser.prototype.update_catalog = function (item) {
+ECMSCatalogBrowser.prototype.update_catalog = function (item) {
     if (!item.oid)
         return;
     if (!this.catalog[item.oid])
@@ -230,7 +216,7 @@ CatalogBrowser.prototype.update_catalog = function (item) {
 };
 
 
-CatalogBrowser.prototype.get_info = function (oid, full, callback) {
+ECMSCatalogBrowser.prototype.get_info = function (oid, full, callback) {
     if (!oid || !callback)
         return;
     var url = this.base_url;
@@ -265,140 +251,29 @@ CatalogBrowser.prototype.get_info = function (oid, full, callback) {
             callback(response);
         },
         error: function (xhr, textStatus, thrownError) {
+            if (xhr.status) {
+                if (xhr.status == 401)
+                    return callback({ success: false, error: obj.translate("Unable to get media's information because you are not logged in.") });
+                if (xhr.status == 403)
+                    return callback({ success: false, error: obj.translate("Unable to get media's information because you cannot access to this media.") });
+                if (xhr.status == 404)
+                    return callback({ success: false, error: obj.translate("Media does not exist.") });
+                if (xhr.status == 500)
+                    return callback({ success: false, error: obj.translate("An error occured in medias server. Please try again later.") });
+            }
             if (textStatus == "timeout")
                 callback({ success: false, error: obj.translate("Unable to get media's information. Request timed out.") });
-        },
-        statusCode: {
-            401: function () {
-                callback({ success: false, error: obj.translate("Unable to get media's information because you are not logged in.") });
-            },
-            403: function () {
-                callback({ success: false, error: obj.translate("Unable to get media's information because you cannot access to this media.") });
-            },
-            404: function () {
-                callback({ success: false, error: obj.translate("Media does not exist.") });
-            },
-            500: function () {
-                callback({ success: false, error: obj.translate("An error occured in medias server. Please try again later.") });
-            }
-        }
-    });
-};
-
-
-CatalogBrowser.prototype.get_tree = function () {
-    var url = this.base_url;
-    var data = {};
-    if (this.use_proxy)
-        data.action = this.api_tree_path;
-    else
-        url += this.api_tree_path;
-    if (this.request_data)
-        for (var field in this.request_data) {
-            data[field] = this.request_data[field];
-        }
-    var obj = this;
-    $.ajax({
-        url: url,
-        data: data,
-        dataType: "json",
-        cache: false,
-        success: function (response) {
-            if (response.success) {
-                obj.hide_message("tree");
-                obj.display_tree(response);
-            }
             else
-                obj.display_message("tree", response.error ? response.error : obj.translate("No information about error."));
-        },
-        error: function (xhr, textStatus, thrownError) {
-            if (textStatus == "timeout")
-                obj.display_message("tree", obj.translate("Unable to get channels. Request timed out."));
-            else
-                obj.display_message("tree", obj.translate("An error occured during request:")+"<br/>&nbsp;&nbsp;&nbsp;&nbsp;"+textStatus+" "+thrownError);
+                callback({ success: false, error: obj.translate("An error occured during request:")+"<br/>&nbsp;&nbsp;&nbsp;&nbsp;"+textStatus+" "+thrownError });
         }
     });
 };
-CatalogBrowser.prototype.display_tree = function (data) {
-    if (!data.channels)
-        return;
-    this.$widgets.tree.html(this._get_tree(data));
-    // expand tree for selected category
-    if (this.current_category_oid)
-        this.expand_tree(this.current_category_oid);
-    // bind click events
-    $(".channel-btn", this.$widgets.tree).click({ obj: this }, function (evt) {
-        evt.data.obj.display_channel($(this).attr("ref"));
-    });
-    $(".channel-toggle", this.$widgets.tree).click({ obj: this }, function (evt) {
-        evt.data.obj.toggle_channel($(this).attr("ref"));
-    });
-};
-CatalogBrowser.prototype._get_tree = function (data, parent_oid, parent_title) {
-    if (!data.channels)
-        return "";
-    var oid = data.oid ? data.oid : 0;
-    var html = "";
-    // display link for catalog root if "c" in this.displayable_content
-    if (oid == 0 && this.displayable_content.indexOf("c") != -1) {
-        html += "<span id=\"tree_channel_0_link\" "+(this.current_category_oid == "0" ? "class=\"channel-active\"" : "")+">";
-        html += "<span ref=\"0\" class=\"channel-btn\" title=\""+this.translate("Click to display all channels in catalog root")+"\">"+this.translate("Catalog root")+"</span>";
-        html += "</span>";
-    }
-    html += "<ul id=\"tree_channel_"+oid+"\">";
-    for (var i=0; i < data.channels.length; i++) {
-        var channel = data.channels[i];
-        channel.parent_oid = parent_oid ? parent_oid : 0;
-        channel.parent_title = parent_title ? parent_title : this.translate("Catalog root");
-        this.update_catalog(channel);
-        var button = "<span class=\"list-none\"></span>";
-        var sub_channels = "";
-        if (channel.channels && channel.channels.length > 0) {
-            sub_channels = this._get_tree(channel, channel.oid, channel.title);
-            button = "<span ref=\""+channel.oid+"\" class=\"channel-toggle list-entry\"></span>";
-        }
-        html += "<li><span id=\"tree_channel_"+channel.oid+"_link\" "+(this.current_category_oid == channel.oid ? "class=\"channel-active\"" : "")+">"+button;
-        html +=     "<span ref=\""+channel.oid+"\" class=\"channel-btn\" title=\""+this.translate("Click to display the content of this channel")+"\">"+channel.title+"</span></span>";
-        html += sub_channels;
-        html += "</li>";
-    }
-    html += "</ul>";
-    return html;
-};
-CatalogBrowser.prototype.expand_tree = function (oid) {
-    if (!oid || !this.tree_loaded)
-        return;
-    var cat = this.catalog[oid];
-    while (cat) {
-        $("#tree_channel_"+cat.oid, this.$widgets.tree).css("display", "block");
-        $("#tree_channel_"+cat.oid+"_link .channel-toggle", this.$widgets.tree).addClass("opened");
-        cat = this.catalog[cat.parent_oid];
-    }
-};
-
-CatalogBrowser.prototype.toggle_channel = function (oid) {
-    var $btn = $("#tree_channel_"+oid+"_link .channel-toggle", this.$widgets.tree);
-    if ($btn.hasClass("opened")) {
-        $("#tree_channel_"+oid, this.$widgets.tree).css("display", "none");
-        $btn.removeClass("opened");
-    }
-    else {
-        $("#tree_channel_"+oid, this.$widgets.tree).css("display", "block");
-        $btn.addClass("opened");
-    }
-};
 
 
-
-
-CatalogBrowser.prototype.display_channel = function (cat_oid) {
-    if (this.current_category_oid !== null)
-        $("#tree_channel_"+this.current_category_oid+"_link", this.$widgets.tree).removeClass("channel-active");
+ECMSCatalogBrowser.prototype.display_channel = function (cat_oid) {
     this.change_tab("list");
     this.current_category_oid = cat_oid;
-    $("#tree_channel_"+this.current_category_oid+"_link", this.$widgets.tree).addClass("channel-active");
-    $("#tree_channel_"+cat_oid, this.$widgets.tree).css("display", "block");
-    $("#tree_channel_"+cat_oid+"_link .channel-toggle", this.$widgets.tree).addClass("opened");
+    this.tree_manager.set_active(cat_oid);
     var url = this.base_url;
     var data = {};
     if (cat_oid && cat_oid != "0")
@@ -412,9 +287,9 @@ CatalogBrowser.prototype.display_channel = function (cat_oid) {
             data.validated = "no";
     }
     if (this.use_proxy)
-        data.action = this.api_content_path;
+        data.action = this.api_content;
     else
-        url += this.api_content_path;
+        url += this.api_content;
     if (this.request_data)
         for (var field in this.request_data) {
             data[field] = this.request_data[field];
@@ -447,26 +322,24 @@ CatalogBrowser.prototype.display_channel = function (cat_oid) {
             callback(response);
         },
         error: function (xhr, textStatus, thrownError) {
+            if (xhr.status) {
+                if (xhr.status == 401)
+                    return callback({ success: false, error: obj.translate("You are not logged in. Please login in Moodle and retry.") });
+                if (xhr.status == 403)
+                    return callback({ success: false, error: obj.translate("Unable to get channel's content because you cannot access to this channel.") });
+                if (xhr.status == 404)
+                    return callback({ success: false, error: obj.translate("Unable to get channel's content because you cannot access to this channel.") });
+                if (xhr.status == 500)
+                    return callback({ success: false, error: obj.translate("An error occured in medias server. Please try again later.") });
+            }
             if (textStatus == "timeout")
                 callback({ success: false, error: obj.translate("Unable to get channel's content. Request timed out.") });
-        },
-        statusCode: {
-            401: function () {
-                callback({ success: false, error: obj.translate("You are not logged in. Please login in Moodle and retry.") });
-            },
-            403: function () {
-                callback({ success: false, error: obj.translate("Unable to get channel's content because you cannot access to this channel.") });
-            },
-            404: function () {
-                callback({ success: false, error: obj.translate("Requested channel does not exist.") });
-            },
-            500: function () {
-                callback({ success: false, error: obj.translate("An error occured in medias server. Please try again later.") });
-            }
+            else
+                callback({ success: false, error: obj.translate("An error occured during request:")+"<br/>&nbsp;&nbsp;&nbsp;&nbsp;"+textStatus+" "+thrownError });
         }
     });
 };
-CatalogBrowser.prototype.display_content = function (target, data, cat_oid) {
+ECMSCatalogBrowser.prototype.display_content = function (target, data, cat_oid) {
     var $container = this.$widgets["content_"+target];
     var selectable;
     var nb_channels = data.channels ? data.channels.length : 0;
@@ -565,7 +438,7 @@ CatalogBrowser.prototype.display_content = function (target, data, cat_oid) {
         }
     }
 };
-CatalogBrowser.prototype.get_content_entry = function (item_type, item, gselectable, no_save) {
+ECMSCatalogBrowser.prototype.get_content_entry = function (item_type, item, gselectable, no_save) {
     var oid = item.oid;
     if (!no_save)
         this.update_catalog(item);
@@ -584,7 +457,7 @@ CatalogBrowser.prototype.get_content_entry = function (item_type, item, gselecta
         html += "<span class=\"item-entry-preview\"><span class=\"item-"+item_type+"-icon\"></span></span>";
     html +=     "<span class=\"item-entry-content\">";
     html +=         "<span class=\"item-entry-top-bar\">";
-    html +=             "<span class=\"item-entry-title\">"+item.title+"</span>";
+    html +=             "<span class=\"item-entry-title\">"+utils.escape_html(item.title)+"</span>";
     if (item.can_edit) {
         if (item.accessibility !== undefined) {
             var atext;
@@ -622,7 +495,7 @@ CatalogBrowser.prototype.get_content_entry = function (item_type, item, gselecta
     html +=         "</span>";
     if (item.creation) {
         html +=     "<span class=\"item-entry-bottom-bar\">";
-        html +=         "<span class=\"item-entry-creation\">"+this.get_date_display(item.creation)+"</span>";
+        html +=         "<span class=\"item-entry-creation\">"+utils.get_date_display(item.creation)+"</span>";
         html +=     "</span>";
     }
     html +=     "</span>";
@@ -655,7 +528,7 @@ CatalogBrowser.prototype.get_content_entry = function (item_type, item, gselecta
     return $entry;
 };
 
-CatalogBrowser.prototype.pick = function (oid) {
+ECMSCatalogBrowser.prototype.pick = function (oid) {
     if (oid === null || oid === undefined) {
         // deselect
         if (this.current_selection && this.current_selection.oid)
@@ -672,7 +545,7 @@ CatalogBrowser.prototype.pick = function (oid) {
         obj._pick(oid, result);
     });
 };
-CatalogBrowser.prototype._pick = function (oid, result, no_update) {
+ECMSCatalogBrowser.prototype._pick = function (oid, result, no_update) {
     if (result.success) {
         this.overlay.hide();
         // update info in local catalog
@@ -690,21 +563,23 @@ CatalogBrowser.prototype._pick = function (oid, result, no_update) {
             this.current_category_oid = oid;
         else
             this.current_category_oid = result.info.parent_oid;
-        if (this.current_category_oid)
-            this.expand_tree(this.current_category_oid);
+        if (this.tree_manager && this.current_category_oid) {
+            this.tree_manager.set_active(oid);
+            this.tree_manager.expand_tree(this.current_category_oid);
+        }
     }
     else {
         // this should never happen
-        alert("Unable to get info about initial selection: "+result.error);
+        console.log("Unable to get info about initial selection:"+result.error);
     }
 };
-CatalogBrowser.prototype.get_last_pick = function () {
+ECMSCatalogBrowser.prototype.get_last_pick = function () {
     return this.current_selection;
 };
 
 
 
-CatalogBrowser.prototype.on_search_submit = function (place, text, type) {
+ECMSCatalogBrowser.prototype.on_search_submit = function (place, text, type) {
     // get fields to search in
     var fields = "";
     if ($("#catalog_browser_search_in_titles", this.$widgets.search_form).is(":checked"))
@@ -791,28 +666,26 @@ CatalogBrowser.prototype.on_search_submit = function (place, text, type) {
             callback(response);
         },
         error: function (xhr, textStatus, thrownError) {
+            if (xhr.status) {
+                if (xhr.status == 401)
+                    return callback({ success: false, error: obj.translate("You are not logged in. Please login in Moodle and retry.") });
+                if (xhr.status == 403)
+                    return callback({ success: false, error: obj.translate("Unable to get channel's content because you cannot access to this channel.") });
+                if (xhr.status == 404)
+                    return callback({ success: false, error: obj.translate("Requested channel does not exist.") });
+                if (xhr.status == 500)
+                    return callback({ success: false, error: obj.translate("An error occured in medias server. Please try again later.") });
+            }
             if (textStatus == "timeout")
                 callback({ success: false, error: obj.translate("Unable to get channel's content. Request timed out.") });
-        },
-        statusCode: {
-            401: function () {
-                callback({ success: false, error: obj.translate("You are not logged in. Please login in Moodle and retry.") });
-            },
-            403: function () {
-                callback({ success: false, error: obj.translate("Unable to get channel's content because you cannot access to this channel.") });
-            },
-            404: function () {
-                callback({ success: false, error: obj.translate("Requested channel does not exist.") });
-            },
-            500: function () {
-                callback({ success: false, error: obj.translate("An error occured in medias server. Please try again later.") });
-            }
+            else
+                callback({ success: false, error: obj.translate("An error occured during request:")+"<br/>&nbsp;&nbsp;&nbsp;&nbsp;"+textStatus+" "+thrownError });
         }
     });
 };
 
 
-CatalogBrowser.prototype.display_message = function (place, text, type) {
+ECMSCatalogBrowser.prototype.display_message = function (place, text, type) {
     var t = type ? type : "error";
     this.$widgets["message_"+place].html("<div class=\""+t+"\">"+text+"</div>");
     if (!this.messages_displayed[place]) {
@@ -820,14 +693,14 @@ CatalogBrowser.prototype.display_message = function (place, text, type) {
         this.messages_displayed[place] = true;
     }
 };
-CatalogBrowser.prototype.hide_message = function (place) {
+ECMSCatalogBrowser.prototype.hide_message = function (place) {
     if (this.messages_displayed[place]) {
         this.$widgets["message_"+place].css("display", "none");
         this.messages_displayed[place] = false;
     }
 };
 
-CatalogBrowser.prototype.resize = function () {
+ECMSCatalogBrowser.prototype.resize = function () {
     var width = $(window).width() - 100;
     if (width < 900)
         width = 900;
@@ -836,164 +709,6 @@ CatalogBrowser.prototype.resize = function () {
     this.$widgets.main.width(width);
     var height = $(window).height() - 100;
     this.$widgets.main.height(height);
-};
-
-
-
-CatalogBrowser.prototype.set_language = function (lang) {
-    if (lang == "fr") {
-        this.language = "fr";
-        this.translations = {
-            "Loading": "Chargement",
-            "Channels list": "Liste des chaînes",
-            "Search": "Rechercher",
-            "Search results": "Résultats de la recherche",
-            "Search:": "Rechercher&nbsp;:",
-            "Search in:": "Rechercher dans&nbsp;:",
-            "Search for:": "Contenu à rechercher&nbsp;:",
-            "Search in progress": "Recherche en cours",
-            "Go": ">",
-            "Use the input in the left column to search for something.": "Utilisez le champ de texte à gauche pour rechercher du contenu.",
-            "No results.": "Pas de résultat.",
-            "titles": "titres",
-            "descriptions": "descriptions",
-            "keywords": "mots clés",
-            "speakers": "intervenants",
-            "companies": "sociétés",
-            "chapters": "chapitres",
-            "photos": "photos",
-            "channels": "chaînes",
-            "videos": "vidéos",
-            "live streams": "diffusions en direct",
-            "photos groups": "groupes de photos",
-            "Channel's content": "Contenu de la chaîne",
-            "Catalog root": "Racine du catalogue",
-            "Channels": "Chaînes",
-            "Sub channels": "Sous chaînes",
-            "Videos": "Vidéos",
-            "Live streams": "Diffusions en direct",
-            "Photos groups": "Groupes de photos",
-            "channel(s)": "chaîne(s)",
-            "video(s)": "vidéo(s)",
-            "live stream(s)": "diffusion(s) en direct",
-            "photos group(s)": "groupe(s) de photos",
-            "No information about media.": "Pas d'information sur le média",
-            "Unable to get media's information. Request timed out.": "Impossible d'obtenir les informations sur le média. Délai d'attente de la requête écoulé.",
-            "Unable to get media's information because you cannot access to this media.": "Impossible d'obtenir les informations sur le média car vous ne pouvez pas accéder à ce média.",
-            "Media does not exist.": "Aucun média ne correspond à l'identifiant entré.",
-            "An error occured in medias server. Please try again later.": "Une erreur est suvenue dans le serveur de médias. Veuillez réessayer plus tard.",
-            "No information about error.": "Aucune information sur l'erreur.",
-            "Unable to get channels. Request timed out.": "Impossible d'obtenir la liste des chaînes. Délai d'attente de la requête écoulé.",
-            "An error occured during request:": "Une erreur est survenue pendant la requête&nbsp;:",
-            "Click to display the content of this channel": "Cliquez pour afficher le le contenu de cette chaîne",
-            "Unable to get channel's content. Request timed out.": "Impossible d'obtenir la liste du contenu de la chaîne. Délai d'attente de la requête écoulé.",
-            "You are not logged in. Please login in Moodle and retry.": "Vous devez vous authentifier pour voir les médias. Veuillez vous authentifier dans Moodle puis réessayez.",
-            "Unable to get channel's content because you cannot access to this channel.": "Impossible d'obtenir la liste du contenu de la chaîne car vous ne disposez pas du droit d'accès à cette chaîne.",
-            "Requested channel does not exist.": "La chaîne demandée n'existe pas.",
-            "This channel contains no sub channels and no medias.": "Cette chaîne ne contient pas de sous chaîne ni de média.",
-            "This channel contains no sub channels.": "Cette chaîne ne contient pas de sous chaîne.",
-            "This channel contains no medias.": "Cette chaîne ne contient pas de média.",
-            "Accessible for all users": "Accessible pour tous les utilisateurs",
-            "Accessible only for authenticated users": "Accessible uniquement pour les utilisateurs authentifiés",
-            "Accessible only for authenticated users with access right": "Accessible uniquement pour les utilisateurs authentifiés qui possèdent le droit d'accès",
-            "Inaccessible for all users": "Inaccessible pour tous les utilisateurs",
-            "Visible for all users": "Visible pour tous les utilisateurs",
-            "Visible only for authenticated users": "Visible uniquement pour les utilisateurs authentifiés",
-            "Visible only for authenticated users with access right": "Visible uniquement pour les utilisateurs authentifiés qui possèdent le droit d'accès",
-            "Invisible for all users": "Invisible pour tous les utilisateurs",
-            "This media is published": "Ce média est publié",
-            "This media is not published": "Ce média n'est pas publié",
-            "This video is not ready": "Cette vidéo n'est pas prête",
-            "Select a channel to display its content.": "Sélectionnez une chaîne pour afficher son contenu.",
-            "Select a channel": "Sélectionner une chaîne",
-            "Select a media": "Sélectionner un média",
-            "Select this channel": "Sélectionner cette chaîne",
-            "Select this media": "Sélectionner ce média",
-            "Display channel": "Afficher cette chaîne",
-            "Channel:": "Chaîne&nbsp;:",
-            "Current channel": "Chaîne courante",
-            "Parent channel:": "Chaîne parente&nbsp;:",
-            "Parent channel": "Chaîne parente",
-            "January": "janvier",
-            "February": "février",
-            "March": "mars",
-            "April": "avril",
-            "May": "mai",
-            "June": "juin",
-            "July": "juillet",
-            "August": "août",
-            "September": "septembre",
-            "October": "octobre",
-            "November": "novembre",
-            "December": "décembre",
-            "at": "à"
-        };
-    }
-    else {
-        this.language = "en";
-        this.translations = {};
-    }
-};
-
-CatalogBrowser.prototype.get_date_display = function (d) {
-    // date format %Y-%m-%d %H:%M:%S
-    var date_split = d.split(" ");
-    if (date_split.length < 2)
-        return "";
-    var ymd_split = date_split[0].split("-");
-    var hms_split = date_split[1].split(":");
-    if (ymd_split.length < 3 || hms_split.length < 3)
-        return "";
-    
-    // year
-    var year = ymd_split[0];
-    // month
-    var month = ymd_split[1];
-    switch (ymd_split[1]) {
-        case "01": month = this.translate("January");   break;
-        case "02": month = this.translate("February");  break;
-        case "03": month = this.translate("March");     break;
-        case "04": month = this.translate("April");     break;
-        case "05": month = this.translate("May");       break;
-        case "06": month = this.translate("June");      break;
-        case "07": month = this.translate("July");      break;
-        case "08": month = this.translate("August");    break;
-        case "09": month = this.translate("September"); break;
-        case "10": month = this.translate("October");   break;
-        case "11": month = this.translate("November");  break;
-        case "12": month = this.translate("December");  break;
-    }
-    // day
-    var day = ymd_split[2];
-    try { day = parseInt(ymd_split[2], 10); } catch (e) { }
-    
-    // hour
-    var hour = parseInt(hms_split[0], 10);
-    // minute
-    var minute = parseInt(hms_split[1], 10);
-    if (minute < 10)
-        minute = "0"+minute;
-    
-    var time;
-    if (this.language == "fr") {
-        // 24 hours time format
-        if (hour < 10)
-            hour = "0"+hour;
-        time = hour+"h"+minute;
-    }
-    else {
-        // 12 hours time format
-        var moment = "PM";
-        if (hour < 13) {
-            moment = "AM";
-            if (hour == 0)
-                hour = 12;
-        }
-        else
-            hour -= 12;
-        time = hour+":"+minute+" "+moment;
-    }
-    return day+" "+month+" "+year+" "+this.translate("at")+" "+time;
 };
 
 

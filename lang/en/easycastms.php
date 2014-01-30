@@ -28,6 +28,7 @@ $string['form_no_media'] = 'No media selected';
 // proxy messages
 $string['proxy_login_required'] = 'You must be logged in to access this url. Please log in and retry.';
 $string['proxy_permission_required'] = 'You don\'t have the permission to access this url.';
+$string['proxy_curl_missing'] = 'The CURL lib is missing from your PHP server. This lib is required to use the MediaServer plugin.';
 $string['proxy_action_missing'] = 'Action not set in request arguments.';
 $string['proxy_request_error'] = 'Error during request to MediaServer. Error:';
 $string['proxy_parsing_error'] = 'Response from MediaServer cannot be parsed.';

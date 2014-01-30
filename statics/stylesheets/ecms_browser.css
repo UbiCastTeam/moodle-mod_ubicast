@@ -193,12 +193,14 @@
     background: #ffefef url("../images/icons/messages/icon_24_error.png") 6px 50% no-repeat;
 }
 .catalogbrowser .loading {
+    padding-top: 8px;
+    padding-bottom: 8px;
     line-height: 28px;
     min-height: 28px;
     padding-left: 48px;
     color: #000;
-    border-color: #808080;
-    background: #e0e0e0 url("../images/icons/messages/icon_32_loading.gif") 4px 50% no-repeat;
+    border-color: #aaa;
+    background: #eee url("../images/icons/messages/icon_32_loading.gif") 6px 50% no-repeat;
 }
 
 

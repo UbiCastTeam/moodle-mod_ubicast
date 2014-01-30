@@ -28,6 +28,7 @@ $string['form_no_media'] = 'Pas de média sélectionné';
 // proxy messages
 $string['proxy_login_required'] = 'Vous devez être authentifié pour accéder à cette URL. Veuillez vous authentifier puis réessayez.';
 $string['proxy_permission_required'] = 'Vous ne disposez pas de la permission d\'accès à cette URL.';
+$string['proxy_curl_missing'] = 'Le module CURL n\'est pas disponible dans votre serveur. Ce module est nécessaire au fonctionnement du plugin MediaServer.';
 $string['proxy_action_missing'] = 'Le paramètre action est manquant.';
 $string['proxy_request_error'] = 'Erreur lors de la requête sur MediaServer. Erreur:';
 $string['proxy_parsing_error'] = 'La réponse de MediaServer ne peut pas être lue.';

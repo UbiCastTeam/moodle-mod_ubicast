@@ -4,7 +4,7 @@
 
 ==========================================================================
 
-Copyright: 2013 UbiCast (http://ubicast.eu)
+Copyright: UbiCast (http://ubicast.eu)
 License: http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 
 
@@ -16,5 +16,8 @@ Description:
 
 Install:
     Just put a dir named "easycastms" with all files of this repository in your moodle mod dir.
-    This plugin requires Moodle >= 2.3 and MediaServer >= 4.0.
+
+
+Dependencies:
+    This plugin requires the PHP CURL library, Moodle >= 2.3 and MediaServer >= 4.0.
 
