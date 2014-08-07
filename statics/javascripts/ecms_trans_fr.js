@@ -24,7 +24,10 @@ utils.add_translations({
     "chapters": "chapitres",
     "photos": "photos",
     "channels": "chaînes",
+    "channel": "chaîne",
     "videos": "vidéos",
+    "video": "vidéo",
+    "Loading...": "Chargement...",
     "live streams": "diffusions en direct",
     "photos groups": "groupes de photos",
     "Channel's content": "Contenu de la chaîne",
@@ -84,14 +87,28 @@ utils.add_translations({
     "November": "novembre",
     "December": "décembre",
     "at": "à",
+    "Created on": "Créé le",
+    "Added on": "Ajouté le",
+    "Type:": "Type :",
     // tree manager
-    "Loading": "Chargement",
     "Unable to get channels tree. Request timed out.": "Impossible d'obtenir la liste des chaînes. Délai d'attente de la requête écoulé.",
     "An error occured during request:": "Une erreur est survenue pendant la requête&nbsp;:",
     "Unable to get channels tree because you are not logged in.": "Impossible d'obtenir la liste des chaînes, vous n'êtes pas authentifié",
     "Unable to get channels tree because you cannot access to this channel.": "Impossible d'obtenir la liste des chaînes, vous n'avez pas la permission pour accéder à cette chaîne.",
     "Channel does not exist.": "La chaîne demandée n'existe pas.",
     "An error occured in medias server. Please try again later.": "Une erreur est suvenue dans le serveur de médias. Veuillez réessayer plus tard.",
-    "No information about error.": "Aucune information sur l'erreur."
+    "No information about error.": "Aucune information sur l'erreur.",
+    // latest
+    "Latest content": "Contenu récent",
+    "Latest content added in the catalog": "Contenu récemment ajouté au catalogue",
+    "This list presents all media and channels ordered by add date in the catalog.": "Cette liste présente les derniers éléments ajoutés au catalogue triés par date d'ajout.",
+    "Display 5 more items": "Afficher 5 éléments de plus",
+    "Display 20 more items": "Afficher 20 éléments de plus",
+    "display channels": "afficher les chaînes",
+    "Apply": "Appliquer",
+    // filters
+    "Filters": "Filtres",
+    "Editable": "Editable",
+    "Published": "Publié"
 }, "fr");
 

@@ -48,7 +48,7 @@ function easycastms_print_intro($easycastms_media, $cm, $course, $ignoresettings
     }
 }
 
-function easycastms_display_media($easycastms_media, $cm, $course, $can_edit) {
+function easycastms_display_media($easycastms_media, $cm, $course) {
     global $CFG, $PAGE, $OUTPUT;
     
     $title = $easycastms_media->name;
@@ -59,55 +59,10 @@ function easycastms_display_media($easycastms_media, $cm, $course, $can_edit) {
     
     $prefix = easycastms_get_url_prefix($easycastms_media);
     
-    $edit_btn = '';
-    if ($can_edit) {
-        $edit_btn = '<div class="edit-btn"><a href="edit.php?id='.$cm->id.'" title="'.get_string('edit_link', 'easycastms').'"></a></div>';
-    }
-    
     $code = '
-        <div id="easycastms_'.$easycastms_media->mediaid.'" class="easycastms-embed">
-            <div class="easycastms-btn-place">
-                '.$edit_btn.'
-                <div class="fullscreen-btn"><a href="javascript: media_manager_'.$easycastms_media->mediaid.'.toggle_fullscreen();" title="'.get_string('fullscreen', 'easycastms').'"></a></div>
-            </div>
-            <iframe style="width: 100%; height: 800px;" src="'.$config->easycastms_url.'/'.$prefix.'/permalink/'.$easycastms_media->mediaid.'/iframe/"></iframe>
-        </div>
-        <link rel="stylesheet" href="statics/stylesheets/embed.css" type="text/css"/>
-        <script type="text/javascript" src="statics/javascripts/jquery-latest.min.js"></script>
-        <script type="text/javascript" src="statics/javascripts/fullscreen.js"></script>
-        <script type="text/javascript" src="statics/javascripts/media_manager.js"></script>
-        <script type="text/javascript"> var media_manager_'.$easycastms_media->mediaid.' = new MediaManager("'.$easycastms_media->mediaid.'"); </script>
-    ';
-    echo $code;
-    
-    easycastms_print_intro($easycastms_media, $cm, $course);
-    
-    echo $OUTPUT->footer();
-    die;
-}
-
-function easycastms_display_media_edition($easycastms_media, $cm, $course) {
-    global $CFG, $PAGE, $OUTPUT;
-    
-    $title = $easycastms_media->name;
-    
-    easycastms_print_header($easycastms_media, $cm, $course);
-    
-    $config = get_config('easycastms');
-    
-    $code = '
-        <div id="easycastms_'.$easycastms_media->mediaid.'" class="easycastms-embed">
-            <div class="easycastms-btn-place">
-                <div class="see-btn"><a href="view.php?id='.$cm->id.'" title="'.get_string('view_link', 'easycastms').'"></a></div>
-                <!--<div class="fullscreen-btn"><a href="javascript: media_manager_'.$easycastms_media->mediaid.'.toggle_fullscreen();" title="'.get_string('fullscreen', 'easycastms').'"></a></div>-->
-            </div>
-            <iframe style="width: 100%; height: 800px;" src="'.$config->easycastms_url.'/edit/iframe/'.$easycastms_media->mediaid.'/"></iframe>
-        </div>
-        <link rel="stylesheet" href="statics/stylesheets/embed.css" type="text/css"/>
-        <!--<script type="text/javascript" src="statics/javascripts/jquery-latest.min.js"></script>-->
-        <!--<script type="text/javascript" src="statics/javascripts/fullscreen.js"></script>-->
-        <script type="text/javascript" src="statics/javascripts/media_manager.js"></script>
-        <script type="text/javascript"> var media_manager_'.$easycastms_media->mediaid.' = new MediaManager("'.$easycastms_media->mediaid.'"); </script>
+    <iframe id="mediaserver_iframe" style="width: 100%; height: 800px;" src="'.$config->easycastms_url.'/'.$prefix.'/permalink/'.$easycastms_media->mediaid.'/iframe/" frameborder="0" allowfullscreen="allowfullscreen"></iframe>
+    <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/javascripts/jquery-latest.min.js"></script>
+    <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/javascripts/iframe_manager.js"></script>
     ';
     echo $code;
     

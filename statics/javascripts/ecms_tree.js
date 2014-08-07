@@ -17,10 +17,10 @@ function ECMSTreeManager(options) {
     this.on_data_retrieved = null;
     this.channels_base_url = "/channels/#";
     this.channels_url_field = "slug";
-    
-    // vars
     this.api_tree = "/api/v2/channels/tree/";
     this.api_path = "/api/v2/channels/path/";
+    
+    // vars
     this.$widget = null;
     this.loaded = false;
     this.loading = false;
@@ -38,7 +38,9 @@ function ECMSTreeManager(options) {
         "on_change",
         "on_data_retrieved",
         "channels_base_url",
-        "channels_url_field"
+        "channels_url_field",
+        "api_tree",
+        "api_path"
     ]);
     
     if (this.auto_init) {

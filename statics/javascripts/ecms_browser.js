@@ -13,7 +13,7 @@ function ECMSCatalogBrowser(options) {
     this.selectable_content = "vlp"; // v for videos, l for lives, p for photos group and c for channels
     this.displayable_content = "cvlp";
     this.filter_validated = null;
-    this.allowed_oids = null; // must be an object like { "the_oid": true, ... }
+    this.parent_selection_oid = null; // special for category parent selection
     this.initial_oid = null;
     this.on_pick = null;
     this.language = "";
@@ -24,12 +24,15 @@ function ECMSCatalogBrowser(options) {
     this.api_get_category = "/api/v2/channels/get/";
     this.api_get_media = "/api/v2/medias/get/";
     this.api_search = "/api/v2/search/";
-    this.messages_displayed = { list: true, search: true };
+    this.api_latest = "/api/v2/latest/";
+    this.messages_displayed = { list: true, search: true, latest: true };
+    this.loading_timeout = null;
     this.catalog = {};
     this.tree_manager = null;
     this.displayed = "list";
     this.current_category_oid = "0";
     this.current_selection = null;
+    this.latest_initialized = false;
     this.$widgets = {};
     
     utils.setup_class(this, options, [
@@ -41,7 +44,7 @@ function ECMSCatalogBrowser(options) {
         "selectable_content",
         "displayable_content",
         "filter_validated",
-        "allowed_oids",
+        "parent_selection_oid",
         "initial_oid",
         "on_pick",
         "language",
@@ -65,8 +68,9 @@ ECMSCatalogBrowser.prototype.init = function () {
     html += "<div class=\"cb-left\">";
     html +=     "<div class=\"cb-column\">";
     html +=         "<div class=\"cb-title\">";
-    html +=             "<div class=\"cb-tab cb-tab-list\">"+this.translate("Channels list")+"</div>";
-    html +=             "<div class=\"cb-tab cb-tab-search\">"+this.translate("Search")+"</div>";
+    html +=             "<div class=\"cb-btn cb-btn-list cb-active\">"+this.translate("Channels list")+"</div>";
+    html +=             "<div class=\"cb-btn cb-btn-search\">"+this.translate("Search")+"</div>";
+    html +=             "<div class=\"cb-btn cb-btn-latest\">"+this.translate("Latest content")+"</div>";
     html +=         "</div>";
     html +=         "<div class=\"cb-container cb-left-list\">";
     html +=             "<div class=\"cb-tree\"></div>";
@@ -122,6 +126,16 @@ ECMSCatalogBrowser.prototype.init = function () {
         html +=         "</div>";
     }
     html +=         "</div>";
+    html +=         "<div class=\"cb-container cb-left-latest\">";
+    html +=             "<div class=\"info\">"+this.translate("This list presents all media and channels ordered by add date in the catalog.")+"</div>";
+    if (this.displayable_content.length > 1 && this.displayable_content.indexOf("c") != -1) {
+        html +=         "<p>";
+        html +=             "<input id=\"latest_display_channels\" type=\"checkbox\">";
+        html +=             " <label for=\"latest_display_channels\">"+this.translate("display channels")+"</label>";
+        html +=         "</p>";
+        html +=         "<p><button type=\"button\" class=\"cb-latest-refresh\">"+this.translate("Apply")+"</button></p>";
+    }
+    html +=         "</div>";
     html +=     "</div>";
     html += "</div>";
     html += "<div class=\"cb-right\">";
@@ -135,7 +149,7 @@ ECMSCatalogBrowser.prototype.init = function () {
     html +=         "</div>";
     html +=     "</div>";
     html +=     "<div class=\"cb-column cb-column-search\">";
-    html +=         "<div class=\"cb-title\">"+this.translate("Search results")+" <span></span></div>";
+    html +=         "<div class=\"cb-title\">"+this.translate("Search results")+" <span class=\"cb-search-results-count\"></span></div>";
     html +=         "<div class=\"cb-container\">";
     html +=             "<div class=\"cb-message\">";
     html +=                 "<div class=\"info\">"+this.translate("Use the input in the left column to search for something.")+"</div>";
@@ -143,28 +157,111 @@ ECMSCatalogBrowser.prototype.init = function () {
     html +=             "<div class=\"cb-content\"></div>";
     html +=         "</div>";
     html +=     "</div>";
+    html +=     "<div class=\"cb-column cb-column-latest\">";
+    html +=         "<div class=\"cb-title\">"+this.translate("Latest content added in the catalog")+"</div>";
+    html +=         "<div class=\"cb-container\">";
+    html +=             "<div class=\"cb-message\"></div>";
+    html +=             "<div class=\"cb-content\">";
+    html +=                 "<div class=\"cb-latest-place\"></div>";
+    html +=                 "<div class=\"cb-latest-btn\">";
+    html +=                     "<button type=\"button\" class=\"std-btn cb-latest-more-5\">"+this.translate("Display 5 more items")+"</button>";
+    html +=                     "<button type=\"button\" class=\"std-btn cb-latest-more-20\">"+this.translate("Display 20 more items")+"</button>";
+    html +=                 "</div>";
+    html +=             "</div>";
+    html +=         "</div>";
+    html +=     "</div>";
+    html +=     "<div class=\"cb-loading\"><div>"+this.translate("Loading...")+"</div></div>";
     html += "</div>";
+    /* TODO: filters implementation
+    html += "<div class=\"cb-filters-btn-place\"><div class=\"cb-btn cb-btn-filters\">"+this.translate("Filters")+"</div></div>";
+    html += "<div class=\"cb-filters-menu\">";
+    if (this.displayable_content.indexOf("c") != -1) {
+        html += "<div><b>"+this.translate("Channels:")+"</b><br/>";
+        html += "<label for=\"filter_categories_editable\">"+this.translate("Editable")+"</label>";
+        html += " <select id=\"filter_categories_editable\">";
+        html += " <option value=\"all\">"+this.translate("all")+"</option>";
+        html += " <option value=\"yes\">"+this.translate("yes")+"</option>";
+        html += " <option value=\"no\">"+this.translate("no")+"</option>";
+        html += " </select></div>";
+    }
+    if (this.displayable_content.indexOf("v") != -1) {
+        html += "<div><p>"+this.translate("Videos:")+"</p>";
+        html += "<label for=\"filter_videos_editable\">"+this.translate("Editable")+"</label>";
+        html += " <select id=\"filter_videos_editable\">";
+        html += " <option value=\"all\">"+this.translate("all")+"</option>";
+        html += " <option value=\"yes\">"+this.translate("yes")+"</option>";
+        html += " <option value=\"no\">"+this.translate("no")+"</option>";
+        html += " </select><br/>";
+        html += "<label for=\"filter_videos_published\">"+this.translate("Published")+"</label>";
+        html += " <select id=\"filter_videos_published\">";
+        html += " <option value=\"all\">"+this.translate("all")+"</option>";
+        html += " <option value=\"yes\">"+this.translate("yes")+"</option>";
+        html += " <option value=\"no\">"+this.translate("no")+"</option>";
+        html += " </select></div>";
+    }
+    if (this.displayable_content.indexOf("l") != -1) {
+        html += "<div><p>"+this.translate("Lives:")+"</p>";
+        html += "<label for=\"filter_lives_editable\">"+this.translate("Editable")+"</label>";
+        html += " <select id=\"filter_lives_editable\">";
+        html += " <option value=\"all\">"+this.translate("all")+"</option>";
+        html += " <option value=\"yes\">"+this.translate("yes")+"</option>";
+        html += " <option value=\"no\">"+this.translate("no")+"</option>";
+        html += " </select>";
+        html += "<label for=\"filter_lives_published\">"+this.translate("Published")+"</label>";
+        html += " <select id=\"filter_lives_published\">";
+        html += " <option value=\"all\">"+this.translate("all")+"</option>";
+        html += " <option value=\"yes\">"+this.translate("yes")+"</option>";
+        html += " <option value=\"no\">"+this.translate("no")+"</option>";
+        html += " </select></div>";
+    }
+    if (this.displayable_content.indexOf("p") != -1) {
+        html += "<div><p>"+this.translate("Photos groups:")+"</p>";
+        html += "<label for=\"filter_photos_editable\">"+this.translate("Editable")+"</label>";
+        html += "<select id=\"filter_photos_editable\">";
+        html += " <option value=\"all\">"+this.translate("all")+"</option>";
+        html += " <option value=\"yes\">"+this.translate("yes")+"</option>";
+        html += " <option value=\"no\">"+this.translate("no")+"</option>";
+        html += " </select><br/>";
+        html += "<label for=\"filter_photos_published\">"+this.translate("Published")+"</label>";
+        html += " <select id=\"filter_photos_published\">";
+        html += " <option value=\"all\">"+this.translate("all")+"</option>";
+        html += " <option value=\"yes\">"+this.translate("yes")+"</option>";
+        html += " <option value=\"no\">"+this.translate("no")+"</option>";
+        html += " </select></div>";
+    }
+    html += "</div>";
+    */
     html += "</div>";
     this.$widgets.main = $(html);
     
     // get elements
     this.$widgets.tree = $(".cb-left .cb-tree", this.$widgets.main);
-    this.$widgets.column_list = $(".cb-column-list", this.$widgets.main);
-    this.$widgets.column_search = $(".cb-column-search", this.$widgets.main);
-    this.$widgets.content_list = $(".cb-content", this.$widgets.column_list);
-    this.$widgets.content_search = $(".cb-content", this.$widgets.column_search);
-    this.$widgets.message_list = $(".cb-message", this.$widgets.column_list);
-    this.$widgets.message_search = $(".cb-message", this.$widgets.column_search);
+    this.$widgets.loading = $(".cb-right .cb-loading", this.$widgets.main);
+    this.$widgets.content_list = $(".cb-column-list .cb-content", this.$widgets.main);
+    this.$widgets.content_search = $(".cb-column-search .cb-content", this.$widgets.main);
+    this.$widgets.content_latest = $(".cb-column-search .cb-content", this.$widgets.main);
+    this.$widgets.message_list = $(".cb-column-list .cb-message", this.$widgets.main);
+    this.$widgets.message_search = $(".cb-column-search .cb-message", this.$widgets.main);
+    this.$widgets.message_latest = $(".cb-column-latest .cb-message", this.$widgets.main);
     this.$widgets.search_form = $(".cb-left-search", this.$widgets.main);
-    this.$widgets.search_results = $(".cb-title span", this.$widgets.column_search);
+    this.$widgets.search_results = $(".cb-column-search .cb-search-results-count", this.$widgets.main);
+    this.$widgets.letest_btn = $(".cb-column-latest .cb-latest-btn", this.$widgets.main);
+    this.$widgets.filters_btn = $(".cb-btn-filters", this.$widgets.main);
+    this.$widgets.filters_menu = $(".cb-filters-menu", this.$widgets.main);
+    this.$widgets.latest_place = $(".cb-column-latest .cb-latest-place", this.$widgets.main);
     
     // get initial media or channel info
     if (this.initial_oid)
         this.pick(this.initial_oid);
     
     // events
-    $(".cb-tab-list", this.$widgets.main).click({ obj: this }, function (evt) { evt.data.obj.change_tab("list"); });
-    $(".cb-tab-search", this.$widgets.main).click({ obj: this }, function (evt) { evt.data.obj.change_tab("search"); });
+    $(".cb-btn-list", this.$widgets.main).click({ obj: this }, function (evt) { evt.data.obj.change_tab("list"); });
+    $(".cb-btn-search", this.$widgets.main).click({ obj: this }, function (evt) { evt.data.obj.change_tab("search"); });
+    $(".cb-btn-latest", this.$widgets.main).click({ obj: this }, function (evt) { evt.data.obj.change_tab("latest"); });
+    $(".cb-btn-filters", this.$widgets.main).click({ obj: this }, function (evt) { evt.data.obj.toggle_filters_menu(); });
+    $(".cb-latest-more-5", this.$widgets.main).click({ obj: this }, function (evt) { evt.data.obj.latest_more_click(5); });
+    $(".cb-latest-more-20", this.$widgets.main).click({ obj: this }, function (evt) { evt.data.obj.latest_more_click(20); });
+    $(".cb-latest-refresh", this.$widgets.main).click({ obj: this }, function (evt) { evt.data.obj.latest_refresh(); });
     $("form", this.$widgets.main).submit({ obj: this }, function (evt) { evt.data.obj.on_search_submit(); });
     $(window).resize(function () {
         obj.resize();
@@ -172,9 +269,24 @@ ECMSCatalogBrowser.prototype.init = function () {
     this.resize();
 };
 
+ECMSCatalogBrowser.prototype.toggle_filters_menu = function () {
+    if (this.$widgets.filters_btn.hasClass("cb-active")) {
+        this.$widgets.filters_btn.removeClass("cb-active");
+        this.$widgets.filters_menu.removeClass("cb-active");
+    }
+    else {
+        this.$widgets.filters_btn.addClass("cb-active");
+        this.$widgets.filters_menu.addClass("cb-active");
+    }
+};
+
 ECMSCatalogBrowser.prototype.change_tab = function (tab_id) {
     if (this.$widgets.main.hasClass("cb-display-"+tab_id))
         return;
+    if (tab_id == "latest")
+        this.latest_init();
+    $(".cb-btn-"+this.displayed, this.$widgets.main).removeClass("cb-active");
+    $(".cb-btn-"+tab_id, this.$widgets.main).addClass("cb-active");
     this.$widgets.main.removeClass("cb-display-"+this.displayed).addClass("cb-display-"+tab_id);
     this.displayed = tab_id;
 };
@@ -278,6 +390,8 @@ ECMSCatalogBrowser.prototype.display_channel = function (cat_oid) {
     var data = {};
     if (cat_oid && cat_oid != "0")
         data.parent_oid = cat_oid;
+    if (this.parent_selection_oid)
+        data.parent_selection_oid = this.parent_selection_oid;
     if (this.displayable_content)
         data.content = this.displayable_content;
     if (this.filter_validated !== null) {
@@ -295,11 +409,9 @@ ECMSCatalogBrowser.prototype.display_channel = function (cat_oid) {
             data[field] = this.request_data[field];
         }
     var obj = this;
-    this.list_loading_timeout = setTimeout(function () {
-        obj.display_message("list", obj.translate("Loading")+"...", "loading");
-        obj.list_loading_timeout = null;
-    }, 500);
+    this.display_loading();
     var callback = function (response) {
+        obj.hide_loading();
         if (response.success) {
             obj.hide_message("list");
             obj.display_content("list", response, cat_oid);
@@ -308,8 +420,6 @@ ECMSCatalogBrowser.prototype.display_channel = function (cat_oid) {
             obj.$widgets.content_list.html("");
             obj.display_message("list", response.error);
         }
-        if (obj.list_loading_timeout)
-            clearTimeout(obj.list_loading_timeout);
     };
     $.ajax({
         url: url,
@@ -378,15 +488,19 @@ ECMSCatalogBrowser.prototype.display_content = function (target, data, cat_oid) 
             $container.append(this.get_content_entry("parent", {
                 oid: parent_oid,
                 title: parent_title,
-                extra_class: "item-entry-small"
-            }, parent_oid && selectable, true));
+                extra_class: "item-entry-small",
+                selectable: (!this.parent_selection_oid || data.parent_selectable),
+                no_save: true
+            }, parent_oid != 0 && selectable));
             // current category selection button
             var cat_title = this.catalog[cat_oid] ? this.translate("Channel:")+" "+this.catalog[cat_oid].title : "Current channel";
             $container.append(this.get_content_entry("current", {
                 oid: cat_oid,
                 title: cat_title,
-                extra_class: "item-entry-small"
-            }, selectable, true));
+                extra_class: "item-entry-small",
+                selectable: (!this.parent_selection_oid || data.selectable),
+                no_save: true
+            }, selectable));
         }
         if (sections == 0) {
             if (selectable) {
@@ -438,15 +552,17 @@ ECMSCatalogBrowser.prototype.display_content = function (target, data, cat_oid) 
         }
     }
 };
-ECMSCatalogBrowser.prototype.get_content_entry = function (item_type, item, gselectable, no_save) {
+ECMSCatalogBrowser.prototype.get_content_entry = function (item_type, item, gselectable) {
     var oid = item.oid;
-    if (!no_save)
+    if (!item.no_save)
         this.update_catalog(item);
-    var selectable = gselectable && (!this.allowed_oids || oid in this.allowed_oids);
+    var selectable = gselectable && (!this.parent_selection_oid || item.selectable);
     
     var $entry = $("<div class=\"item-entry item-type-"+item_type+"\" id=\"item_entry_"+oid+"\"></div>");
     if (this.current_selection && this.current_selection.oid == oid)
         $entry.addClass("selected");
+    if (selectable)
+        $entry.addClass("selectable");
     if (item.extra_class)
         $entry.addClass(item.extra_class);
     
@@ -493,18 +609,28 @@ ECMSCatalogBrowser.prototype.get_content_entry = function (item_type, item, gsel
     if (item.duration)
         html +=         "<span class=\"item-entry-duration\">"+item.duration+"</span>";
     html +=         "</span>";
-    if (item.creation) {
-        html +=     "<span class=\"item-entry-bottom-bar\">";
-        html +=         "<span class=\"item-entry-creation\">"+utils.get_date_display(item.creation)+"</span>";
-        html +=     "</span>";
-    }
+    html +=         "<span class=\"item-entry-bottom-bar\">";
+    if (item.show_type)
+        html +=         "<span class=\"item-entry-type\">"+this.translate("Type:")+" "+this.translate(item_type)+"</span>";
+    if (item.creation)
+        html +=         "<span class=\"item-entry-date\">"+this.translate("Created on")+" "+utils.get_date_display(item.creation)+"</span>";
+    if (item.show_add_date && item.add_date)
+        html +=         "<span class=\"item-entry-date\">"+this.translate("Added on")+" "+utils.get_date_display(item.add_date)+"</span>";
+    if (item.show_parent_title && item.parent_title)
+        html +=         "<span class=\"item-entry-parent\">"+this.translate("Parent channel:")+" "+item.parent_title+"</span>";
+    html +=         "</span>";
     html +=     "</span>";
     html += "</div>";
     var $entry_block = $(html);
     if (item_type == "channel" || item_type == "parent")
-        $entry_block.click({ obj: this, oid: oid }, function (evt) { evt.data.obj.display_channel(evt.data.oid) });
+        $entry_block.click({ obj: this, oid: oid }, function (evt) {
+            evt.data.obj.display_channel(evt.data.oid);
+            evt.data.obj.tree_manager.expand_tree(evt.data.oid);
+        });
     else if (selectable)
-        $entry_block.click({ obj: this, oid: oid }, function (evt) { evt.data.obj.pick(evt.data.oid) });
+        $entry_block.click({ obj: this, oid: oid }, function (evt) {
+            evt.data.obj.pick(evt.data.oid);
+        });
     $entry.append($entry_block);
     
     var btn_class = this.use_jquery_ui ? "ui-widget ui-state-default ui-corner-all" : "std-btn";
@@ -520,9 +646,13 @@ ECMSCatalogBrowser.prototype.get_content_entry = function (item_type, item, gsel
     html += "</div>";
     var $entry_links = $(html);
     if (item_type == "channel" || item_type == "parent")
-        $(".item-entry-display", $entry_links).click({ obj: this, oid: oid }, function (evt) { evt.data.obj.display_channel(evt.data.oid) });
+        $(".item-entry-display", $entry_links).click({ obj: this, oid: oid }, function (evt) {
+            evt.data.obj.display_channel(evt.data.oid);
+        });
     if (selectable)
-        $(".item-entry-pick", $entry_links).click({ obj: this, oid: oid }, function (evt) { evt.data.obj.pick(evt.data.oid) });
+        $(".item-entry-pick", $entry_links).click({ obj: this, oid: oid }, function (evt) {
+            evt.data.obj.pick(evt.data.oid);
+        });
     $entry.append($entry_links);
     
     return $entry;
@@ -580,6 +710,8 @@ ECMSCatalogBrowser.prototype.get_last_pick = function () {
 
 
 ECMSCatalogBrowser.prototype.on_search_submit = function (place, text, type) {
+    if (!$("#catalog_browser_search", this.$widgets.search_form).val())
+        return;
     // get fields to search in
     var fields = "";
     if ($("#catalog_browser_search_in_titles", this.$widgets.search_form).is(":checked"))
@@ -639,11 +771,9 @@ ECMSCatalogBrowser.prototype.on_search_submit = function (place, text, type) {
         }
     // execute search request
     var obj = this;
-    this.search_loading_timeout = setTimeout(function () {
-        obj.display_message("search", obj.translate("Search in progress")+"...", "loading");
-        obj.search_loading_timeout = null;
-    }, 500);
+    this.display_loading();
     var callback = function (response) {
+        obj.hide_loading();
         if (response.success) {
             obj.hide_message("search");
             obj.display_content("search", response);
@@ -652,8 +782,6 @@ ECMSCatalogBrowser.prototype.on_search_submit = function (place, text, type) {
             obj.$widgets.content_search.html("");
             obj.display_message("search", response.error);
         }
-        if (obj.search_loading_timeout)
-            clearTimeout(obj.search_loading_timeout);
     };
     $.ajax({
         url: url,
@@ -685,6 +813,143 @@ ECMSCatalogBrowser.prototype.on_search_submit = function (place, text, type) {
 };
 
 
+/* Latest display */
+ECMSCatalogBrowser.prototype.latest_init = function () {
+    if (this.latest_initialized)
+        return;
+    this.latest_initialized = true;
+    // load videos
+    // TODO restore values from cookies
+    this.load_latest();
+};
+ECMSCatalogBrowser.prototype.load_latest = function (count, end) {
+    if (this.latest_loading)
+        return;
+    this.latest_loading = true;
+    
+    var url = this.base_url;
+    var data = {};
+    if (this.displayable_content)
+        data.content = this.displayable_content;
+    if (this.displayable_content.length > 1 && this.displayable_content.indexOf("c") != -1 && !$("#latest_display_channels").is(":checked")) {
+        data.content = "";
+        for (var i=0; i < this.displayable_content.length; i++) {
+            if (this.displayable_content[i] != "c")
+                data.content += this.displayable_content[i];
+        }
+    }
+    if (this.filter_validated !== null) {
+        if (this.filter_validated)
+            data.validated = "yes";
+        else
+            data.validated = "no";
+    }
+    if (this.use_proxy)
+        data.action = this.api_latest;
+    else
+        url += this.api_latest;
+    
+    var start_value = 0;
+    if (this.latest_start) {
+        data.start = this.latest_start;
+        start_value = parseInt(this.latest_start.replace(new RegExp("[-_]", "g"), ""), 10);
+        if (isNaN(start_value))
+            start_value = 0;
+    }
+    if (end) {
+        var end_value = parseInt(end.replace(new RegExp("[-_]", "g"), ""), 10);
+        if (start_value > 0 && !isNaN(end_value) && end_value >= start_value) {
+            this.latest_loading = false;
+            console.log("cancelled");
+            return;
+        }
+        data.end = end;
+    }
+    if (count)
+        data.count = count;
+    
+    var obj = this;
+    this.display_loading();
+    var callback = function (response) {
+        obj.hide_loading();
+        if (response.success) {
+            obj.hide_message("latest");
+            obj.display_latest(response);
+        }
+        else {
+            obj.display_message("latest", response.error);
+        }
+        obj.latest_loading = false;
+    };
+    $.ajax({
+        url: url,
+        data: data,
+        dataType: "json",
+        cache: false,
+        success: function (response) {
+            if (!response.success)
+                response.error = response.error ? response.error : obj.translate("No information about error.");
+            callback(response);
+        },
+        error: function (xhr, textStatus, thrownError) {
+            if (xhr.status) {
+                if (xhr.status == 401)
+                    return callback({ success: false, error: obj.translate("You are not logged in. Please login in Moodle and retry.") });
+                if (xhr.status == 403)
+                    return callback({ success: false, error: obj.translate("Unable to get channel's content because you cannot access to this channel.") });
+                if (xhr.status == 404)
+                    return callback({ success: false, error: obj.translate("Requested channel does not exist.") });
+                if (xhr.status == 500)
+                    return callback({ success: false, error: obj.translate("An error occured in medias server. Please try again later.") });
+            }
+            if (textStatus == "timeout")
+                callback({ success: false, error: obj.translate("Unable to get channel's content. Request timed out.") });
+            else
+                callback({ success: false, error: obj.translate("An error occured during request:")+"<br/>&nbsp;&nbsp;&nbsp;&nbsp;"+textStatus+" "+thrownError });
+        }
+    });
+};
+ECMSCatalogBrowser.prototype.display_latest = function (result) {
+    this.latest_start = result.max_date;
+    this.latest_more = result.more === true;
+    for (var i=0; i < result.items.length; i++) {
+        var item = result.items[i];
+        item.show_type = true;
+        item.show_add_date = true;
+        item.show_parent_title = true;
+        if (item.date_label != this.latest_date_label) {
+            this.latest_date_label = item.date_label;
+            this.$widgets.latest_place.append("<h3>"+item.date_label+"</h3>");
+        }
+        var type = "channel";
+        if (item.type == "v")
+            type = "video";
+        if (item.type == "l")
+            type = "live";
+        if (item.type == "p")
+            type = "photos";
+        this.$widgets.latest_place.append(this.get_content_entry(type, item, this.selectable_content.indexOf(item.type) != -1));
+    }
+    if (this.latest_more)
+        this.$widgets.letest_btn.css("display", "block");
+    else
+        this.$widgets.letest_btn.css("display", "none");
+};
+ECMSCatalogBrowser.prototype.latest_more_click = function (count) {
+    if (!this.latest_more)
+        return;
+    this.load_latest(count);
+};
+ECMSCatalogBrowser.prototype.latest_refresh = function (count) {
+    this.latest_more = false;
+    this.latest_start = "";
+    this.latest_date_label = "";
+    this.$widgets.latest_place.html("");
+    this.load_latest();
+};
+
+
+/* Messages */
 ECMSCatalogBrowser.prototype.display_message = function (place, text, type) {
     var t = type ? type : "error";
     this.$widgets["message_"+place].html("<div class=\""+t+"\">"+text+"</div>");
@@ -699,7 +964,22 @@ ECMSCatalogBrowser.prototype.hide_message = function (place) {
         this.messages_displayed[place] = false;
     }
 };
+ECMSCatalogBrowser.prototype.display_loading = function () {
+    var obj = this;
+    this.loading_timeout = setTimeout(function () {
+        obj.$widgets.loading.css("display", "block");
+        obj.loading_timeout = null;
+    }, 500);
+};
+ECMSCatalogBrowser.prototype.hide_loading = function () {
+    if (this.loading_timeout) {
+        clearTimeout(this.loading_timeout);
+        this.loading_timeout = null;
+    }
+    this.$widgets.loading.css("display", "");
+};
 
+/* Resize */
 ECMSCatalogBrowser.prototype.resize = function () {
     var width = $(window).width() - 100;
     if (width < 900)

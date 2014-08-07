@@ -36,9 +36,6 @@ $completion->set_module_viewed($cm);
 
 $PAGE->set_url('/mod/easycastms/view.php', array('id' => $cm->id));
 
-// display edition link if user has permission
-$can_edit = has_capability('mod/easycastms:addinstance', $context);
-
 // display media
-easycastms_display_media($easycastms_media, $cm, $course, $can_edit);
+easycastms_display_media($easycastms_media, $cm, $course);
 
