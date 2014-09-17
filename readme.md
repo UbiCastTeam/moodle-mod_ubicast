@@ -31,5 +31,5 @@ and which media from MediaServer should be used.
 Dependencies:
 -------------
 This plugin requires the PHP CURL library, 
-Moodle >= 2.3 and MediaServer >= 4.0.
+Moodle >= 2.7 and MediaServer >= 4.0.
 
