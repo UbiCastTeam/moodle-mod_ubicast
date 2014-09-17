@@ -28,6 +28,7 @@ require_course_login($course, true, $cm);
 $context = context_system::instance();
 require_capability('mod/easycastms:view', $context);
 
+// logs moodle 2.7
 $event = \mod_easycastms\event\course_module_viewed::create(array(
     'objectid' => $PAGE->cm->instance,
     'context' => $PAGE->context,
