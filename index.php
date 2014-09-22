@@ -17,7 +17,11 @@ $course = $DB->get_record('course', array('id'=>$id), '*', MUST_EXIST);
 require_course_login($course, true);
 $PAGE->set_pagelayout('incourse');
 
-add_to_log($course->id, 'easycastms', 'view all', 'index.php?id=$course->id', '');
+// logs moodle 2.7+
+$event = \mod_easycastms\event\course_module_instance_list_viewed::create(array(
+    'context' => context_course::instance($course->id)
+));
+$event->trigger();
 
 $strmedias       = get_string('medias', 'easycastms');
 $strsectionname  = get_string('sectionname', 'format_'.$course->format);

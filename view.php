@@ -25,10 +25,18 @@ if (!$easycastms_media = $DB->get_record('easycastms', array('id' => $cm->instan
 }
 
 require_course_login($course, true, $cm);
-$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+$context = context_system::instance();
 require_capability('mod/easycastms:view', $context);
 
-add_to_log($course->id, 'easycastms', 'view', 'view.php?id='.$cm->id, $easycastms_media->id, $cm->id);
+// logs moodle 2.7
+$event = \mod_easycastms\event\course_module_viewed::create(array(
+    'objectid' => $PAGE->cm->instance,
+    'context' => $PAGE->context,
+));
+$event->add_record_snapshot('course', $PAGE->course);
+// In the next line you can use $PAGE->activityrecord if you have set it, or skip this line if you don't have a record.
+$event->add_record_snapshot($PAGE->cm->modname, $PAGE->activityrecord);
+$event->trigger();
 
 // Update 'viewed' state if required by completion system
 $completion = new completion_info($course);
