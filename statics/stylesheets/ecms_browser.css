@@ -340,6 +340,12 @@
     background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#ddd));
     border-radius: 5px;
 }
+.catalogbrowser .item-entry.thumbnail.selectable {
+    border: 2px solid #5B79C4;
+}
+.catalogbrowser .item-entry.thumbnail.selected {
+    border: 2px solid #52AC49;
+}
 .catalogbrowser .item-entry.selectable {
     border-color: #bce;
     background: #def;

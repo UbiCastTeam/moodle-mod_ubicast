@@ -900,13 +900,26 @@ ECMSCatalogBrowser.prototype._set_on_click_entry_block = function($entry_block, 
             });
         }
     } else if (!(item_type == 'parent' || item_type == 'current')) {
-        $(".item-entry-preview", $entry_block).click({ obj: this, oid: oid }, function(event) { event.data.obj.pick(event.data.oid); });
+        $(".item-entry-preview", $entry_block).click({ obj: this, oid: oid }, function(evt) {
+            if (evt.data.obj.use_overlay && !selectable) {
+                evt.data.obj.display_channel(evt.data.oid);
+                evt.data.obj.tree_manager.expand_tree(evt.data.oid);
+            } else {
+                evt.data.obj.pick(evt.data.oid);
+            }
+        });
     } else {
         $entry_block.click({ obj: this, oid: oid }, function (evt) {
-            if (item_type == "parent" && evt.data.oid == '0')
-                window.location = evt.data.obj._get_btn_link(null);
-            else
-                evt.data.obj.pick(evt.data.oid);
+            if (evt.data.obj.use_overlay && !selectable) {
+                evt.data.obj.display_channel(evt.data.oid);
+                evt.data.obj.tree_manager.expand_tree(evt.data.oid);
+            } else {
+                if (item_type == "parent" && evt.data.oid == '0' && !evt.data.obj.use_overlay) {
+                    window.location = evt.data.obj._get_btn_link(null);
+                } else {
+                    evt.data.obj.pick(evt.data.oid);
+                }
+            }
         });
     }
 };
