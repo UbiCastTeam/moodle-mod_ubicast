@@ -74,7 +74,8 @@
     display: none;
 }
 .catalogbrowser .cb-title {
-    padding: 4px 8px;
+    padding: 4px 2px;
+    font-size: 0.8em;
     top: 0;
     left: 0;
     right: 0;
@@ -158,7 +159,7 @@
     background: #ccc;
 }
 .catalogbrowser .cb-btn + .cb-btn {
-    margin-left: 8px;
+    margin-left: 2px;
 }
 .catalogbrowser .cb-title .cb-btn {
     float: left;
@@ -479,14 +480,128 @@
     bottom: 0;
     line-height: 40px;
 }
+.catalogbrowser.cb-display-display .cb-left .cb-column .cb-display,
 .catalogbrowser .item-entry:hover .item-entry-links {
     display: block;
 }
 .catalogbrowser .item-entry-links .std-btn {
     cursor: pointer;
 }
-
+.overlay-info .item-entry-links .std-btn a {
+    color: #333;
+    text-decoration: none;
+}
+.catalogbrowser .cb-left .cb-column .cb-display,
 .catalogbrowser .cb-latest-place.no-channels .item-type-channel {
     display: none;
 }
+.catalogbrowser .cb-left .cb-display.cb-search-block .cb-btn {
+    border: 1px solid #eee;
+}
+.catalogbrowser .cb-left .cb-display.cb-search-block .cb-search-title {
+    margin-left: -5px;
+}
+.catalogbrowser .item-entry.thumbnail .item-entry-links,
+.catalogbrowser .item-entry.thumbnail .item-entry-content { display: none;}
+.catalogbrowser .item-entry.thumbnail:hover .info-thumb,
+.catalogbrowser .item-entry.thumbnail:hover .obj-block-edit { display: block;}
+.catalogbrowser .cb-section { clear: both }
+.catalogbrowser .item-entry.thumbnail .item-entry-title,
+.catalogbrowser .item-entry.thumbnail .item-entry-duration {
+    padding: 5px;
+    display: block;
+    color: #bbb;
+    font-style: italic;
+    font-weight: bold;
+    position: absolute;
+    z-index: 1;
+    background: transparent url("../images/black_mask.png") 0 0 repeat;
+}
+.catalogbrowser .item-entry.thumbnail .item-entry-title {
+    width: 100%;
+    bottom: 0;
+    left: 0;
+}
+.catalogbrowser .item-entry.thumbnail .item-entry-duration {
+    top: 0;
+    left: 0;
+    margin: 0;
+}
+.catalogbrowser .item-entry.thumbnail .info-thumb {
+    top: 5px;
+    right: 5px;
+    background: transparent url("../images/info_icon.png") 0 50% no-repeat;
+    width: 58px;
+    height: 56px;
+    border: none;
+    position: absolute;
+    cursor: pointer;
+    display: none;
+    z-index: 4;
+}
+.catalogbrowser .item-entry.thumbnail .item-entry-content .item-entry-bottom-bar span {
+    color: white;
+    text-align: left;
+    padding-left: 5px;
+}
+.catalogbrowser .item-entry.thumbnail .item-entry-content .item-entry-bottom-bar span a:visited,
+.catalogbrowser .item-entry.thumbnail .item-entry-content .item-entry-bottom-bar span a { color: #1F90CB }
+.catalogbrowser .item-entry.thumbnail .item-entry-content {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    padding: 0;
+    background-color: black;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 2;
+    overflow: auto;
+}
+.catalogbrowser .item-entry.thumbnail .item-entry-preview {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background: transparent 50% 50% no-repeat;
+    z-index: 0;
+    cursor: pointer;
+}
+.catalogbrowser .item-entry.thumbnail .item-entry-close {
+    color: red;
+    text-align: right;
+    float: right;
+    padding-right: 3px;
+    cursor: pointer;
+    margin-left: 10px;
+}
 
+.catalogbrowser .item-entry.thumbnail > div.item-entry-link.clickable {
+    width: 100%;
+    height: 100%;
+}
+.catalogbrowser .item-entry.thumbnail:hover .item-entry-title,
+.catalogbrowser .item-entry.thumbnail:hover .item-entry-duration { color: white }
+.catalogbrowser .item-entry.thumbnail {
+    float: left;
+    margin: 4px;
+    width: 240px;
+    height: 180px;
+    text-align: center;
+    display: block;
+    overflow: hidden;
+    cursor: auto;
+    background: transparent;
+    background: -moz-linear-gradient(top, rgba(255, 255, 255, 0.5), rgba(0, 0, 0, 0.5));
+    background: -webkit-gradient(linear, left top, left bottom, from(rgba(255, 255, 255, 0.5)), to(rgba(0, 0, 0, 0.5)));
+    border: 1px solid #888;
+    border-radius: 4px;
+}
+.catalogbrowser .cb-right .cb-column .cb-latest-place, .catalogbrowser .cb-right .cb-column .cb-latest-btn {
+    clear: both;
+}
+.catalogbrowser .item-entry.thumbnail .obj-block-edit {
+    z-index: 4;
+    right: 10px;
+}

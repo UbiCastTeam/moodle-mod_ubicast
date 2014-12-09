@@ -17,8 +17,8 @@ function ECMSTreeManager(options) {
     this.on_data_retrieved = null;
     this.channels_base_url = "/channels/#";
     this.channels_url_field = "slug";
-    this.api_tree = "/api/v2/channels/tree/";
-    this.api_path = "/api/v2/channels/path/";
+    this.api_tree = "";
+    this.api_path = "";
     
     // vars
     this.$widget = null;
@@ -42,7 +42,7 @@ function ECMSTreeManager(options) {
         "api_tree",
         "api_path"
     ]);
-    
+    this.api_manager = new ECMSAPIManager({ base_url: this.base_url, use_proxy: this.use_proxy });
     if (this.auto_init) {
         var obj = this;
         $(document).ready(function () {
@@ -97,12 +97,8 @@ ECMSTreeManager.prototype.load_tree = function (parent_oid, callback) {
     if (!this.content[parent_oid])
         this.content[parent_oid] = { oid: parent_oid };
     this.content[parent_oid].loading = true;
-    var url = this.base_url;
+
     var data = { recursive: "no" };
-    if (this.use_proxy)
-        data.action = this.api_tree;
-    else
-        url += this.api_tree;
     if (parent_oid != "0")
         data.parent_oid = parent_oid;
     if (this.request_data)
@@ -124,31 +120,42 @@ ECMSTreeManager.prototype.load_tree = function (parent_oid, callback) {
         $target.html("<li><div class=\"loading\">"+obj.translate("Loading")+"...</div></li>");
     }, 500);
     // load category tree
-    $.ajax({
-        url: url,
-        data: data,
-        dataType: "json",
-        cache: false,
-        success: function (response) {
-            obj._ajax_cb(response, parent_oid, $target, callback);
-        },
-        error: function (xhr, textStatus, thrownError) {
-            if (xhr.status) {
-                if (xhr.status == 401)
-                    return obj._ajax_cb({ success: false, error: obj.translate("Unable to get channels tree because you are not logged in.") }, parent_oid, $target, callback);
-                if (xhr.status == 403)
-                    return obj._ajax_cb({ success: false, error: obj.translate("Unable to get channels tree because you cannot access to this channel.") }, parent_oid, $target, callback);
-                if (xhr.status == 404)
-                    return obj._ajax_cb({ success: false, error: obj.translate("Channel does not exist.") }, parent_oid, $target, callback);
-                if (xhr.status == 500)
-                    return obj._ajax_cb({ success: false, error: obj.translate("An error occured in medias server. Please try again later.") }, parent_oid, $target, callback);
-            }
-            if (textStatus == "timeout")
-                obj._ajax_cb({ success: false, error: obj.translate("Unable to get channels tree. Request timed out.") }, parent_oid, $target, callback);
-            else
-                obj._ajax_cb({ success: false, error: obj.translate("An error occured during request:")+"<br/>&nbsp;&nbsp;&nbsp;&nbsp;"+textStatus+" "+thrownError }, parent_oid, $target, callback);
+    var scallback = function (response) {
+        obj._ajax_cb(response, parent_oid, $target, callback);
+    }
+    var ecallback = function (xhr, textStatus, thrownError) {
+        if (xhr.status) {
+            if (xhr.status == 401)
+                return obj._ajax_cb({ success: false, error: obj.translate("Unable to get channels tree because you are not logged in.") }, parent_oid, $target, callback);
+            if (xhr.status == 403)
+                return obj._ajax_cb({ success: false, error: obj.translate("Unable to get channels tree because you cannot access to this channel.") }, parent_oid, $target, callback);
+            if (xhr.status == 404)
+                return obj._ajax_cb({ success: false, error: obj.translate("Channel does not exist.") }, parent_oid, $target, callback);
+            if (xhr.status == 500)
+                return obj._ajax_cb({ success: false, error: obj.translate("An error occured in medias server. Please try again later.") }, parent_oid, $target, callback);
         }
-    });
+        if (textStatus == "timeout")
+            obj._ajax_cb({ success: false, error: obj.translate("Unable to get channels tree. Request timed out.") }, parent_oid, $target, callback);
+        else
+            obj._ajax_cb({ success: false, error: obj.translate("An error occured during request:")+"<br/>&nbsp;&nbsp;&nbsp;&nbsp;"+textStatus+" "+thrownError }, parent_oid, $target, callback);
+    }
+    if (this.api_tree) {
+        var url = this.base_url;
+        if (this.use_proxy)
+            data.action = this.api_tree;
+        else
+            url += this.api_tree;
+        $.ajax({
+            url: url,
+            data: data,
+            dataType: "json",
+            cache: false,
+            success: scallback,
+            error: ecallback,
+        });
+    } else {
+        this.api_manager.ajax_call('get_channels_tree', data, obj._ajax_cb, scallback, ecallback);
+    }
 };
 ECMSTreeManager.prototype._ajax_cb = function (result, parent_oid, $target, callback) {
     if (this.content[parent_oid].timeout) {
@@ -287,31 +294,38 @@ ECMSTreeManager.prototype.set_active = function (oid) {
 
 
 ECMSTreeManager.prototype.load_path = function (oid, callback) {
-    var url = this.base_url;
     var data = { oid: oid };
-    if (this.use_proxy)
-        data.action = this.api_path;
-    else
-        url += this.api_path;
+
     if (this.request_data)
         for (var field in this.request_data) {
             data[field] = this.request_data[field];
         }
     var obj = this;
-    $.ajax({
-        url: url,
-        data: data,
-        dataType: "json",
-        cache: false,
-        success: function (response) {
-            if (!response.success)
-                console.log("Error getting path for oid "+oid+". Error: "+result.error);
-            callback(response);
-        },
-        error: function (xhr, textStatus, thrownError) {
-            console.log("Error getting path for oid "+oid+". Error: "+textStatus+" | "+thrownError);
-            callback({ success: false, error: textStatus+" | "+thrownError });
-        }
-    });
+    var scallback = function (response) {
+        if (!response.success)
+        console.log("Error getting path for oid "+oid+". Error: "+result.error);
+        callback(response);
+    };
+    var ecallback = function (xhr, textStatus, thrownError) {
+        console.log("Error getting path for oid "+oid+". Error: "+textStatus+" | "+thrownError);
+        callback({ success: false, error: textStatus+" | "+thrownError });
+    };
+    if (this.api_path) {
+        var url = this.base_url;
+        if (this.use_proxy)
+            data.action = this.api_path;
+        else
+            url += this.api_path;
+        $.ajax({
+            url: url,
+            data: data,
+            dataType: "json",
+            cache: false,
+            success: scallback,
+            error: ecallback,
+        });
+    } else {
+        this.api_manager.ajax_call('get_channels_path', data, callback, scallback, ecallback);
+    }
 };
 
