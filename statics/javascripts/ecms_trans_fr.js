@@ -109,6 +109,26 @@ utils.add_translations({
     // filters
     "Filters": "Filtres",
     "Editable": "Editable",
-    "Published": "Publié"
+    "Published": "Publié",
+    //new ecms
+    "Display": "Affichage",
+    "Display mode:": "Mode d'affichage :",
+    "list": "liste",
+    "thumbnails": "vignettes",
+    "Edit it": "Éditer",
+    "Open information panel": "Ouvrir le panneau d'information",
+    "Edit this channel": "Éditer cette chaine",
+    "Edit": "Éditer",
+    "Hide this window": "Cacher cette fenêtre",
+    "The query has been found in following slides:": "Cette recherche a été trouvée dans les slides :",
+    "The query has been found in following photos:": "Cette recherche a été trouvée dans les photos :",
+    "The query has been found in audio:": "Cette recherche a été trouvée dans les pistes audio :",
+    "Information about media": "À propos de ce média",
+    "Recording date": "Date d'enregistrement",
+    "Publishing date": "Date de publication",
+    "Speaker": "intervenant",
+    "Views": "Vues",
+    "Comments": "Commentaires",
+    "Duration": "Durée"
 }, "fr");
 
