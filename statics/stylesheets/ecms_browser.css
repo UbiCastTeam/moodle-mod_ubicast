@@ -114,12 +114,14 @@
     display: block;
 }
 .catalogbrowser .cb-search-title,
+.catalogbrowser .cb-display-title,
 .catalogbrowser .cb-section {
     font-size: 125%;
     font-weight: bold;
     text-decoration: italic;
     color: #666;
 }
+.catalogbrowser .cb-display-title,
 .catalogbrowser .cb-search-title {
     margin-left: -8px;
     margin-bottom: 4px;
@@ -174,14 +176,20 @@
 }
 
 /* filters menu and button */
+.catalogbrowser .cb-display-btn-place,
 .catalogbrowser .cb-filters-btn-place {
-    top: 4px;
+    top: 0;
     bottom: 4px;
-    right: 8px;
+    right: 100px;
     position: absolute;
     height: 24px;
     line-height: 24px;
+    z-index: 1;
 }
+.catalogbrowser .cb-display-btn-place {
+    right: 40px;
+}
+.catalogbrowser .cb-display-menu,
 .catalogbrowser .cb-filters-menu {
     padding: 8px;
     top: 36px;
@@ -191,17 +199,22 @@
     background: #fff;
     border: 1px solid #ccc;
     border-radius: 4px;
+    z-index: 1;
 }
+.catalogbrowser .cb-display-menu.cb-active,
 .catalogbrowser .cb-filters-menu.cb-active {
     display: block;
 }
+.catalogbrowser .cb-display-menu label,
 .catalogbrowser .cb-filters-menu label {
     margin-left: 16px;
 }
+.catalogbrowser .cb-display-menu p,
 .catalogbrowser .cb-filters-menu p {
     margin: 0;
     font-weight: bold;
 }
+.catalogbrowser .cb-display-menu div + div,
 .catalogbrowser .cb-filters-menu div + div {
     margin-top: 8px;
 }
@@ -610,4 +623,7 @@
 .catalogbrowser .item-entry.thumbnail .obj-block-edit {
     z-index: 4;
     right: 10px;
+}
+.cb-latest-place h3 {
+    clear: both;
 }

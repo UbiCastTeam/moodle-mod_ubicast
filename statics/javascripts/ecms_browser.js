@@ -123,19 +123,17 @@ ECMSCatalogBrowser.prototype.init = function() {
     html += this.get_tab_menu_html();
     html += this.get_tree_hmtl();
     html += this.get_search_hmtl();
-    if (this.use_overlay)
-        html += this.get_latest_hmtl();
-    //html += this.get_filters_hmtl();
-    html += this.get_display_hmtl();
+    html += this.get_latest_hmtl();
     html +=     "</div>";
     html += "</div>";
     html += "<div class=\"cb-right\">";
+    //html += this.get_filters_hmtl();
+    html += this.get_display_hmtl();
     if (!this.use_overlay)
         html += "<div class=\"main-block-content\">";
     html += this.get_column_list_hmtl();
     html += this.get_column_search_hmtl();
-    if (this.use_overlay)
-        html += this.get_column_latest_hmtl();
+    html += this.get_column_latest_hmtl();
     html +=     "<div class=\"cb-loading\"><div>" + this.translate("Loading...") + "</div></div>";
     html += "</div>";
     if (!this.use_overlay)
@@ -157,6 +155,8 @@ ECMSCatalogBrowser.prototype.init = function() {
     this.$widgets.latest_btn = $(".cb-column-latest .cb-latest-btn", this.$widgets.main);
     this.$widgets.filters_btn = $(".cb-btn-filters", this.$widgets.main);
     this.$widgets.filters_menu = $(".cb-filters-menu", this.$widgets.main);
+    this.$widgets.display_btn = $(".cb-btn-display", this.$widgets.main);
+    this.$widgets.display_menu = $(".cb-display-menu", this.$widgets.main);
     this.$widgets.latest_place = $(".cb-column-latest .cb-latest-place", this.$widgets.main);
     // get initial media or channel info
     if (this.initial_oid)
@@ -166,8 +166,8 @@ ECMSCatalogBrowser.prototype.init = function() {
     $(".cb-btn-list", this.$widgets.main).click({ obj: this }, function (evt) { evt.data.obj.change_tab("list"); });
     $(".cb-btn-search", this.$widgets.main).click({ obj: this }, function (evt) { evt.data.obj.change_tab("search"); });
     $(".cb-btn-latest", this.$widgets.main).click({ obj: this }, function (evt) { evt.data.obj.change_tab("latest"); });
-    $(".cb-btn-display", this.$widgets.main).click({ obj: this }, function (evt) { evt.data.obj.change_tab("display"); });
-    //$(".cb-btn-filters", this.$widgets.main).click({ obj: this }, function (evt) { evt.data.obj.toggle_filters_menu(); });
+    $(".cb-btn-display", this.$widgets.main).click({ obj: this }, function (evt) { evt.data.obj.toggle_menu("display"); });
+    //$(".cb-btn-filters", this.$widgets.main).click({ obj: this }, function (evt) { evt.data.obj.toggle_menu("filters"); });
     //$(".cb-filters-menu  div select", this.$widgets.main).change({ obj: this }, function (evt) { evt.data.obj.toggle_filter_control(evt, this); });
     $(".cb-latest-more-5", this.$widgets.main).click({ obj: this }, function (evt) { evt.data.obj.latest_more_click(5); });
     $(".cb-latest-more-20", this.$widgets.main).click({ obj: this }, function (evt) { evt.data.obj.latest_more_click(20); });
@@ -193,22 +193,19 @@ ECMSCatalogBrowser.prototype.get_tab_menu_html = function() {
     html += "<div class=\"cb-title\">";
     html +=     "<div class=\""+ this.btn_class + " cb-btn-list cb-active\">" + this.translate("Channels list") + "</div>";
     html +=     "<div class=\""+ this.btn_class + " cb-btn-search\">" + this.translate("Search") + "</div>";
-    if (this.use_overlay)
-        html +=     "<div class=\""+ this.btn_class + " cb-btn-latest\">" + this.translate("Latest content") + "</div>";
-    html +=     "<div class=\""+ this.btn_class + " cb-btn-display\">" + this.translate("Display") + "</div>";
+    html +=     "<div class=\""+ this.btn_class + " cb-btn-latest\">" + this.translate("Latest content") + "</div>";
     html += "</div>";
     return html;
 };
 ECMSCatalogBrowser.prototype.get_display_hmtl = function() {
-    var html = "<div class=\"cb-container cb-display\">";
-    html += "<div class=\"cb-search-block\">";
-    html += "<p class=\"cb-search-title\">" + this.translate("Display mode:") + "</p>";
+    var html = "<div class=\"cb-display-btn-place\"><div class=\""+ this.btn_class + " cb-btn-display\">" + this.translate("Display") + "</div></div>";
+    html += "<div class=\"cb-display-menu\">";
+    html += "<p class=\"cb-display-title\">" + this.translate("Display mode:") + "</p>";
     html += "<button class=\"cb-btn " + ( this.display_mode === "list" ? "cb-active" : "") + "\" id=\"display_as_list\">" + this.translate("list") + "</button>";
     html += "<button class=\"cb-btn " + ( this.display_mode === "thumbnail" ? "cb-active" : "") + "\" id=\"display_as_thumbnails\">" + this.translate("thumbnails") + "</button>";
    // html += "<p>" + this.translate("Number of elements per page:") + "</p>";
    // html += "    <input type=\"text\" class=\"center\" id=\"elements_per_page\" value=\"30\"/>"; TODO pagination
    // html += "<button type=\"submit\" onclick=\"javascript: cm.set_elements_per_page();\">" + this.translate("Ok") + "</button>";
-    html += "</div>";
     html += "</div>";
     return html;
 };
@@ -391,14 +388,23 @@ ECMSCatalogBrowser.prototype.get_column_latest_hmtl = function() {
     html += "</div>";
     return html;
 };
-ECMSCatalogBrowser.prototype.toggle_filters_menu = function() {
-    if (this.$widgets.filters_btn.hasClass("cb-active")) {
-        this.$widgets.filters_btn.removeClass("cb-active");
-        this.$widgets.filters_menu.removeClass("cb-active");
-    }
-    else {
-        this.$widgets.filters_btn.addClass("cb-active");
-        this.$widgets.filters_menu.addClass("cb-active");
+ECMSCatalogBrowser.prototype.toggle_menu = function(menu) {
+    if (menu == 'filters') {
+        if (this.$widgets.filters_btn.hasClass("cb-active")) {
+            this.$widgets.filters_btn.removeClass("cb-active");
+            this.$widgets.filters_menu.removeClass("cb-active");
+        } else {
+            this.$widgets.filters_btn.addClass("cb-active");
+            this.$widgets.filters_menu.addClass("cb-active");
+        }
+    } else if (menu == 'display') {
+        if (this.$widgets.display_btn.hasClass("cb-active")) {
+            this.$widgets.display_btn.removeClass("cb-active");
+            this.$widgets.display_menu.removeClass("cb-active");
+        } else {
+            this.$widgets.display_btn.addClass("cb-active");
+            this.$widgets.display_menu.addClass("cb-active");
+        }
     }
 };
 ECMSCatalogBrowser.prototype.toggle_filter_control = function(event, js_obj) {
@@ -454,29 +460,6 @@ ECMSCatalogBrowser.prototype.change_tab = function(tab_id) {
     $(".cb-btn-" + this.displayed, this.$widgets.main).removeClass("cb-active");
     $(".cb-btn-" + tab_id, this.$widgets.main).addClass("cb-active");
     this.$widgets.main.removeClass("cb-display-" + this.displayed).addClass("cb-display-"+tab_id);
-    if (tab_id == 'list') {
-        $('.cb-column-search').hide();
-        $('.cb-column-latest').hide();
-        $('.cb-column-list').show();
-    } else if (tab_id == 'search') {
-        $('.cb-column-list').hide();
-        $('.cb-column-latest').hide();
-        $('.cb-column-search').show();
-    } else if (tab_id == 'latest') {
-        $('.cb-column-list').hide();
-        $('.cb-column-latest').show();
-        $('.cb-column-search').hide();
-    }
-    if (tab_id == 'display') {
-        if (this.displayed == 'search') {
-            $('.cb-column-search').show();
-        } else if (this.displayed == 'list') {
-            $('.cb-column-list').show();
-        } else if (this.displayed == 'latest') {
-            this.latest_init();
-            $('.cb-column-latest').show();
-        }
-    }
     this.displayed = tab_id;
 };
 ECMSCatalogBrowser.prototype.open = function() {
@@ -1343,7 +1326,7 @@ ECMSCatalogBrowser.prototype.display_latest = function(result) {
         item.show_type = true;
         item.show_add_date = true;
         item.show_parent_title = true;
-        if (item.date_label != this.latest_date_label) {
+        if (item.date_label && (item.date_label != this.latest_date_label)) {
             this.latest_date_label = item.date_label;
             this.$widgets.latest_place.append("<h3>" + item.date_label + "</h3>");
         }
