@@ -11,92 +11,91 @@ function ECMSAPIManager(options) {
     this.language = "";
     utils.setup_class(this, options, [
         "base_url",
-        "use_proxy",
-
+        "use_proxy"
     ]);
     if (this.language)
         utils.use_lang(this.language);
 
     // vars
     this.methods = {
-        // ### fast copy - past not used in code ###
+        /* ### fast copy - past not used in code ###
         generic: {
             method: "",
-            url: '',
+            url: "",
             errors: {
                 401: this.translate(""),
                 403: this.translate(""),
                 404: this.translate(""),
                 500: this.translate(""),
-                timeout: this.translate(""),
-            },
+                timeout: this.translate("")
+            }
         },
-        // ##########################################
+        ########################################## */
         ping: {
             method: "GET",
-            url: '/api/v2/',
+            url: "/api/v2/",
             errors: {
                 401: this.translate(""),
                 403: this.translate(""),
                 404: this.translate(""),
                 500: this.translate(""),
-                timeout: this.translate(""),
-            },
+                timeout: this.translate("")
+            }
         },
         get_api_key: {
             method: "POST", //why?
-            url: '/api/v2/get-api-key/',
+            url: "/api/v2/get-api-key/",
             errors: {
                 401: this.translate(""),
                 403: this.translate(""),
                 404: this.translate(""),
                 500: this.translate(""),
-                timeout: this.translate(""),
-            },
+                timeout: this.translate("")
+            }
         },
         error_report: {
             method: "POST",
-            url: '/api/v2/error-report/',
+            url: "/api/v2/error-report/",
             errors: {
                 401: this.translate(""),
                 403: this.translate(""),
                 404: this.translate(""),
                 500: this.translate(""),
-                timeout: this.translate(""),
-            },
+                timeout: this.translate("")
+            }
         },
         search: {
             method: "GET",
-            url: '/api/v2/search/',
+            url: "/api/v2/search/",
             errors: {
                 401: this.translate("You are not logged in. Please login in Moodle and retry."),
                 403: this.translate("Unable to get search's results content because you cannot access to this channel."),
                 404: this.translate("Requested channel does not exist."),
                 500: this.translate("An error occured in medias server. Please try again later."),
-                timeout: this.translate("Unable to get search's results. Request timed out."),
-            },
+                timeout: this.translate("Unable to get search's results. Request timed out.")
+            }
         },
         get_channels_list: {
             method: "GET",
-            url: '/api/v2/channels/',
+            url: "/api/v2/channels/",
             errors: {
                 401: this.translate(""),
                 403: this.translate(""),
                 404: this.translate(""),
                 500: this.translate(""),
-                timeout: this.translate(""),
-            },
+                timeout: this.translate("")
+            }
         },
         get_latest_content: {
             method: "GET",
-            url: '/api/v2/latest/',
+            url: "/api/v2/latest/",
             errors: {
                 401: this.translate("You are not logged in. Please login in Moodle and retry."),
                 403: this.translate("Unable to get latest content because you cannot access to this channel."),
                 404: this.translate("Requested channel does not exist."),
                 500: this.translate("An error occured in medias server. Please try again later."),
-                timeout: this.translate("Unable to get latest content. Request timed out."),
-            },
+                timeout: this.translate("Unable to get latest content. Request timed out.")
+            }
         },
         get_channels_content: {
             method: "GET",
@@ -106,174 +105,174 @@ function ECMSAPIManager(options) {
                 403: this.translate("Unable to get channel's content because you cannot access to this channel."),
                 404: this.translate("Unable to get channel's content because you cannot access to this channel."),
                 500: this.translate("An error occured in medias server. Please try again later."),
-                timeout: this.translate("Unable to get channel's content. Request timed out."),
-            },
+                timeout: this.translate("Unable to get channel's content. Request timed out.")
+            }
         },
         get_channels: {
             method: "GET",
-            url: '/api/v2/channels/get/',
+            url: "/api/v2/channels/get/",
             errors: {
                 401: this.translate("Unable to get channel's information because you are not logged in."),
-                403: this.translate("Unable to get channel's information because you cannot access to this media."),
+                403: this.translate("Unable to get channel's information because you cannot access to this channel."),
                 404: this.translate("Channel does not exist."),
                 500: this.translate("An error occured in channels server. Please try again later."),
-                timeout: this.translate("Unable to get channel's information. Request timed out."),
-            },
+                timeout: this.translate("Unable to get channel's information. Request timed out.")
+            }
         },
         get_channels_tree: {
             method: "GET",
-            url: '/api/v2/channels/tree/',
+            url: "/api/v2/channels/tree/",
             errors: {
                 401: this.translate("Unable to get channels tree because you are not logged in."),
                 403: this.translate("Unable to get channels tree because you cannot access to this channel."),
                 404: this.translate("Channel does not exist."),
                 500: this.translate("An error occured in medias server. Please try again later."),
-                timeout: this.translate("Unable to get channels tree. Request timed out."),
-            },
+                timeout: this.translate("Unable to get channels tree. Request timed out.")
+            }
         },
         get_channels_path: {
             method: "GET",
-            url: '/api/v2/channels/path/',
+            url: "/api/v2/channels/path/",
             errors: {
                 401: this.translate("Unable to get channels path because you are not logged in."),
                 403: this.translate("Unable to get channels path because you cannot access to this channel."),
                 404: this.translate("Channel does not exist."),
                 500: this.translate("An error occured in medias server. Please try again later."),
-                timeout: this.translate("Unable to get channels path. Request timed out."),
-            },
+                timeout: this.translate("Unable to get channels path. Request timed out.")
+            }
         },
         get_medias_list: {
             method: "GET",
-            url: '/api/v2/medias/',
+            url: "/api/v2/medias/",
             errors: {
                 401: this.translate(""),
                 403: this.translate(""),
                 404: this.translate(""),
                 500: this.translate(""),
-                timeout: this.translate(""),
-            },
+                timeout: this.translate("")
+            }
         },
         get_medias: {
             method: "GET",
-            url: '/api/v2/medias/get/',
+            url: "/api/v2/medias/get/",
             errors: {
                 401: this.translate("Unable to get media's information because you are not logged in."),
                 403: this.translate("Unable to get media's information because you cannot access to this media."),
                 404: this.translate("Media does not exist."),
                 500: this.translate("An error occured in medias server. Please try again later."),
-                timeout: this.translate("Unable to get media's information. Request timed out."),
-            },
+                timeout: this.translate("Unable to get media's information. Request timed out.")
+            }
         },
         add_medias: {
             method: "POST",
-            url: '/api/v2/medias/add/',
+            url: "/api/v2/medias/add/",
             errors: {
                 401: this.translate(""),
                 403: this.translate(""),
                 404: this.translate(""),
                 500: this.translate(""),
-                timeout: this.translate(""),
-            },
+                timeout: this.translate("")
+            }
         },
         medias_resources_check: {
             method: "POST",
-            url: '/api/v2/medias/resources-check/',
+            url: "/api/v2/medias/resources-check/",
             errors: {
                 401: this.translate(""),
                 403: this.translate(""),
                 404: this.translate(""),
                 500: this.translate(""),
-                timeout: this.translate(""),
-            },
+                timeout: this.translate("")
+            }
         },
         medias_trimming_child_init: {
             method: "POST",
-            url: '/api/v2/medias/trimming-child-init/',
+            url: "/api/v2/medias/trimming-child-init/",
             errors: {
                 401: this.translate(""),
                 403: this.translate(""),
                 404: this.translate(""),
                 500: this.translate(""),
-                timeout: this.translate(""),
-            },
+                timeout: this.translate("")
+            }
         },
         medias_get_upload_config: {
             method: "GET",
-            url: '/api/v2/medias/get-upload-config/',
+            url: "/api/v2/medias/get-upload-config/",
             errors: {
                 401: this.translate(""),
                 403: this.translate(""),
                 404: this.translate(""),
                 500: this.translate(""),
-                timeout: this.translate(""),
-            },
+                timeout: this.translate("")
+            }
         },
         get_lives_list: {
             method: "GET",
-            url: '/api/v2/lives/',
+            url: "/api/v2/lives/",
             errors: {
                 401: this.translate(""),
                 403: this.translate(""),
                 404: this.translate(""),
                 500: this.translate(""),
-                timeout: this.translate(""),
-            },
+                timeout: this.translate("")
+            }
         },
         prepare_lives: {
             method: "POST",
-            url: '/api/v2/lives/prepare/',
+            url: "/api/v2/lives/prepare/",
             errors: {
                 401: this.translate(""),
                 403: this.translate(""),
                 404: this.translate(""),
                 500: this.translate(""),
-                timeout: this.translate(""),
-            },
+                timeout: this.translate("")
+            }
         },
         start_lives: {
             method: "POST",
-            url: '/api/v2/lives/start/',
+            url: "/api/v2/lives/start/",
             errors: {
                 401: this.translate(""),
                 403: this.translate(""),
                 404: this.translate(""),
                 500: this.translate(""),
-                timeout: this.translate(""),
-            },
+                timeout: this.translate("")
+            }
         },
         stop_lives: {
             method: "POST",
-            url: '/api/v2/lives/stop/',
+            url: "/api/v2/lives/stop/",
             errors: {
                 401: this.translate("Your session has expired, please log you in again."),
                 403: this.translate("You are not allowed to perform this action."),
                 404: this.translate("Media does not exist."),
                 500: this.translate("An error occured in medias server. Please try again later."),
-                timeout: this.translate("Request timed out."),
-            },
+                timeout: this.translate("Request timed out.")
+            }
         },
         lives_change_slides: {
             method: "POST",
-            url: '/api/v2/lives/change-slide/',
+            url: "/api/v2/lives/change-slide/",
             errors: {
                 401: this.translate(""),
                 403: this.translate(""),
                 404: this.translate(""),
                 500: this.translate(""),
-                timeout: this.translate(""),
-            },
+                timeout: this.translate("")
+            }
         },
         lives_get_viewers: {
             method: "GET",
-            url: '/api/v2/lives/get-viewers/',
+            url: "/api/v2/lives/get-viewers/",
             errors: {
                 401: this.translate(""),
                 403: this.translate(""),
                 404: this.translate(""),
                 500: this.translate(""),
-                timeout: this.translate(""),
-            },
-        },
+                timeout: this.translate("")
+            }
+        }
     };
     var obj = this;
     $(document).ready(function() {
@@ -294,7 +293,7 @@ ECMSAPIManager.prototype.ajax_call = function(method, data, callback, scallback,
         console.log("no method");
         return;
     }
-    async = typeof async !== 'undefined' ? async : true;
+    async = typeof async !== "undefined" ? async : true;
     var obj = this;
     var url = this.base_url;
     if (this.use_proxy)
@@ -318,7 +317,8 @@ ECMSAPIManager.prototype.ajax_call = function(method, data, callback, scallback,
             if (obj.methods[method].errors[xhr.status])
                 return callback({
                     success: false,
-                    error: obj.methods[method].errors[xhr.status]
+                    error: obj.methods[method].errors[xhr.status],
+                    error_code: xhr.status
                 });
         }
         if (textStatus == "timeout")
@@ -344,6 +344,6 @@ ECMSAPIManager.prototype.ajax_call = function(method, data, callback, scallback,
         dataType: "json",
         cache: false,
         success: default_success_callback,
-        error: default_error_callback,
+        error: default_error_callback
     });
 };
