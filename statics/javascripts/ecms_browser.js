@@ -3,6 +3,7 @@
 * Copyright: UbiCast, all rights reserved  *
 * Author: Stephane Diemer                  *
 *******************************************/
+/* global box_hide_info */
 function ECMSCatalogBrowser(options) {
     // params
     this.title = "";
@@ -34,11 +35,12 @@ function ECMSCatalogBrowser(options) {
     this.current_category_oid = "0";
     this.current_selection = null;
     this.latest_initialized = false;
+    this.$main = null;
     this.$widgets = {};
     this.last_search_response = null;
     this.last_cat_content = null;
     this.last_latest = null;
-    this.display_mode = utils.get_cookie("catalog-display_mode");
+    this.display_mode = utils.get_cookie("catalog-display_mode") || "list";
     this.btn_class = "cb-btn";
     utils.setup_class(this, options, [
         // allowed options
@@ -74,7 +76,6 @@ function ECMSCatalogBrowser(options) {
     });
     if (this.browse_search) {
         this.btn_class = "tab-button";
-        var obj = this;
         $(window).bind("hashchange", function () {
             if ((window.location.hash ? window.location.hash.substring(1) : "")) {
                 var slug = (window.location.hash ? window.location.hash.substring(1) : "");
@@ -107,7 +108,7 @@ function ECMSCatalogBrowser(options) {
                             console.log(data.error_code);
                             if (!obj.use_overlay && (data.error_code == "403" || data.error_code == "401")) {
                                 var login_url = obj.url_login + "?next=" + window.location.pathname + (window.location.hash ? window.location.hash.substring(1) : "");
-                                message = "<p>" + obj.translate("Please") + " <a href=\"" + login_url + "\">" + obj.translate("sign in") + "</a></p>";
+                                message = "<p>" + obj.translate("Please login to access this channel") + "<br /> <a href=\"" + login_url + "\">" + obj.translate("Sign in") + "</a></p>";
                             }
                             obj.display_message("list", data.error + message);
                         }
@@ -143,52 +144,56 @@ ECMSCatalogBrowser.prototype.init = function() {
     html += "<div class=\"cb-right\">";
     //html += this.get_filters_hmtl();
     html += this.get_display_hmtl();
-    if (!this.use_overlay)
+    if (!this.use_overlay) {
+        html += "<div class=\"main-block\">";
         html += "<div class=\"main-block-content\">";
+    }
     html += this.get_column_list_hmtl();
     html += this.get_column_search_hmtl();
     html += this.get_column_latest_hmtl();
     html +=     "<div class=\"cb-loading\"><div>" + this.translate("Loading...") + "</div></div>";
-    html += "</div>";
     if (!this.use_overlay)
         html += "</div>";
+        html += "</div>";
     html += "</div>";
-    this.$widgets.main = $(html);
+    html += "</div>";
+    this.$main = $(html);
     
     // get elements
-    this.$widgets.tree = $(".cb-left .cb-tree", this.$widgets.main);
-    this.$widgets.loading = $(".cb-right .cb-loading", this.$widgets.main);
-    this.$widgets.content_list = $(".cb-column-list .cb-content", this.$widgets.main);
-    this.$widgets.content_search = $(".cb-column-search .cb-content", this.$widgets.main);
-    this.$widgets.content_latest = $(".cb-column-latest .cb-content", this.$widgets.main);
-    this.$widgets.message_list = $(".cb-column-list .cb-message", this.$widgets.main);
-    this.$widgets.message_search = $(".cb-column-search .cb-message", this.$widgets.main);
-    this.$widgets.message_latest = $(".cb-column-latest .cb-message", this.$widgets.main);
-    this.$widgets.search_form = $(".cb-left-search", this.$widgets.main);
-    this.$widgets.search_results = $(".cb-column-search .cb-search-results-count", this.$widgets.main);
-    this.$widgets.latest_btn = $(".cb-column-latest .cb-latest-btn", this.$widgets.main);
-    this.$widgets.filters_btn = $(".cb-btn-filters", this.$widgets.main);
-    this.$widgets.filters_menu = $(".cb-filters-menu", this.$widgets.main);
-    this.$widgets.display_btn = $(".cb-btn-display", this.$widgets.main);
-    this.$widgets.display_menu = $(".cb-display-menu", this.$widgets.main);
-    this.$widgets.latest_place = $(".cb-column-latest .cb-latest-place", this.$widgets.main);
+    this.$widgets.tree = $(".cb-left .cb-tree", this.$main);
+    this.$widgets.loading = $(".cb-right .cb-loading", this.$main);
+    this.$widgets.content_list = $(".cb-column-list .cb-content", this.$main);
+    this.$widgets.content_search = $(".cb-column-search .cb-content", this.$main);
+    this.$widgets.content_latest = $(".cb-column-latest .cb-content", this.$main);
+    this.$widgets.message_list = $(".cb-column-list .cb-message", this.$main);
+    this.$widgets.message_search = $(".cb-column-search .cb-message", this.$main);
+    this.$widgets.message_latest = $(".cb-column-latest .cb-message", this.$main);
+    this.$widgets.search_form = $(".cb-left-search", this.$main);
+    this.$widgets.search_results = $(".cb-column-search .cb-search-results-count", this.$main);
+    this.$widgets.latest_btn = $(".cb-column-latest .cb-latest-btn", this.$main);
+    this.$widgets.filters_btn = $(".cb-btn-filters", this.$main);
+    this.$widgets.filters_menu = $(".cb-filters-menu", this.$main);
+    this.$widgets.display_btn = $(".cb-btn-display", this.$main);
+    this.$widgets.display_menu = $(".cb-display-menu", this.$main);
+    this.$widgets.latest_place = $(".cb-column-latest .cb-latest-place", this.$main);
     // get initial media or channel info
     if (this.initial_oid)
         this.pick(this.initial_oid);
     
     // events
-    $(".cb-btn-list", this.$widgets.main).click({ obj: this }, function (evt) { evt.data.obj.change_tab("list"); });
-    $(".cb-btn-search", this.$widgets.main).click({ obj: this }, function (evt) { evt.data.obj.change_tab("search"); });
-    $(".cb-btn-latest", this.$widgets.main).click({ obj: this }, function (evt) { evt.data.obj.change_tab("latest"); });
-    $(".cb-btn-display", this.$widgets.main).click({ obj: this }, function (evt) { evt.data.obj.toggle_menu("display"); });
-    //$(".cb-btn-filters", this.$widgets.main).click({ obj: this }, function (evt) { evt.data.obj.toggle_menu("filters"); });
-    //$(".cb-filters-menu  div select", this.$widgets.main).change({ obj: this }, function (evt) { evt.data.obj.toggle_filter_control(evt, this); });
-    $(".cb-latest-more-5", this.$widgets.main).click({ obj: this }, function (evt) { evt.data.obj.latest_more_click(5); });
-    $(".cb-latest-more-20", this.$widgets.main).click({ obj: this }, function (evt) { evt.data.obj.latest_more_click(20); });
-    $(".cb-latest-refresh", this.$widgets.main).click({ obj: this }, function (evt) { evt.data.obj.latest_refresh(); });
-    $("form", this.$widgets.main).submit({ obj: this }, function (evt) { evt.data.obj.on_search_submit(); });
-    $("#display_as_list", this.$widgets.main).click({ obj: this }, function (evt) { evt.data.obj.display_as_list(); });
-    $("#display_as_thumbnails", this.$widgets.main).click({ obj: this }, function (evt) { evt.data.obj.display_as_thumbnails(); });
+    $(".cb-btn-list", this.$main).click({ obj: this }, function (evt) { evt.data.obj.change_tab("list"); });
+    $(".cb-btn-search", this.$main).click({ obj: this }, function (evt) { evt.data.obj.change_tab("search"); });
+    $(".cb-btn-latest", this.$main).click({ obj: this }, function (evt) { evt.data.obj.change_tab("latest"); });
+    $(".cb-btn-display", this.$main).click({ obj: this }, function (evt) { evt.data.obj.toggle_menu("display"); });
+    //$(".cb-btn-filters", this.$main).click({ obj: this }, function (evt) { evt.data.obj.toggle_menu("filters"); });
+    //$(".cb-filters-menu  div select", this.$main).change({ obj: this }, function (evt) { evt.data.obj.toggle_filter_control(evt, this); });
+    $(".cb-latest-more-5", this.$main).click({ obj: this }, function (evt) { evt.data.obj.latest_more_click(5); });
+    $(".cb-latest-more-20", this.$main).click({ obj: this }, function (evt) { evt.data.obj.latest_more_click(20); });
+    $(".cb-latest-refresh", this.$main).click({ obj: this }, function (evt) { evt.data.obj.latest_refresh(); });
+    $("form", this.$main).submit({ obj: this }, function (evt) { evt.data.obj.on_search_submit(); });
+    $("#display_as_list", this.$main).click({ obj: this }, function (evt) { evt.data.obj.display_as_list(); });
+    $("#display_as_thumbnails", this.$main).click({ obj: this }, function (evt) { evt.data.obj.display_as_thumbnails(); });
+    $("#order_channels_medias", this.$main).change({ obj: this }, function (evt) { evt.data.obj.order_channel($(this).val()); });
     if (this.display_mode == "list") {
         this.display_as_list();
     } else {
@@ -200,6 +205,8 @@ ECMSCatalogBrowser.prototype.init = function() {
         });
         this.resize();
     } else {
+        if (this.display_mode == "thumbnail")
+            $("#global").addClass("wide");
         $(document).mouseup(function (e) {
             var container = $(".cb-message .error");
             if (!container.is(e.target) && container.has(e.target).length === 0) {
@@ -219,11 +226,30 @@ ECMSCatalogBrowser.prototype.get_tab_menu_html = function() {
     return html;
 };
 ECMSCatalogBrowser.prototype.get_display_hmtl = function() {
+    var sorting_values = [
+        { "default": this.translate("Use channel's default sorting") },
+        { "creation_date-desc": this.translate("Creation date, descending") },
+        { "creation_date-asc": this.translate("Creation date, ascending") },
+        { "add_date-desc": this.translate("Add date, descending") },
+        { "add_date-asc": this.translate("Add date, ascending") },
+        { "title-desc": this.translate("Title, descending") },
+        { "title-asc": this.translate("Title, ascending") },
+        { "comments-desc": this.translate("Number of comments, descending") },
+        { "comments-asc": this.translate("Number of comments, ascending") },
+        { "views-desc": this.translate("Number of views, descending") },
+        { "views-asc": this.translate("Number of views, ascending") }
+    ];
     var html = "<div class=\"cb-display-btn-place\"><div class=\""+ this.btn_class + " cb-btn-display\">" + this.translate("Display") + "</div></div>";
     html += "<div class=\"cb-display-menu\">";
     html += "<p class=\"cb-display-title\">" + this.translate("Display mode:") + "</p>";
     html += "<button class=\"std-btn " + ( this.display_mode === "list" ? "cb-active" : "") + "\" id=\"display_as_list\">" + this.translate("list") + "</button>";
     html += "<button class=\"std-btn " + ( this.display_mode === "thumbnail" ? "cb-active" : "") + "\" id=\"display_as_thumbnails\">" + this.translate("thumbnails") + "</button>";
+    html += "<br /><br /><label for=\"order_channels_medias\">" + this.translate("Sort by") + "</label>";
+    html += "<select id=\"order_channels_medias\">";
+    for (var index in sorting_values)
+        for (var key in sorting_values[index])
+        html +=     "<option value=\"" + key + "\">" + sorting_values[index][key] + "</option>";
+    html += "</select>";
    // html += "<p>" + this.translate("Number of elements per page:") + "</p>";
    // html += "    <input type=\"text\" class=\"center\" id=\"elements_per_page\" value=\"30\"/>"; TODO pagination
    // html += "<button type=\"submit\" onclick=\"javascript: cm.set_elements_per_page();\">" + this.translate("Ok") + "</button>";
@@ -440,72 +466,82 @@ ECMSCatalogBrowser.prototype.toggle_filter_control = function(event, js_obj) {
     return;
 };
 ECMSCatalogBrowser.prototype.display_as_list = function() {
-    if ($("#display_as_list").hasClass("cb-active")) {
+    if ($("#display_as_list", this.$main).hasClass("cb-active")) {
         return;
     }
     this.display_mode = "list";
-    $("#display_as_thumbnails").removeClass("cb-active");
-    $("#display_as_list").addClass("cb-active");
-    $("#container").css("width", "1000px");
-    $(".catalogbrowser .cb-content .item-entry.list").css("float", "none");
+    $("#display_as_thumbnails", this.$main).removeClass("cb-active");
+    $("#display_as_list", this.$main).addClass("cb-active");
+    if (!this.use_overlay)
+        $("#global").removeClass("wide");
+    $(".catalogbrowser .cb-content .item-entry.list", this.$main).css("float", "none");
     utils.set_cookie("catalog-display_mode", this.display_mode);
     if (this.last_search_response)
         this.display_content("search", this.last_search_response, undefined);
     if (this.last_cat_content)
         this.display_content("list", this.last_cat_content, this.current_category_oid);
-    if (this.last_latest)
-        this.display_latest(this.last_latest);
+    if (this.last_latest) {
+        this.latest_more = false;
+        this.latest_start = "";
+        this.latest_date_label = "";
+        this.$widgets.latest_place.html("");
+        this.load_latest();
+    }
 };
 ECMSCatalogBrowser.prototype.display_as_thumbnails = function() {
-    if ($("#display_as_thumbnails").hasClass("cb-active")) {
+    if ($("#display_as_thumbnails", this.$main).hasClass("cb-active")) {
         return;
     }
     this.display_mode = "thumbnail";
-    $("#display_as_list").removeClass("cb-active");
-    $("#display_as_thumbnails").addClass("cb-active");
-    $("#container").css("width", "95%");
-    $(".catalogbrowser .cb-content .item-entry.thumbnail").css("float", "left");
+    $("#display_as_list", this.$main).removeClass("cb-active");
+    $("#display_as_thumbnails", this.$main).addClass("cb-active");
+    if (!this.use_overlay)
+        $("#global").addClass("wide");
+    $(".catalogbrowser .cb-content .item-entry.thumbnail", this.$main).css("float", "left");
     utils.set_cookie("catalog-display_mode", this.display_mode);
     if (this.last_search_response)
         this.display_content("search", this.last_search_response, undefined);
     if (this.last_cat_content)
         this.display_content("list", this.last_cat_content, this.current_category_oid);
-    if (this.last_latest)
-        this.display_latest(this.last_latest);
+    if (this.last_latest) {
+        this.latest_more = false;
+        this.latest_start = "";
+        this.latest_date_label = "";
+        this.$widgets.latest_place.html("");
+        this.load_latest();
+    }
+};
+ECMSCatalogBrowser.prototype.order_channel = function(order) {
+    this.display_channel(this.current_category_oid, order);
 };
 ECMSCatalogBrowser.prototype.change_tab = function(tab_id) {
-    if (this.$widgets.main.hasClass("cb-display-" + tab_id))
+    if (this.$main.hasClass("cb-display-" + tab_id))
         return;
     if (tab_id == "latest")
         this.latest_init();
-    $(".cb-btn-" + this.displayed, this.$widgets.main).removeClass("cb-active");
-    $(".cb-btn-" + tab_id, this.$widgets.main).addClass("cb-active");
-    this.$widgets.main.removeClass("cb-display-" + this.displayed).addClass("cb-display-"+tab_id);
+    $(".cb-btn-" + this.displayed, this.$main).removeClass("cb-active");
+    $(".cb-btn-" + tab_id, this.$main).addClass("cb-active");
+    this.$main.removeClass("cb-display-" + this.displayed).addClass("cb-display-"+tab_id);
     this.displayed = tab_id;
 };
 ECMSCatalogBrowser.prototype.open = function() {
     var obj = this;
     if (!this.tree_manager) {
         var callback_tree = function (oid) {
-            if (obj.use_overlay)
-                obj.display_channel(oid);
-            else {
-                var item = { "oid": oid };
-                var url = obj._get_btn_link(item, "view");
-                if (url)
-                    window.location = url;
-            }
+            obj.display_channel(oid);
         };
-        this.tree_manager = new ECMSTreeManager({
+        var params = {
             $place: this.$widgets.tree,
             base_url: this.base_url,
             use_proxy: this.use_proxy,
             request_data: this.request_data,
             display_root: this.displayable_content.indexOf("c") != -1,
             current_category_oid: this.current_category_oid,
-            on_change: callback_tree,
             on_data_retrieved: function (data) { obj.update_catalog(data); }
-        });
+        };
+        if (this.use_overlay)
+            params.on_change = callback_tree;
+        this.tree_manager = new ECMSTreeManager(params);
     }
     if (this.use_overlay) {
         if (this.displayable_content.indexOf("c") != -1) {
@@ -514,8 +550,8 @@ ECMSCatalogBrowser.prototype.open = function() {
         this.overlay.show({
             mode: "html",
             title: this.title,
-            html: this.$widgets.main,
-            on_hide: function () { obj.$widgets.main.detach(); }
+            html: this.$main,
+            on_hide: function () { obj.$main.detach(); }
         });
     }
 };
@@ -551,8 +587,7 @@ ECMSCatalogBrowser.prototype.get_info = function(oid, full, callback, async) {
         }
     }
     if (item) {
-        var data = { info: item, success: true };
-        callback(data);
+        callback({ info: item, success: true });
         return;
     }
     var method = "";
@@ -570,7 +605,6 @@ ECMSCatalogBrowser.prototype.get_info = function(oid, full, callback, async) {
             data[field] = this.request_data[field];
         }
     var obj = this;
-    this.display_loading();
     var callback_update = function(data) {
         obj.hide_loading();
         if (data.success) {
@@ -582,7 +616,7 @@ ECMSCatalogBrowser.prototype.get_info = function(oid, full, callback, async) {
             console.log(data.error_code);
             if (!obj.use_overlay && (data.error_code == "403" || data.error_code == "401")) {
                 var login_url = obj.url_login + "?next=" + window.location.pathname + (window.location.hash ? window.location.hash.substring(1) : "");
-                message = "<p>" + obj.translate("Please") + " <a href=\"" + login_url + "\">" + obj.translate("sign in") + "</a></p>";
+                message = "<p>" + obj.translate("Please login to access this channel") + "<br /> <a href=\"" + login_url + "\">" + obj.translate("Sign in") + "</a></p>";
             }
             obj.display_message("list", data.error + message);
         }
@@ -592,10 +626,12 @@ ECMSCatalogBrowser.prototype.get_info = function(oid, full, callback, async) {
         this.api_manager.ajax_call(method, data, callback_update, null, null, async);
     }
 };
-ECMSCatalogBrowser.prototype.display_channel = function(cat_oid) {
+ECMSCatalogBrowser.prototype.display_channel = function(cat_oid, order) {
     this.change_tab("list");
     this.current_category_oid = cat_oid;
     this.tree_manager.set_active(cat_oid);
+    if (!this.use_overlay)
+        $("head .csslistlink").remove();
     var data = {};
     if (cat_oid && cat_oid != "0")
         data.parent_oid = cat_oid;
@@ -608,6 +644,11 @@ ECMSCatalogBrowser.prototype.display_channel = function(cat_oid) {
             data.validated = "yes";
         else
             data.validated = "no";
+    }
+    if (order) {
+        data.order_by = order;
+    } else {
+        data.order_by = "default";
     }
     if (this.request_data)
         for (var field in this.request_data) {
@@ -628,7 +669,7 @@ ECMSCatalogBrowser.prototype.display_channel = function(cat_oid) {
             console.log(data.error_code);
             if (!obj.use_overlay && (data.error_code == "403" || data.error_code == "401")) {
                 var login_url = obj.url_login + "?next=" + window.location.pathname + (window.location.hash ? window.location.hash.substring(1) : "");
-                message = "<p>" + obj.translate("Please") + " <a href=\"" + login_url + "\">" + obj.translate("sign in") + "</a></p>";
+                message = "<p>" + obj.translate("Please login to access this channel") + "<br /> <a href=\"" + login_url + "\">" + obj.translate("Sign in") + "</a></p>";
             }
             obj.display_message("list", response.error + message);
         }
@@ -679,8 +720,15 @@ ECMSCatalogBrowser.prototype.display_content = function(target, data, cat_oid, t
                     extra_class: "item-entry-small",
                     selectable: (!obj.parent_selection_oid || data.parent_selectable),
                     no_save: true,
-                    slug: (obj.catalog[parent_oid] ? obj.catalog[parent_oid].slug : "")
+                    slug: result.info.parent_slug
                 }, parent_oid != "0" && selectable));
+                if (!obj.use_overlay) {
+                    var csslinks = "";
+                    for (var index in result.info.css_list) {
+                        csslinks += "<link class=\"csslistlink\" rel=\"stylesheet\" type=\"text/css\" href=\"" + result.info.css_list[index] + "\">";
+                    }
+                    $("head").append(csslinks);
+                }
                 $container.append(obj.get_content_entry("current", {
                     oid: cat_oid,
                     title: result.info.title,
@@ -747,6 +795,7 @@ ECMSCatalogBrowser.prototype.display_content = function(target, data, cat_oid, t
     }
 };
 ECMSCatalogBrowser.prototype.get_content_entry = function(item_type, item, gselectable) {
+    this.update_catalog(item);
     var oid = item.oid;
     var selectable = gselectable && (!this.parent_selection_oid || item.selectable);
     var $entry = null;
@@ -780,6 +829,13 @@ ECMSCatalogBrowser.prototype.get_content_entry = function(item_type, item, gsele
             html += "</div>";
 
             html += "<div class=\"overlay-info\" id=\"item_entry_" + oid + "_info\" style=\"display: none;\"></div>";
+                $(document).click(function(event) {
+                    if(!$(event.target).closest("#item_entry_" + oid + "_info").length && !$(event.target).closest(".info-thumb").length) {
+                        if($("#item_entry_" + oid + "_info").is(":visible")) {
+                            box_hide_info();
+                        }
+                    }
+                });
         }
     html += this._get_entry_block_html(item, btn_class, item_type, selectable);
     var $entry_block = $(html);
@@ -800,7 +856,10 @@ ECMSCatalogBrowser.prototype._get_entry_block_html = function(item, btn_class, i
     var href = "";
     if (!this.use_overlay && item.slug && !(item_type == "parent" || item_type == "current")) {
         balise = "a";
-        href = "href=\"" + this._get_btn_link(item, "view") +  "\"";
+        if (item_type != "channel" && !item.validated && item.can_edit)
+            href = "href=\"" + this._get_btn_link(item, "edit") +  "\"";
+        else
+            href = "href=\"" + this._get_btn_link(item, "view") +  "\"";
     }
     var html = "<" + balise + " " + href + "class=\"item-entry-link " + (selectable || item_type == "channel" || item_type == "parent" ? "clickable" : "") + "\">";
     if (item.thumb)
@@ -827,36 +886,18 @@ ECMSCatalogBrowser.prototype._get_entry_block_html = function(item, btn_class, i
     if (this.display_mode == "thumbnail" && !(item_type == "parent" || item_type == "current"))
         html +=         "<span class=\"item-entry-close\">X</span>";
     if (item.can_edit && !(item_type == "parent" || item_type == "current")) {
-        if (item.accessibility !== undefined) {
-            var atext;
-            switch (item.accessibility) {
-                case "all": atext = "Accessible for all users"; break;
-                case "auth": atext = "Accessible only for authenticated users"; break;
-                case "perm": atext = "Accessible only for authenticated users with access right"; break;
-                case "": atext = "Inaccessible for all users"; break;
-            }
-            if (atext)
-                html +=     "<span class=\"item-entry-accessibility " + item.accessibility + "\" title=\"" + this.translate(atext) + "\"></span>";
-        }
-        if (item.visibility !== undefined) {
-            var vtext;
-            switch (item.visibility) {
-                case "all": vtext = "Visible for all users"; break;
-                case "auth": vtext = "Visible only for authenticated users"; break;
-                case "perm": vtext = "Visible only for authenticated users with access right"; break;
-                case "": vtext = "Invisible for all users"; break;
-            }
-            if (vtext)
-                html +=     "<span class=\"item-entry-visibility " + item.visibility + "\" title=\"" + this.translate(vtext) + "\"></span>";
+        if (item.unlisted) {
+            var label = item_type == "channel" ? "channel" : "media";
+            html +=     "<span class=\"item-entry-unlisted\" title=\"" + this.translate("This "+label+" is unlisted") + "\"></span>";
         }
         if (item_type != "channel") {
             if (item.validated)
-                html +=     "<span class=\"item-entry-publication published\" title=\"" + this.translate("This media is published") + "\"></span>";
+                html += "<span class=\"item-entry-publication published\" title=\"" + this.translate("This media is published") + "\"></span>";
             else
-                html +=     "<span class=\"item-entry-publication\" title=\"" + this.translate("This media is not published") + "\"></span>";
+                html += "<span class=\"item-entry-publication\" title=\"" + this.translate("This media is not published") + "\"></span>";
         }
         if (item_type == "video" && !item.ready)
-            html +=         "<span class=\"item-entry-state\" title=\"" + this.translate("This video is not ready") + "\"></span>";
+            html +=     "<span class=\"item-entry-state\" title=\"" + this.translate("This video is not ready") + "\"></span>";
     }
     if (item.duration && this.display_mode != "thumbnail")
         html +=         "<span class=\"item-entry-duration\">" + item.duration + "</span>";
@@ -892,7 +933,7 @@ ECMSCatalogBrowser.prototype._get_entry_block_html = function(item, btn_class, i
         html += "<div class=\"category-description-text\">" + item.description + "</div>\
                     <div class=\"category-description-rss\"> ";
                     if (this.display_itunes_rss) {
-                        html += this.translate("Subscribe to channel's videos RSS:") +
+                        html += this.translate("Subscribe to channel's videos RSS:") + "<br/> " +
                         "<a href=\"/channels/" + item.oid + "/rss.xml\">\
                             <img src=\"" + this.url_icone_rss + "\"/> " + this.translate("standard") + "</a>\
                         <a href=\"/channels/playlist/itunes/" + item.slug + ".xml\">\
@@ -969,7 +1010,7 @@ ECMSCatalogBrowser.prototype._get_entry_links_html = function(item, btn_class, i
             html += "<span class=\"" + btn_class + " main item-entry-pick\">" + this.translate("Select this media") + "</span>";
     } else {
         if (!(item_type == "parent" || item_type == "current") && !this.use_overlay) {
-            if (item_type != "channel") {
+            if (item_type != "channel" && item.validated) {
                 html += "<a class=\"" + btn_class + " item-entry-pick-view-media\" href=\"" + (url_view ? url_view : "") + "\">" + this.translate("See") + "</a>";
             }
             if (item.can_edit) {
@@ -1004,7 +1045,7 @@ ECMSCatalogBrowser.prototype._get_btn_link = function(item, action) {
             prefix = "/photos/";
         }
         if (prefix && !item.slug) {
-            this.get_info(item.oid, true, function(data) {
+            this.get_info(item.oid, false, function(data) {
                 item = data.info;
             }, false); 
         }
@@ -1029,9 +1070,8 @@ ECMSCatalogBrowser.prototype._set_on_click_entry_links = function($entry_links, 
     if (selectable) {
         $(".item-entry-pick", $entry_links).click({ obj: this, oid: oid }, function (event) { event.data.obj.pick(event.data.oid); });
     }
-    if (this.browse_search) {
-        if (item.can_delete)
-            $(".item-entry-pick-delete-media", $entry_links).click({ obj: this, oid: oid }, function(evt) { evt.data.obj.pick(evt.data.oid, "delete"); });
+    if (this.browse_search && item.can_delete) {
+        $(".item-entry-pick-delete-media", $entry_links).click({ obj: this, oid: oid }, function(evt) { evt.data.obj.pick(evt.data.oid, "delete"); });
     }
 };
 ECMSCatalogBrowser.prototype._get_thumbnail_info_box_html = function(item, item_type, btn_class, selectable) {
@@ -1147,7 +1187,7 @@ ECMSCatalogBrowser.prototype._set_thumbnail_info_box_html = function(item_type, 
             var html = obj._get_thumbnail_info_box_html(item, item_type, btn_class, selectable);
             $("#item_entry_" + oid + "_info").append($(html));
             var $entry_overlay = $("#item_entry_" + oid + "_info");
-            obj._set_on_click_entry_links($entry_overlay, oid, item_type, selectable);
+            obj._set_on_click_entry_links($entry_overlay, item, oid, item_type, selectable);
             box_open_info("item_entry_" + oid);
         } else {
             obj.get_info(oid, true, function(data) {
@@ -1155,7 +1195,7 @@ ECMSCatalogBrowser.prototype._set_thumbnail_info_box_html = function(item_type, 
                 var html = obj._get_thumbnail_info_box_html(item, item_type, btn_class, selectable);
                 $("#item_entry_" + oid + "_info").append($(html));
                 var $entry_overlay = $("#item_entry_" + oid + "_info");
-                obj._set_on_click_entry_links($entry_overlay, oid, item_type, selectable);
+                obj._set_on_click_entry_links($entry_overlay, item, oid, item_type, selectable);
                 box_open_info("item_entry_" + oid);
             });
         }
@@ -1167,10 +1207,10 @@ ECMSCatalogBrowser.prototype.pick = function(oid, action) {
     if (oid === null || oid === undefined) {
         // deselect
         if (this.current_selection && this.current_selection.oid)
-            $("#item_entry_"+this.current_selection.oid).removeClass("selected");
+            $("#item_entry_"+this.current_selection.oid, this.$main).removeClass("selected");
         return;
     }
-    if (this.catalog[oid]) {
+    if (this.catalog[oid] && this.catalog[oid].is_full) {
         this._pick(oid, { success: true, info: this.catalog[oid] }, true, action);
         return;
     }
@@ -1186,9 +1226,9 @@ ECMSCatalogBrowser.prototype._pick = function(oid, result, no_update, action) {
             this.overlay.hide();
         // change current selection
         if (this.current_selection && this.current_selection.oid)
-            $("#item_entry_"+this.current_selection.oid).removeClass("selected");
+            $("#item_entry_"+this.current_selection.oid, this.$main).removeClass("selected");
         this.current_selection = this.catalog[oid];
-        $("#item_entry_"+oid).addClass("selected");
+        $("#item_entry_"+oid, this.$main).addClass("selected");
         if (this.on_pick) {
             if (!this.use_overlay) {
                 this.on_pick(this.catalog[oid], action);
@@ -1320,9 +1360,13 @@ ECMSCatalogBrowser.prototype.load_latest = function(count, end) {
     this.latest_loading = true;
     
     var data = {};
+    if (this.request_data)
+        for (var field in this.request_data) {
+            data[field] = this.request_data[field];
+        }
     if (this.displayable_content)
         data.content = this.displayable_content;
-    if (this.displayable_content.length > 1 && this.displayable_content.indexOf("c") != -1 && !$("#latest_display_channels").is(":checked")) {
+    if (this.displayable_content.length > 1 && this.displayable_content.indexOf("c") != -1 && !$("#latest_display_channels", this.$main).is(":checked")) {
         data.content = "";
         for (var i=0; i < this.displayable_content.length; i++) {
             if (this.displayable_content[i] != "c")
@@ -1354,7 +1398,6 @@ ECMSCatalogBrowser.prototype.load_latest = function(count, end) {
     }
     if (count)
         data.count = count;
-    
     var obj = this;
     this.display_loading();
     var callback = function(response) {
@@ -1369,7 +1412,7 @@ ECMSCatalogBrowser.prototype.load_latest = function(count, end) {
             console.log(data.error_code);
             if (!obj.use_overlay && (data.error_code == "403" || data.error_code == "401")) {
                 var login_url = obj.url_login + "?next=" + window.location.pathname + (window.location.hash ? window.location.hash.substring(1) : "");
-                message = "<p>" + obj.translate("Please") + "<a href=\"" + login_url + "\">" + obj.translate("sign in") + "</a></p>";
+                message = "<p>" + obj.translate("Please login to access this channel") + "<br /> <a href=\"" + login_url + "\">" + obj.translate("Sign in") + "</a></p>";
             }
             obj.display_message("latest", response.error + message);
         }
@@ -1380,7 +1423,6 @@ ECMSCatalogBrowser.prototype.load_latest = function(count, end) {
 ECMSCatalogBrowser.prototype.display_latest = function(result) {
     this.latest_start = result.max_date;
     this.latest_more = result.more === true;
-    this.$widgets.latest_place.empty();
     for (var i=0; i < result.items.length; i++) {
         var item = result.items[i];
         item.show_type = true;
@@ -1400,8 +1442,6 @@ ECMSCatalogBrowser.prototype.display_latest = function(result) {
         var html = this.get_content_entry(type, item, this.selectable_content.indexOf(item.type) != -1);
         var $entry_block = $(html);
         this.$widgets.latest_place.append(html);
-        
-        this._set_on_click_entry_block($entry_block, item.oid, type, item, this.selectable_content.indexOf(item.type) != -1);
     }
     if (this.latest_more)
         this.$widgets.latest_btn.css("display", "block");
@@ -1458,7 +1498,7 @@ ECMSCatalogBrowser.prototype.resize = function() {
         width = 900;
     else if (width > 1200)
         width = 1200;
-    this.$widgets.main.width(width);
+    this.$main.width(width);
     var height = $(window).height() - 100;
-    this.$widgets.main.height(height);
+    this.$main.height(height);
 };

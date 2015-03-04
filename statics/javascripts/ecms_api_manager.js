@@ -330,8 +330,14 @@ ECMSAPIManager.prototype.ajax_call = function(method, data, callback, scallback,
             else
                 return callback({
                     success: false,
-                    error: obj.translate("An error occured during request:") + "<br/>&nbsp;&nbsp;&nbsp;&nbsp;" + textStatus + " " + thrownError
+                    error: obj.translate("An error occured during request:") + "<br/>&nbsp;&nbsp;&nbsp;&nbsp;" + textStatus + " " + thrownError.name
                 });
+        else
+            return callback({
+                    success: false,
+                    error: obj.translate("An error occured during request:") + "<br/>&nbsp;&nbsp;&nbsp;&nbsp;" + textStatus + " " + thrownError.name
+                });
+
     };
     if (ecallback) {
         default_error_callback = ecallback;

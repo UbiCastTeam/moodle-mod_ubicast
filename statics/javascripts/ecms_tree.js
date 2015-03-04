@@ -122,7 +122,7 @@ ECMSTreeManager.prototype.load_tree = function (parent_oid, callback) {
     // load category tree
     var scallback = function (response) {
         obj._ajax_cb(response, parent_oid, $target, callback);
-    }
+    };
     var ecallback = function (xhr, textStatus, thrownError) {
         if (xhr.status) {
             if (xhr.status == 401)
@@ -138,7 +138,7 @@ ECMSTreeManager.prototype.load_tree = function (parent_oid, callback) {
             obj._ajax_cb({ success: false, error: obj.translate("Unable to get channels tree. Request timed out.") }, parent_oid, $target, callback);
         else
             obj._ajax_cb({ success: false, error: obj.translate("An error occured during request:")+"<br/>&nbsp;&nbsp;&nbsp;&nbsp;"+textStatus+" "+thrownError }, parent_oid, $target, callback);
-    }
+    };
     if (this.api_tree) {
         var url = this.base_url;
         if (this.use_proxy)
@@ -151,10 +151,10 @@ ECMSTreeManager.prototype.load_tree = function (parent_oid, callback) {
             dataType: "json",
             cache: false,
             success: scallback,
-            error: ecallback,
+            error: ecallback
         });
     } else {
-        this.api_manager.ajax_call('get_channels_tree', data, obj._ajax_cb, scallback, ecallback);
+        this.api_manager.ajax_call("get_channels_tree", data, obj._ajax_cb, scallback, ecallback);
     }
 };
 ECMSTreeManager.prototype._ajax_cb = function (result, parent_oid, $target, callback) {
@@ -300,10 +300,9 @@ ECMSTreeManager.prototype.load_path = function (oid, callback) {
         for (var field in this.request_data) {
             data[field] = this.request_data[field];
         }
-    var obj = this;
     var scallback = function (response) {
         if (!response.success)
-        console.log("Error getting path for oid "+oid+". Error: "+result.error);
+        console.log("Error getting path for oid "+oid+". Error: "+response.error);
         callback(response);
     };
     var ecallback = function (xhr, textStatus, thrownError) {
@@ -322,10 +321,10 @@ ECMSTreeManager.prototype.load_path = function (oid, callback) {
             dataType: "json",
             cache: false,
             success: scallback,
-            error: ecallback,
+            error: ecallback
         });
     } else {
-        this.api_manager.ajax_call('get_channels_path', data, callback, scallback, ecallback);
+        this.api_manager.ajax_call("get_channels_path", data, callback, scallback, ecallback);
     }
 };
 

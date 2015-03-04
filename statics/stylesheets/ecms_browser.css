@@ -127,7 +127,6 @@
 }
 .catalogbrowser .cb-title
 {
-    font-size: .8em;
     font-weight: bold;
     line-height: 24px;
 
@@ -139,7 +138,7 @@
     overflow: hidden;
 
     height: 24px;
-    padding: 4px 2px;
+    padding: 4px 6px;
 
     background: #ddd;
     background: -moz-linear-gradient(top, #eee, #ccc);
@@ -148,6 +147,7 @@
 .catalogbrowser .cb-column-search .cb-title span
 {
     font-style: italic;
+    font-size: 80%;
 
     margin-left: 24px;
 
@@ -164,6 +164,9 @@
     overflow: auto;
 
     padding: 4px;
+}
+.catalogbrowser .cb-container .cb-content {
+    position: relative;
 }
 .catalogbrowser .cb-left .cb-container
 {
@@ -269,15 +272,23 @@
 
     position: absolute;
     z-index: 1;
-    top: 0;
+    top: 4px;
     right: 100px;
-    bottom: 4px;
 
     height: 24px;
 }
 .catalogbrowser .cb-display-btn-place
 {
-    right: 40px;
+    right: 8px;
+}
+.catalogbrowser .cb-display-btn-place .tab-button
+{
+    display: block;
+    margin-top: -2px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    border-radius: 4px;
+    line-height: 100%;
 }
 .catalogbrowser .cb-display-menu,
 .catalogbrowser .cb-filters-menu
@@ -285,7 +296,7 @@
     position: absolute;
     z-index: 4;
     top: 36px;
-    right: 16px;
+    right: 8px;
 
     display: none;
 
@@ -365,7 +376,7 @@
     padding-left: 38px;
 
     border: 1px solid transparent;
-    border-radius: 6px;
+    border-radius: 4px;
 }
 .catalogbrowser .info
 {
@@ -537,7 +548,7 @@
 }
 .catalogbrowser .item-entry-preview img
 {
-    width: 100%;
+    max-width: 100%;
     margin: -2px 0;
 
     vertical-align: middle;
@@ -595,7 +606,7 @@
 
 .catalogbrowser .item-entry-top-bar
 {
-    font-size: 14px;
+    font-size: 100%;
     font-weight: bold;
 
     display: block;
@@ -622,8 +633,7 @@
 
     color: #666;
 }
-.catalogbrowser .item-entry-visibility,
-.catalogbrowser .item-entry-accessibility,
+.catalogbrowser .item-entry-unlisted,
 .catalogbrowser .item-entry-publication,
 .catalogbrowser .item-entry-state
 {
@@ -636,25 +646,9 @@
 
     background: transparent none 0 0 no-repeat;
 }
-.catalogbrowser .item-entry-visibility,
-.catalogbrowser .item-entry-accessibility
+.catalogbrowser .item-entry-unlisted
 {
-    background-image: url('../images/icons/16/cancel.png');
-}
-.catalogbrowser .item-entry-visibility.all,
-.catalogbrowser .item-entry-accessibility.all
-{
-    background-image: url('../images/icons/16/users.png');
-}
-.catalogbrowser .item-entry-visibility.auth,
-.catalogbrowser .item-entry-accessibility.auth
-{
-    background-image: url('../images/icons/16/user.png');
-}
-.catalogbrowser .item-entry-visibility.perm,
-.catalogbrowser .item-entry-accessibility.perm
-{
-    background-image: url('../images/icons/16/rights.png');
+    background-image: url('../images/icons/16/unlisted.png');
 }
 .catalogbrowser .item-entry-publication
 {
