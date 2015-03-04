@@ -1216,7 +1216,7 @@ ECMSCatalogBrowser.prototype.pick = function(oid, action) {
     }
     // load info if no info are available
     var obj = this;
-    this.get_info(oid, false, function(result) {
+    this.get_info(oid, true, function(result) {
         obj._pick(oid, result, false, action);
     });
 };
