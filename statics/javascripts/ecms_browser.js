@@ -105,12 +105,12 @@ function ECMSCatalogBrowser(options) {
                             }
                         } else {
                             var message = "";
-                            console.log(data.error_code);
                             if (!obj.use_overlay && (data.error_code == "403" || data.error_code == "401")) {
                                 var login_url = obj.url_login + "?next=" + window.location.pathname + (window.location.hash ? window.location.hash.substring(1) : "");
                                 message = "<p>" + obj.translate("Please login to access this channel") + "<br /> <a href=\"" + login_url + "\">" + obj.translate("Sign in") + "</a></p>";
                             }
                             obj.display_message("list", data.error + message);
+                            console.log(data.error_code);
                         }
                     });
                 } else {
@@ -136,21 +136,21 @@ ECMSCatalogBrowser.prototype.init = function() {
     html += "<div class=\"cb-left\">";
     html +=     "<div class=\"cb-column\">";
     html += this.get_tab_menu_html();
-    html += this.get_tree_hmtl();
-    html += this.get_search_hmtl();
-    html += this.get_latest_hmtl();
+    html += this.get_tree_html();
+    html += this.get_search_html();
+    html += this.get_latest_html();
     html +=     "</div>";
     html += "</div>";
     html += "<div class=\"cb-right\">";
-    //html += this.get_filters_hmtl();
-    html += this.get_display_hmtl();
+    //html += this.get_filters_html();
+    html += this.get_display_html();
     if (!this.use_overlay) {
         html += "<div class=\"main-block\">";
         html += "<div class=\"main-block-content\">";
     }
-    html += this.get_column_list_hmtl();
-    html += this.get_column_search_hmtl();
-    html += this.get_column_latest_hmtl();
+    html += this.get_column_list_html();
+    html += this.get_column_search_html();
+    html += this.get_column_latest_html();
     html +=     "<div class=\"cb-loading\"><div>" + this.translate("Loading...") + "</div></div>";
     if (!this.use_overlay)
         html += "</div>";
@@ -225,7 +225,7 @@ ECMSCatalogBrowser.prototype.get_tab_menu_html = function() {
     html += "</div>";
     return html;
 };
-ECMSCatalogBrowser.prototype.get_display_hmtl = function() {
+ECMSCatalogBrowser.prototype.get_display_html = function() {
     var sorting_values = [
         { "default": this.translate("Use channel's default sorting") },
         { "creation_date-desc": this.translate("Creation date, descending") },
@@ -245,7 +245,7 @@ ECMSCatalogBrowser.prototype.get_display_hmtl = function() {
     html += "<button class=\"std-btn " + ( this.display_mode === "list" ? "cb-active" : "") + "\" id=\"display_as_list\">" + this.translate("list") + "</button>";
     html += "<button class=\"std-btn " + ( this.display_mode === "thumbnail" ? "cb-active" : "") + "\" id=\"display_as_thumbnails\">" + this.translate("thumbnails") + "</button>";
     html += "<br /><br /><label for=\"order_channels_medias\">" + this.translate("Sort by") + "</label>";
-    html += "<select id=\"order_channels_medias\">";
+    html += " <select id=\"order_channels_medias\">";
     for (var index in sorting_values)
         for (var key in sorting_values[index])
         html +=     "<option value=\"" + key + "\">" + sorting_values[index][key] + "</option>";
@@ -256,7 +256,7 @@ ECMSCatalogBrowser.prototype.get_display_hmtl = function() {
     html += "</div>";
     return html;
 };
-ECMSCatalogBrowser.prototype.get_filters_hmtl = function() {
+ECMSCatalogBrowser.prototype.get_filters_html = function() {
     var html = "<div class=\"cb-filters-btn-place\"><div class=\""+ this.btn_class + " cb-btn-filters\">" + this.translate("Filters") + "</div></div>";
     html += "<div class=\"cb-filters-menu\">";
     if (this.displayable_content.indexOf("c") != -1) {
@@ -316,14 +316,14 @@ ECMSCatalogBrowser.prototype.get_filters_hmtl = function() {
     html += "</div>";
     return html;
 };
-ECMSCatalogBrowser.prototype.get_tree_hmtl = function() {
+ECMSCatalogBrowser.prototype.get_tree_html = function() {
     var html = "";
     html += "<div class=\"cb-container cb-left-list\">";
     html +=     "<div class=\"cb-tree catalog-channels\"></div>";
     html += "</div>";
     return html;
 };
-ECMSCatalogBrowser.prototype.get_search_hmtl = function() {
+ECMSCatalogBrowser.prototype.get_search_html = function() {
     var html = "";
     html += "<div class=\"cb-container cb-left-search\">";
     html +=     "<form class=\"cb-search-block\" method=\"get\" action=\".\" onsubmit=\"javascript: return false;\">";
@@ -378,7 +378,7 @@ ECMSCatalogBrowser.prototype.get_search_hmtl = function() {
     html += "</div>";
     return html;
 };
-ECMSCatalogBrowser.prototype.get_latest_hmtl = function() {
+ECMSCatalogBrowser.prototype.get_latest_html = function() {
     var html = "";
     html += "<div class=\"cb-container cb-left-latest\">";
     html +=     "<div class=\"info\">" + this.translate("This list presents all media and channels ordered by add date in the catalog.") + "</div>";
@@ -392,7 +392,7 @@ ECMSCatalogBrowser.prototype.get_latest_hmtl = function() {
     html += "</div>";
     return html;
 };
-ECMSCatalogBrowser.prototype.get_column_list_hmtl = function() {
+ECMSCatalogBrowser.prototype.get_column_list_html = function() {
     var html = "";
     html += "<div class=\"cb-column cb-column-list\">";
     html +=     "<div class=\"cb-title\">" + this.translate("Channel's content")+"</div>";
@@ -405,7 +405,7 @@ ECMSCatalogBrowser.prototype.get_column_list_hmtl = function() {
     html += "</div>";
     return html;
 };
-ECMSCatalogBrowser.prototype.get_column_search_hmtl = function() {
+ECMSCatalogBrowser.prototype.get_column_search_html = function() {
     var html = "";
     html += "<div class=\"cb-column cb-column-search\">";
     html +=     "<div class=\"cb-title\">" + this.translate("Search results") + " <span class=\"cb-search-results-count\"></span></div>";
@@ -418,7 +418,7 @@ ECMSCatalogBrowser.prototype.get_column_search_hmtl = function() {
     html += "</div>";
     return html;
 };
-ECMSCatalogBrowser.prototype.get_column_latest_hmtl = function() {
+ECMSCatalogBrowser.prototype.get_column_latest_html = function() {
     var html = "";
     html += "<div class=\"cb-column cb-column-latest\">";
     html +=     "<div class=\"cb-title\">" + this.translate("Latest content added in the catalog") + "</div>";
@@ -487,6 +487,8 @@ ECMSCatalogBrowser.prototype.display_as_list = function() {
         this.$widgets.latest_place.html("");
         this.load_latest();
     }
+    this.$widgets.display_btn.removeClass("cb-active");
+    this.$widgets.display_menu.removeClass("cb-active");
 };
 ECMSCatalogBrowser.prototype.display_as_thumbnails = function() {
     if ($("#display_as_thumbnails", this.$main).hasClass("cb-active")) {
@@ -510,6 +512,8 @@ ECMSCatalogBrowser.prototype.display_as_thumbnails = function() {
         this.$widgets.latest_place.html("");
         this.load_latest();
     }
+    this.$widgets.display_btn.removeClass("cb-active");
+    this.$widgets.display_menu.removeClass("cb-active");
 };
 ECMSCatalogBrowser.prototype.order_channel = function(order) {
     this.display_channel(this.current_category_oid, order);
@@ -613,12 +617,12 @@ ECMSCatalogBrowser.prototype.get_info = function(oid, full, callback, async) {
         }
         else {
             var message = "";
-            console.log(data.error_code);
             if (!obj.use_overlay && (data.error_code == "403" || data.error_code == "401")) {
                 var login_url = obj.url_login + "?next=" + window.location.pathname + (window.location.hash ? window.location.hash.substring(1) : "");
                 message = "<p>" + obj.translate("Please login to access this channel") + "<br /> <a href=\"" + login_url + "\">" + obj.translate("Sign in") + "</a></p>";
             }
             obj.display_message("list", data.error + message);
+            console.log(data.error_code);
         }
     };
     if (method) {
@@ -666,15 +670,17 @@ ECMSCatalogBrowser.prototype.display_channel = function(cat_oid, order) {
         else {
             obj.$widgets.content_list.html("");
             var message = "";
-            console.log(data.error_code);
             if (!obj.use_overlay && (data.error_code == "403" || data.error_code == "401")) {
                 var login_url = obj.url_login + "?next=" + window.location.pathname + (window.location.hash ? window.location.hash.substring(1) : "");
                 message = "<p>" + obj.translate("Please login to access this channel") + "<br /> <a href=\"" + login_url + "\">" + obj.translate("Sign in") + "</a></p>";
             }
             obj.display_message("list", response.error + message);
+            console.log(data.error_code);
         }
     };
     this.api_manager.ajax_call("get_channels_content", data, callback);
+    if (!this.use_overlay && this.display_mode == "thumbnail")
+        box_hide_info();
 };
 ECMSCatalogBrowser.prototype.display_content = function(target, data, cat_oid, type) {
     var $container = this.$widgets["content_" + target];
@@ -802,9 +808,10 @@ ECMSCatalogBrowser.prototype.get_content_entry = function(item_type, item, gsele
     if (this.use_overlay && item_type == "parent" && item.oid == "0")
         return $entry;
     if (item_type == "parent" || item_type == "current")
-        $entry = $("<div class=\"item-entry item-type-" + item_type + " " + "\" id=\"item_entry_" + oid + "\"></div>");
+        $entry = $("<div class=\"item-entry item-type-" + item_type + " " + "\"></div>");
     else
-        $entry = $("<div class=\"item-entry item-type-" + item_type + " " + this.display_mode + "\" id=\"item_entry_" + oid + "\"></div>");
+        $entry = $("<div class=\"item-entry item-type-" + item_type + " " + this.display_mode + "\"></div>");
+    $entry.attr("id", "item_entry_" + oid + "_" + this.displayed);
     if (this.current_selection && this.current_selection.oid == oid)
         $entry.addClass("selected");
     if (selectable)
@@ -813,36 +820,25 @@ ECMSCatalogBrowser.prototype.get_content_entry = function(item_type, item, gsele
         $entry.addClass(item.extra_class);
     var btn_class = this.use_jquery_ui ? "ui-widget ui-state-default ui-corner-all" : "std-btn";
     
-    var html = "";
+    var html = this._get_entry_block_html(item, btn_class, item_type, selectable);
     if (this.display_mode == "thumbnail")
         if (this.browse_search && !(item_type == "parent" || item_type == "current")) {
-            html += "<div id=\"item_entry_" + oid + "\"><a class\"obj-block-link\"></a>";
-            html +=   "<div class=\"obj-block-info-btn info-thumb\"\
+            html +=   "<div class=\"obj-block-info\"\
                         title=\"" + this.translate("Open information panel") + "\"></div>";
             if (item.can_edit) {
                 var url_edit = this._get_btn_link(item, "edit");
-                html +=   "<div class=\"obj-block-edit\"\
-                                title=\"" + this.translate("Edit it") + "\">";
-                html +=         "<a href=\"" + (url_edit ? url_edit : "") + "\"></a>";
-                html +=    "</div>";
+                html +=   "<a class=\"obj-block-edit\"\
+                            title=\"" + this.translate("Edit") + "\"\
+                            href=\"" + (url_edit ? url_edit : "") + "\"></a>";
             }
-            html += "</div>";
 
-            html += "<div class=\"overlay-info\" id=\"item_entry_" + oid + "_info\" style=\"display: none;\"></div>";
-                $(document).click(function(event) {
-                    if(!$(event.target).closest("#item_entry_" + oid + "_info").length && !$(event.target).closest(".info-thumb").length) {
-                        if($("#item_entry_" + oid + "_info").is(":visible")) {
-                            box_hide_info();
-                        }
-                    }
-                });
+            html += "<div class=\"overlay-info\" id=\"item_entry_" + oid + "_" + this.displayed + "_info\" style=\"display: none;\"></div>";
         }
-    html += this._get_entry_block_html(item, btn_class, item_type, selectable);
     var $entry_block = $(html);
-    if (this.display_mode == "thumbnail")
-        this._set_thumbnail_info_box_html(item_type, btn_class, selectable, oid, $entry_block, item);
     this._set_on_click_entry_block($entry_block, oid, item_type, item, selectable);
     $entry.append($entry_block);
+    if (this.display_mode == "thumbnail")
+        this._set_thumbnail_info_box_html(item_type, btn_class, selectable, oid, $entry, item);
     
     html = this._get_entry_links_html(item, btn_class, item_type, selectable);
     var $entry_links = $(html);
@@ -852,16 +848,16 @@ ECMSCatalogBrowser.prototype.get_content_entry = function(item_type, item, gsele
     return $entry;
 };
 ECMSCatalogBrowser.prototype._get_entry_block_html = function(item, btn_class, item_type, selectable) {
-    var balise = "div";
+    var markup = "div";
     var href = "";
     if (!this.use_overlay && item.slug && !(item_type == "parent" || item_type == "current")) {
-        balise = "a";
+        markup = "a";
         if (item_type != "channel" && !item.validated && item.can_edit)
             href = "href=\"" + this._get_btn_link(item, "edit") +  "\"";
         else
             href = "href=\"" + this._get_btn_link(item, "view") +  "\"";
     }
-    var html = "<" + balise + " " + href + "class=\"item-entry-link " + (selectable || item_type == "channel" || item_type == "parent" ? "clickable" : "") + "\">";
+    var html = "<" + markup + " " + href + "class=\"item-entry-link " + (selectable || item_type == "channel" || item_type == "parent" ? "clickable" : "") + "\">";
     if (item.thumb)
         if (this.display_mode == "thumbnail" && !(item_type == "parent" || item_type == "current"))
             html += "<span class=\"item-entry-preview obj-block-link\" style=\"background-image: url(" + item.thumb + ");\"></span>";
@@ -869,22 +865,14 @@ ECMSCatalogBrowser.prototype._get_entry_block_html = function(item, btn_class, i
             html += "<span class=\"item-entry-preview\"><img src=\"" + item.thumb + "\"/></span>";
     else
         html += "<span class=\"item-entry-preview\"><span class=\"item-" + item_type + "-icon\"></span></span>";
-    if (this.display_mode == "thumbnail" && !(item_type == "parent" || item_type == "current")) {
-        html += "<div>";
-        html +=   "<span class=\"item-entry-title\">" + utils.escape_html(item.title) + "</span>";
-        if (item.duration)
-            html +=   "<span class=\"item-entry-duration\">" + item.duration + "</span>";
-        html += "</div>";
-    }
     html +=     "<span class=\"item-entry-content\">";
     html +=         "<span class=\"item-entry-top-bar\">";
-    html +=             "<span class=\"item-entry-title\">" + utils.escape_html(item.title) + "</span>";
+    if (item_type == "parent" || item_type == "current" || this.display_mode != "thumbnail")
+        html +=         "<span class=\"item-entry-title\">" + utils.escape_html(item.title) + "</span>";
     if (this.browse_search && item_type == "current" && item.can_edit) {
         var url_edit = this._get_btn_link(item, "edit");
-        html += "<div class=\"item-entry-links\"><a class=\"" + btn_class + " item-entry-pick item-entry-pick-edit-media\" href=\"" + (url_edit ? url_edit : "") + "\">" + this.translate("Edit this channel") + "</a></div>";
+        html += "<span class=\"item-entry-links\"><a class=\"" + btn_class + " item-entry-pick item-entry-pick-edit-media\" href=\"" + (url_edit ? url_edit : "") + "\">" + this.translate("Edit this channel") + "</a></span>";
     }
-    if (this.display_mode == "thumbnail" && !(item_type == "parent" || item_type == "current"))
-        html +=         "<span class=\"item-entry-close\">X</span>";
     if (item.can_edit && !(item_type == "parent" || item_type == "current")) {
         if (item.unlisted) {
             var label = item_type == "channel" ? "channel" : "media";
@@ -899,10 +887,12 @@ ECMSCatalogBrowser.prototype._get_entry_block_html = function(item, btn_class, i
         if (item_type == "video" && !item.ready)
             html +=     "<span class=\"item-entry-state\" title=\"" + this.translate("This video is not ready") + "\"></span>";
     }
-    if (item.duration && this.display_mode != "thumbnail")
+    if (item.duration)
         html +=         "<span class=\"item-entry-duration\">" + item.duration + "</span>";
     html +=         "</span>";
     html +=         "<span class=\"item-entry-bottom-bar\">";
+    if (item_type != "parent" && item_type != "current" && this.display_mode == "thumbnail")
+        html +=         "<span class=\"item-entry-title\">" + utils.escape_html(item.title) + "</span>";
     if (item.show_type)
         html +=         "<span class=\"item-entry-type\">" + this.translate("Type:") + " " + this.translate(item_type) + "</span>";
     if (item.creation)
@@ -915,9 +905,9 @@ ECMSCatalogBrowser.prototype._get_entry_block_html = function(item, btn_class, i
       //  html +=         "<span class=\"item-entry-parent\">"+this.translate("Found in") +": "+item.matching.replace(',', ' + ')+"</span>";
     html +=         "</span>";
     html +=     "</span>";
-    html += "</" + balise + ">";
+    html += "</" + markup + ">";
     if(item.chapters && this.browse_search && this.displayed == "search") {
-        html +=         "<span class='item-entry-date item-entry-chapters'><p>" + this.translate("chapters") + ":</p><ul>";
+        html +=         "<span class='item-entry-chapters'><p>" + this.translate("chapters") + ":</p><ul>";
         for (var index in item.chapters) {
             var chapter = item.chapters[index];
             html += "<li><a href='/videos/" + item.slug + "/#start=" + chapter.time +  "&autoplay'>";
@@ -969,7 +959,7 @@ ECMSCatalogBrowser.prototype._set_on_click_entry_block = function($entry_block, 
             });
         }
     } else if (!(item_type == "parent" || item_type == "current")) {
-        $(".item-entry-preview", $entry_block).click({ obj: this, oid: oid }, function(evt) {
+        $(".item-entry-content", $entry_block).click({ obj: this, oid: oid }, function(evt) {
             if (evt.data.obj.use_overlay && !selectable) {
                 evt.data.obj.display_channel(evt.data.oid);
                 evt.data.obj.tree_manager.expand_tree(evt.data.oid);
@@ -1176,30 +1166,30 @@ ECMSCatalogBrowser.prototype._get_thumbnail_info_box_html = function(item, item_
     html += "</div>";
     return html;
 };
-ECMSCatalogBrowser.prototype._set_thumbnail_info_box_html = function(item_type, btn_class, selectable, oid, $entry_block, item) {
+ECMSCatalogBrowser.prototype._set_thumbnail_info_box_html = function(item_type, btn_class, selectable, oid, $entry, item) {
     var obj = this;
-    $(".info-thumb", $entry_block).click(function() {
-        if ($("#item_entry_" + oid + "_info").html() !== "") {
-            box_open_info("item_entry_" + oid);
+    $(".obj-block-info", $entry).click(function() {
+        var info_id = "#" + $entry.attr("id") + "_info";
+        if ($(info_id).html() !== "") {
+            box_open_info($entry);
             return;
         }
         if (obj.displayed == "search") {
             var html = obj._get_thumbnail_info_box_html(item, item_type, btn_class, selectable);
-            $("#item_entry_" + oid + "_info").append($(html));
-            var $entry_overlay = $("#item_entry_" + oid + "_info");
+            var $entry_overlay = $(info_id);
+            $entry_overlay.append(html);
             obj._set_on_click_entry_links($entry_overlay, item, oid, item_type, selectable);
-            box_open_info("item_entry_" + oid);
+            box_open_info($entry);
         } else {
             obj.get_info(oid, true, function(data) {
                 var item = data.info;
                 var html = obj._get_thumbnail_info_box_html(item, item_type, btn_class, selectable);
-                $("#item_entry_" + oid + "_info").append($(html));
-                var $entry_overlay = $("#item_entry_" + oid + "_info");
+                var $entry_overlay = $(info_id);
+                $entry_overlay.append(html);
                 obj._set_on_click_entry_links($entry_overlay, item, oid, item_type, selectable);
-                box_open_info("item_entry_" + oid);
+                box_open_info($entry);
             });
         }
-        
         return;
     });
 };
@@ -1207,7 +1197,7 @@ ECMSCatalogBrowser.prototype.pick = function(oid, action) {
     if (oid === null || oid === undefined) {
         // deselect
         if (this.current_selection && this.current_selection.oid)
-            $("#item_entry_"+this.current_selection.oid, this.$main).removeClass("selected");
+            $("#item_entry_"+this.current_selection.oid+"_"+this.displayed, this.$main).removeClass("selected");
         return;
     }
     if (this.catalog[oid] && this.catalog[oid].is_full) {
@@ -1226,9 +1216,9 @@ ECMSCatalogBrowser.prototype._pick = function(oid, result, no_update, action) {
             this.overlay.hide();
         // change current selection
         if (this.current_selection && this.current_selection.oid)
-            $("#item_entry_"+this.current_selection.oid, this.$main).removeClass("selected");
+            $("#item_entry_"+this.current_selection.oid+"_"+this.displayed, this.$main).removeClass("selected");
         this.current_selection = this.catalog[oid];
-        $("#item_entry_"+oid, this.$main).addClass("selected");
+        $("#item_entry_"+oid+"_"+this.displayed, this.$main).addClass("selected");
         if (this.on_pick) {
             if (!this.use_overlay) {
                 this.on_pick(this.catalog[oid], action);
@@ -1409,12 +1399,12 @@ ECMSCatalogBrowser.prototype.load_latest = function(count, end) {
         }
         else {
             var message = "";
-            console.log(data.error_code);
             if (!obj.use_overlay && (data.error_code == "403" || data.error_code == "401")) {
                 var login_url = obj.url_login + "?next=" + window.location.pathname + (window.location.hash ? window.location.hash.substring(1) : "");
                 message = "<p>" + obj.translate("Please login to access this channel") + "<br /> <a href=\"" + login_url + "\">" + obj.translate("Sign in") + "</a></p>";
             }
             obj.display_message("latest", response.error + message);
+            console.log(data.error_code);
         }
         obj.latest_loading = false;
     };
@@ -1440,7 +1430,6 @@ ECMSCatalogBrowser.prototype.display_latest = function(result) {
         if (item.type == "p")
             type = "photos";
         var html = this.get_content_entry(type, item, this.selectable_content.indexOf(item.type) != -1);
-        var $entry_block = $(html);
         this.$widgets.latest_place.append(html);
     }
     if (this.latest_more)
