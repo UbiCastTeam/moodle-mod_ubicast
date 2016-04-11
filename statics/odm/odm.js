@@ -17,6 +17,7 @@ function OverlayDisplayManager(options) {
     this.hide_on_escape = true;
     
     // vars
+    this.pending_show_params = null;
     this.messages = {};
     this.$widget = null;
     this.max_width = 0;
@@ -31,6 +32,7 @@ function OverlayDisplayManager(options) {
     this.resources = [];
     this.current_index = 0;
     this.current_resource = null;
+    this.locked = false;
     this.no_fixed = false;
     
     if (window.utils && window.utils._current_lang)
@@ -41,14 +43,14 @@ function OverlayDisplayManager(options) {
     }
     this.set_language(this.language);
     var obj = this;
-    $(document).ready(function (event) {
+    $(document).ready(function () {
         obj._init();
     });
-    $(window).resize(function (event) {
+    $(window).resize(function () {
         obj.on_resize();
     });
-    $(window).keypress(function (event) {
-        if (obj.hide_on_escape && event.keyCode == 27)
+    $(document).keydown(function (event) {
+        if (!obj.locked && obj.hide_on_escape && event.keyCode == 27)
             obj.hide();
     });
 }
@@ -98,16 +100,20 @@ OverlayDisplayManager.prototype._init = function () {
         event.data.obj.next();
     });
     $(".odm-close", this.$widget).click({ obj: this }, function (event) {
-        event.data.obj.hide();
+        if (!event.data.obj.locked)
+            event.data.obj.hide();
     });
     $(".odm-closer", this.$widget).click({ obj: this }, function (event) {
-        event.data.obj.hide();
+        if (!event.data.obj.locked)
+            event.data.obj.hide();
     });
     $(".odm-element-content", this.$widget).click({ obj: this }, function (event) {
-        if (event.data.obj.display_mode == "image" && event.data.obj.resources.length < 2 && event.data.obj.image && !event.data.obj.image.loading_failed)
+        if (!event.data.obj.locked && event.data.obj.display_mode == "image" && event.data.obj.resources.length < 2 && event.data.obj.image && !event.data.obj.image.loading_failed)
             event.data.obj.hide();
     });
     this.on_resize();
+    if (this.pending_show_params)
+        this.show(this.pending_show_params);
 };
 
 OverlayDisplayManager.prototype.set_language = function (lang) {
@@ -233,30 +239,31 @@ OverlayDisplayManager.prototype._check_title_display = function (title) {
     }
 };
 
-OverlayDisplayManager.prototype._check_buttons_display = function (buttons) {
-    if (buttons) {
+OverlayDisplayManager.prototype._check_buttons_display = function (resource) {
+    var btns = resource.buttons;
+    if (btns) {
         // update buttons
-        if (!buttons.loaded) {
+        if (!btns.loaded) {
             $(".odm-buttons", this.$widget).html("");
-            for (var i=0; i < buttons.length; i++) {
+            for (var i=0; i < btns.length; i++) {
                 var btn = $("<button class=\""+this.default_buttons_class+"\"/>");
-                btn.html(buttons[i].label);
-                if (buttons[i].id)
-                    btn.attr("id", buttons[i].id);
-                if (buttons[i].disabled)
+                btn.html(btns[i].label);
+                if (btns[i].id)
+                    btn.attr("id", btns[i].id);
+                if (btns[i].disabled)
                     btn.attr("disabled", "disabled");
-                if (buttons[i].klass)
-                    btn.attr("class", this.default_buttons_class+" "+buttons[i].klass);
-                if (buttons[i].callback) {
-                    var data = buttons[i].data ? buttons[i].data : {};
+                if (btns[i].klass)
+                    btn.attr("class", this.default_buttons_class+" "+btns[i].klass);
+                if (btns[i].callback) {
+                    var data = btns[i].data ? btns[i].data : {};
                     data.odm = this;
-                    btn.click(data, buttons[i].callback);
+                    btn.click(data, btns[i].callback);
                 }
-                if (buttons[i].close)
+                if (btns[i].close)
                     btn.click({ odm: this }, function (event) { event.data.odm.hide(); });
                 $(".odm-buttons", this.$widget).append(btn);
             }
-            buttons.loaded = true;
+            btns.loaded = true;
         }
         // show bottom bar
         if (!this.bottom_bar_displayed) {
@@ -265,7 +272,7 @@ OverlayDisplayManager.prototype._check_buttons_display = function (buttons) {
             this.on_resize();
         }
         // focus first button
-        if (this.displayed)
+        if (this.displayed && !resource.no_button_focus)
             this._focus_button();
     }
     else if (this.bottom_bar_displayed) {
@@ -285,17 +292,38 @@ OverlayDisplayManager.prototype._focus_button = function () {
     catch (e) { }
 };
 
+OverlayDisplayManager.prototype._set_locked = function (locked) {
+    if (this.locked == locked)
+        return;
 
+    this.locked = locked;
+    if (this.locked)
+        $(".odm-close", this.$widget).css("display", "none");
+    else
+        $(".odm-close", this.$widget).css("display", "");
+};
+
+
+OverlayDisplayManager.prototype._on_resource_hide = function () {
+    if (this.current_resource && this.current_resource.on_hide) {
+        this.current_resource.on_hide();
+        // Don't call on_hide twice
+        delete this.current_resource.on_hide;
+    }
+};
 OverlayDisplayManager.prototype._load_resource = function (resource) {
     this._show_loading();
+    this._on_resource_hide();
+
     this._check_title_display(resource.title ? resource.title : "");
-    this._check_buttons_display(resource.buttons);
+    this._check_buttons_display(resource);
+    this._set_locked(resource.locked ? true : false);
     
     var obj = this;
     var callback = function (success) {
-        obj.current_resource = resource;
         obj._hide_loading();
     };
+    this.current_resource = resource;
     if (resource.image)
         // image mode
         this._load_image(resource, callback);
@@ -321,8 +349,11 @@ OverlayDisplayManager.prototype.change = function (params) {
         this._load_resource(resource);
 };
 OverlayDisplayManager.prototype.show = function (params) {
-    if (!this.$widget)
+    if (!this.$widget) {
+        this.pending_show_params = params;
         return;
+    }
+    this.pending_show_params = null;
     if (this.displayed)
         return this.change(params);
     
@@ -337,21 +368,25 @@ OverlayDisplayManager.prototype.show = function (params) {
         this._load_resource(resource);
     if (this.no_fixed)
         $(".odm-table", this.$widget).css("margin-top", ($(document).scrollTop()+10)+"px");
+    this.displayed = true;
     var obj = this;
-    this.$widget.stop(true, false).fadeIn(250, function () {
-        obj.displayed = true;
-        obj._focus_button();
+    this.$widget.addClass("odm-no-transition").stop(true, false).fadeIn(250, function () {
+        $(this).removeClass("odm-no-transition");
+        if (obj.current_resource && !obj.current_resource.no_button_focus)
+            obj._focus_button();
     });
 };
 OverlayDisplayManager.prototype.hide = function () {
+    if (this.pending_show_params)
+        this.pending_show_params = null;
     if (!this.displayed)
         return;
     
+    this.displayed = false;
     var obj = this;
-    this.$widget.stop(true, false).fadeOut(250, function () {
-        obj.displayed = false;
-        if (obj.current_resource && obj.current_resource.on_hide)
-            obj.current_resource.on_hide();
+    this.$widget.addClass("odm-no-transition").stop(true, false).fadeOut(250, function () {
+        $(this).removeClass("odm-no-transition");
+        obj._on_resource_hide();
     });
 };
 
@@ -364,11 +399,11 @@ OverlayDisplayManager.prototype.go_to_index = function (index) {
     if (index > 0)
         $(".odm-previous", this.$widget).css("display", "block");
     else
-        $(".odm-previous", this.$widget).css("display", "none");
+        $(".odm-previous", this.$widget).css("display", "");
     if (index < this.resources.length - 1)
         $(".odm-next", this.$widget).css("display", "block");
     else
-        $(".odm-next", this.$widget).css("display", "none");
+        $(".odm-next", this.$widget).css("display", "");
     if (this.current_index != index) {
         this.current_index = index;
         this._load_resource(this.resources[this.current_index]);

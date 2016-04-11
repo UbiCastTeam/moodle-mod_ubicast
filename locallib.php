@@ -61,8 +61,8 @@ function easycastms_display_media($easycastms_media, $cm, $course) {
     
     $code = '
     <iframe id="mediaserver_iframe" style="width: 100%; height: 800px;" src="'.$config->easycastms_url.'/'.$prefix.'/permalink/'.$easycastms_media->mediaid.'/iframe/" frameborder="0" allowfullscreen="allowfullscreen"></iframe>
-    <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/javascripts/jquery-latest.min.js"></script>
-    <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/javascripts/iframe_manager.js"></script>
+    <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/javascripts/jquery.min.js?_=1"></script>
+    <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/javascripts/iframe_manager.js?_=1"></script>
     ';
     echo $code;
     

@@ -37,47 +37,53 @@ class mod_easycastms_mod_form extends moodleform_mod {
         $mform->addRule('mediaid', null, 'required', null, 'client');
         $trans_script = '';
         if (get_string('language_code', 'easycastms') == 'fr')
-            $trans_script = '<script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/javascripts/ecms_trans_fr.js?_=1"></script>';
+            $trans_script = '<script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/ms-js/ms-trans-fr.js?_=1"></script>';
         $mform->addElement('html', '
             <div class="fitem">
                 <div class="felement">
-                    <div id="catalog_browser_preview">
+                    <div id="mod_ms_browser_preview">
                         <img src="'.$CFG->wwwroot.'/mod/easycastms/statics/images/media.png"/>
                         <div></div>
-                        <a href="javascript: catalog_browser.open();">'.get_string('form_pick_media', 'easycastms').'</a>
+                        <a href="javascript: ms_browser.open();">'.get_string('form_pick_media', 'easycastms').'</a>
                     </div>
                 </div>
             </div>
             
-            <link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.'/mod/easycastms/statics/odm/odm.css"/>
-            <link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.'/mod/easycastms/statics/stylesheets/ecms_browser.css?_=2"/>
-            <link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.'/mod/easycastms/statics/stylesheets/form.css"/>
-            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/javascripts/jquery-latest.min.js"></script>
+            <link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.'/mod/easycastms/statics/fonts/fa/font-awesome.min.css?_=1"/>
+            <link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.'/mod/easycastms/statics/odm/odm.css?_=1"/>
+            <link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.'/mod/easycastms/statics/ms-js/css/ms-browser.css?_=1"/>
+            <link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.'/mod/easycastms/statics/stylesheets/form.css?_=1"/>
+
+            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/javascripts/jquery.min.js?_=1"></script>
             <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/javascripts/utils.js?_=1"></script>
-            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/javascripts/ecms_api_manager.js"></script>
-            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/odm/odm.js"></script>
+            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/odm/odm.js?_=1"></script>
             '.$trans_script.'
-            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/javascripts/ecms_tree.js?_=1"></script>
-            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/javascripts/ecms_browser.js?_=1"></script>
+            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/ms-js/ms-api.js?_=1"></script>
+            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/ms-js/ms-tree.js?_=1"></script>
+            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/ms-js/ms-browser.js?_=1"></script>
+            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/ms-js/ms-browser-display.js?_=1"></script>
+            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/ms-js/ms-browser-channels.js?_=1"></script>
+            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/ms-js/ms-browser-search.js?_=1"></script>
+            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/ms-js/ms-browser-latest.js?_=1"></script>
             <script type="text/javascript">
-                var catalog_browser = new ECMSCatalogBrowser({
+                utils.use_lang("'.get_string('language_code', 'easycastms').'");
+                var ms_browser = new MSBrowser({
+                    // MSAPI settings
                     base_url: "'.$CFG->wwwroot.'/mod/easycastms/proxy.php",
                     use_proxy: true,
-                    request_data: { course_id: "'.$COURSE->id.'" },
+                    extra_data: { course_id: "'.$COURSE->id.'" },
+                    // MSBrowser settings
                     title: "'.get_string('form_pick_media', 'easycastms').'",
                     on_pick: function (media) {
-                        $(document).ready(function () {
-                            $("#id_mediaid").val(media.oid);
-                            $("#catalog_browser_preview img").attr("src", media.thumb);
-                            $("#catalog_browser_preview div").html(media.title);
-                        });
-                    },
-                    language: "'.get_string('language_code', 'easycastms').'"
+                        $("#id_mediaid").val(media.oid);
+                        $("#mod_ms_browser_preview img").attr("src", media.thumb);
+                        $("#mod_ms_browser_preview div").html(media.title);
+                    }
                 });
                 $(document).ready(function () {
                     var initial_oid = $("#id_mediaid").val();
                     if (initial_oid)
-                        catalog_browser.pick(initial_oid);
+                        ms_browser.pick(initial_oid);
                 });
             </script>');
         

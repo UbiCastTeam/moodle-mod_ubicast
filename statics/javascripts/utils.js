@@ -54,6 +54,73 @@ utils.strip = function (str, character) {
     return result;
 };
 
+// add indexOf method to Array (for IE8)
+if (!Array.prototype.indexOf) {
+    Array.prototype.indexOf = function(searchElement, fromIndex) {
+        if (this == null)
+            throw new TypeError("\"this\" is undefined or null.");
+        var O = Object(this);
+        var len = O.length >>> 0;
+        if (len === 0)
+            return -1;
+        var n = +fromIndex || 0;
+        if (Math.abs(n) === Infinity)
+            n = 0;
+        if (n >= len)
+            return -1;
+        var k = Math.max(n >= 0 ? n : len - Math.abs(n), 0);
+        while (k < len) {
+            if (k in O && O[k] === searchElement)
+                return k;
+            k++;
+        }
+        return -1;
+    };
+}
+
+// From https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/keys
+// add keys method to Object (for IE < 9)
+if (!Object.keys) {
+  Object.keys = (function() {
+    "use strict";
+    var hasOwnProperty = Object.prototype.hasOwnProperty,
+        hasDontEnumBug = !({ toString: null }).propertyIsEnumerable("toString"),
+        dontEnums = [
+          "toString",
+          "toLocaleString",
+          "valueOf",
+          "hasOwnProperty",
+          "isPrototypeOf",
+          "propertyIsEnumerable",
+          "constructor"
+        ],
+        dontEnumsLength = dontEnums.length;
+
+    return function(obj) {
+      if (typeof obj !== "object" && (typeof obj !== "function" || obj === null)) {
+        throw new TypeError("Object.keys called on non-object");
+      }
+
+      var result = [], prop, i;
+
+      for (prop in obj) {
+        if (hasOwnProperty.call(obj, prop)) {
+          result.push(prop);
+        }
+      }
+
+      if (hasDontEnumBug) {
+        for (i = 0; i < dontEnumsLength; i++) {
+          if (hasOwnProperty.call(obj, dontEnums[i])) {
+            result.push(dontEnums[i]);
+          }
+        }
+      }
+      return result;
+    };
+  }());
+}
+
 // isinstance
 utils.isinstance = function (obj, type) {
     if (typeof obj == "object") {
@@ -130,7 +197,7 @@ utils._extract_browser_version = function (ua, re) {
     if (matches && !isNaN(parseFloat(matches[1])))
         return parseFloat(matches[1]);
     return 0.0;
-}
+};
 utils._get_browser_info = function () {
     // get browser name and version
     var name = "unknown";
@@ -202,7 +269,7 @@ utils._get_browser_info();
 // Translations utils
 utils._translations = { en: {} };
 utils._current_lang = "en";
-utils._current_catalog = utils._translations["en"];
+utils._current_catalog = utils._translations.en;
 utils.use_lang = function (lang) {
     utils._current_lang = lang;
     if (!utils._translations[lang])
@@ -226,8 +293,8 @@ utils.add_translations = function (translations, lang) {
 utils.translate = function (text) {
     if (text in utils._current_catalog)
         return utils._current_catalog[text];
-    else if (utils._current_lang != "en" && text in utils._translations["en"])
-        return utils._translations["en"][text];
+    else if (utils._current_lang != "en" && text in utils._translations.en)
+        return utils._translations.en[text];
     return text;
 };
 utils.get_date_display = function (d) {
@@ -289,53 +356,27 @@ utils.get_date_display = function (d) {
     return day+" "+month+" "+year+" "+utils.translate("at")+" "+time;
 };
 
+// Versions comparison
+utils.compare_versions = function (v1, comparator, v2) {
+    "use strict";
+    comparator = comparator == "=" ? "==" : comparator;
+    var v1parts = v1.split("."), v2parts = v2.split(".");
+    var maxLen = Math.max(v1parts.length, v2parts.length);
+    var part1, part2;
+    var cmp = 0;
+    for (var i=0; i < maxLen && !cmp; i++) {
+        part1 = parseInt(v1parts[i], 10) || 0;
+        part2 = parseInt(v2parts[i], 10) || 0;
+        if (part1 < part2)
+            cmp = 1;
+        if (part1 > part2)
+            cmp = -1;
+    }
+    return eval("0" + comparator + cmp);
+};
 
 // JavaScript classes related functions
 utils.setup_class = function (obj, options, allowed_options) {
-    // listeners
-    if (!obj._listeners)
-        obj._listeners = {};
-    if (!obj.constructor.prototype.add_listener)
-        obj.constructor.prototype.add_listener = function (evtname, arg1, arg2, arg3) {
-            // arguments: evtname, [receiver], [params], fct
-            var listener = {};
-            if (arg3 !== undefined) {
-                listener.receiver = arg1;
-                listener.params = arg2;
-                listener.fct = arg3;
-            }
-            else if (arg2 !== undefined) {
-                listener.receiver = arg1;
-                listener.fct = arg2;
-            }
-            else if (arg1 !== undefined) {
-                listener.fct = arg1;
-            }
-            else {
-                throw("Invalid listener for event "+evtname+" (no function given to add_listener function).");
-            }
-            if (!this._listeners[evtname])
-                this._listeners[evtname] = [listener];
-            else
-                this._listeners[evtname].push(listener);
-        };
-    if (!obj.constructor.prototype.call_listeners)
-        obj.constructor.prototype.call_listeners = function (evtname, data) {
-            if (!this._listeners[evtname])
-                return;
-            for (var i=0; i < this._listeners[evtname].length; i++) {
-                var listener = this._listeners[evtname][i];
-                try {
-                    if (listener.receiver)
-                        listener.fct(listener.receiver, data, listener.params);
-                    else
-                        listener.fct(data, listener.params);
-                }
-                catch (e) {
-                    console.log("Error when calling listener for event "+evtname+" of object "+this.constructor.name+".\n    Error: "+e+"\n    Receiver: "+listener.receiver+"\n    Receiving function is: "+listener.fct.toString());
-                }
-            }
-        };
     // translations
     if (!obj.constructor.prototype.add_translations)
         obj.constructor.prototype.add_translations = function (translations) {
@@ -370,4 +411,3 @@ utils.setup_class = function (obj, options, allowed_options) {
     if (options)
         obj.set_options(options);
 };
-

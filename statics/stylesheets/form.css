@@ -1,24 +1,15 @@
 /* CSS for moodle media form */
 
 /* preview place */
-#catalog_browser_preview {
+#mod_ms_browser_preview {
     overflow: hidden;
 }
-#catalog_browser_preview img {
+#mod_ms_browser_preview img {
     margin-right: 10px;
     float: left;
     display: block;
-    width: 120px;
+    max-width: 240px;
 }
-#catalog_browser_preview div {
+#mod_ms_browser_preview div {
     margin-bottom: 10px;
 }
-
-
-.catalogbrowser .item-entry-links .std-btn {
-    cursor: pointer;
-}
-.catalogbrowser .item-entry-links .std-btn:hover {
-    text-decoration: underline;
-}
-
