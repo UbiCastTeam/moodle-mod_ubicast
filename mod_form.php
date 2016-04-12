@@ -44,7 +44,7 @@ class mod_easycastms_mod_form extends moodleform_mod {
                     <div id="mod_ms_browser_preview">
                         <img src="'.$CFG->wwwroot.'/mod/easycastms/statics/images/media.png"/>
                         <div></div>
-                        <a href="javascript: ms_browser.open();">'.get_string('form_pick_media', 'easycastms').'</a>
+                        <button type="button" onclick="javascript: ms_browser.open();">'.get_string('form_pick_media', 'easycastms').'</button>
                     </div>
                 </div>
             </div>

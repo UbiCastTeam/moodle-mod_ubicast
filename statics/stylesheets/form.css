@@ -2,14 +2,19 @@
 
 /* preview place */
 #mod_ms_browser_preview {
-    overflow: hidden;
+	overflow: hidden;
 }
 #mod_ms_browser_preview img {
-    margin-right: 10px;
-    float: left;
-    display: block;
-    max-width: 240px;
+	margin-right: 10px;
+	float: left;
+	display: block;
+	max-width: 240px;
 }
 #mod_ms_browser_preview div {
-    margin-bottom: 10px;
+	margin-bottom: 10px;
+	font-weight: bold;
+}
+
+.odm-main {
+	z-index: 10000; /* to show overlay over title bar */
 }
