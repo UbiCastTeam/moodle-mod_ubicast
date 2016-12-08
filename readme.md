@@ -38,7 +38,7 @@ Set the url of the MediaServer and the API key to use in the plugin settings:
 
 ![Plugin settings](http://www.ubicast.eu/medias/downloads/techdocs/lms-integration/moodle/settings2.png)
 
-You can find these in the Mediaserver Global settings menu:
+You can find these in the Mediaserver authentication settings:
 
 ![MS settings](http://www.ubicast.eu/medias/downloads/techdocs/lms-integration/moodle/settings3.png)
 
