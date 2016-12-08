@@ -1,7 +1,7 @@
 Easycast MediaServer Moodle activity plugin
 ===========================================
 
-Copyright: UbiCast (http://ubicast.eu)
+Copyright: UbiCast (http://www.ubicast.eu)
 License: http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 
 
@@ -9,15 +9,24 @@ Description:
 ------------
 This Moodle activity module allows users to add media from an EasyCast MediaServer in their courses.
 
+
+Dependencies:
+-------------
+This plugin requires the PHP CURL library, 
+Moodle >= *2.7* and MediaServer >= *6.6*.
+
+
 Installation:
 -------------
 
 If you clone this repository, do not forget to initialise the git submodule:
 
-	git clone https://github.com/UbiCastTeam/moodle-mod_easycastms
-	cd moodle-mod_easycastms
-	git submodule init
-	git submodule update
+```bash
+git clone https://github.com/UbiCastTeam/moodle-mod_easycastms
+cd moodle-mod_easycastms
+git submodule init
+git submodule update
+```
 
 Follow [the standard moodle procedure](https://docs.moodle.org/28/en/Installing_plugins) to install the module. You can install it from [the official Moodle plugins repository](https://moodle.org/plugins/view.php?plugin=mod_easycastms) or using this git repository.
 
@@ -56,8 +65,3 @@ About rights management
 -----------------------
 
 Keep in mind that the rights management is currently based on comparing the usernames in Moodle and Mediaserver (in which case we recommend using LDAP as common authentication backend); if the user has the appropriate rights defined in MediaServer, he can also edit directly from within Moodle or watch the statistics.
-
-Dependencies:
--------------
-This plugin requires the PHP CURL library, 
-Moodle >= 2.7 and MediaServer >= 4.0.
