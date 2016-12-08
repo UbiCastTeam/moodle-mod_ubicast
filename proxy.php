@@ -54,7 +54,7 @@ unset($data['course_id']);
 if (isset($data['_'])) // jquery anti caching argument
     unset($data['_']);
 $data['api_key'] = $config->easycastms_apikey;
-$data['username'] = $USER->username;
+$data['use_username'] = $USER->username;
 
 $args = '';
 if (gettype($data) == 'array') {
