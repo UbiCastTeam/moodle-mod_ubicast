@@ -16,5 +16,5 @@
 }
 
 .odm-main {
-	z-index: 10000; /* to show overlay over title bar */
+	z-index: 15000; /* to show overlay over title and dock bar */
 }

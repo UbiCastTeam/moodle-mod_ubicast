@@ -37,7 +37,7 @@ class mod_easycastms_mod_form extends moodleform_mod {
         $mform->addRule('mediaid', null, 'required', null, 'client');
         $trans_script = '';
         if (get_string('language_code', 'easycastms') == 'fr')
-            $trans_script = '<script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/ms-js/ms-trans-fr.js?_=1"></script>';
+            $trans_script = '<script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/ms-js/ms-trans-fr.js?_=2"></script>';
         $mform->addElement('html', '
             <div class="fitem">
                 <div class="felement">
@@ -49,22 +49,22 @@ class mod_easycastms_mod_form extends moodleform_mod {
                 </div>
             </div>
             
-            <link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.'/mod/easycastms/statics/fonts/fa/font-awesome.min.css?_=1"/>
-            <link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.'/mod/easycastms/statics/odm/odm.css?_=1"/>
-            <link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.'/mod/easycastms/statics/ms-js/css/ms-browser.css?_=1"/>
-            <link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.'/mod/easycastms/statics/stylesheets/form.css?_=1"/>
+            <link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.'/mod/easycastms/statics/fonts/fa/font-awesome.min.css?_=2"/>
+            <link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.'/mod/easycastms/statics/odm/odm.css?_=2"/>
+            <link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.'/mod/easycastms/statics/ms-js/css/ms-browser.css?_=2"/>
+            <link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.'/mod/easycastms/statics/stylesheets/form.css?_=2"/>
 
-            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/javascripts/jquery.min.js?_=1"></script>
-            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/javascripts/utils.js?_=1"></script>
-            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/odm/odm.js?_=1"></script>
+            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/javascripts/jquery.min.js?_=2"></script>
+            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/javascripts/utils.js?_=2"></script>
+            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/odm/odm.js?_=2"></script>
             '.$trans_script.'
-            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/ms-js/ms-api.js?_=1"></script>
-            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/ms-js/ms-tree.js?_=1"></script>
-            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/ms-js/ms-browser.js?_=1"></script>
-            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/ms-js/ms-browser-display.js?_=1"></script>
-            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/ms-js/ms-browser-channels.js?_=1"></script>
-            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/ms-js/ms-browser-search.js?_=1"></script>
-            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/ms-js/ms-browser-latest.js?_=1"></script>
+            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/ms-js/ms-api.js?_=2"></script>
+            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/ms-js/ms-tree.js?_=2"></script>
+            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/ms-js/ms-browser.js?_=2"></script>
+            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/ms-js/ms-browser-display.js?_=2"></script>
+            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/ms-js/ms-browser-channels.js?_=2"></script>
+            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/ms-js/ms-browser-search.js?_=2"></script>
+            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/ms-js/ms-browser-latest.js?_=2"></script>
             <script type="text/javascript">
                 utils.use_lang("'.get_string('language_code', 'easycastms').'");
                 var ms_browser = new MSBrowser({
