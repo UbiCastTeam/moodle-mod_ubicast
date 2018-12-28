@@ -12,7 +12,7 @@ This Moodle activity module allows users to add media from an EasyCast MediaServ
 
 Dependencies:
 -------------
-This plugin requires the PHP CURL library, 
+This plugin requires the PHP CURL library,
 Moodle >= *2.7* and MediaServer >= *6.6*.
 
 
@@ -22,19 +22,17 @@ Installation:
 If you clone this repository, do not forget to initialise the git submodule:
 
 ```bash
-git clone https://github.com/UbiCastTeam/moodle-mod_easycastms
+git clone --recursive https://github.com/UbiCastTeam/moodle-mod_easycastms
 cd moodle-mod_easycastms
-git submodule init
-git submodule update
 ```
 
 Follow [the standard moodle procedure](https://docs.moodle.org/28/en/Installing_plugins) to install the module. You can install it from [the official Moodle plugins repository](https://moodle.org/plugins/view.php?plugin=mod_easycastms) or using this git repository.
 
-Once installed, go to the plugin settings in Moodle (usually, Plugins > Activity modules > EasyCast MediaServer plugin): 
+Once installed, go to the plugin settings in Moodle (usually, Plugins > Activity modules > EasyCast MediaServer plugin):
 
 ![Plugin settings location](http://www.ubicast.eu/medias/downloads/techdocs/lms-integration/moodle/settings1.png)
 
-Set the url of the MediaServer and the API key to use in the plugin settings: 
+Set the url of the MediaServer and the API key to use in the plugin settings:
 
 ![Plugin settings](http://www.ubicast.eu/medias/downloads/techdocs/lms-integration/moodle/settings2.png)
 
