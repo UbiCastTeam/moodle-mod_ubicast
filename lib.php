@@ -79,7 +79,7 @@ function easycastms_update_instance($data, $mform) {
 // Delete easycastms instance.
 function easycastms_delete_instance($id) {
     global $DB;
-    
+
     $easycastms_media = $DB->get_record('easycastms', array('id'=>$id));
     if (!$easycastms_media) {
         return false;
@@ -92,7 +92,7 @@ function easycastms_delete_instance($id) {
     return true;
 }
 
-// Return use outline
+// Return user outline
 function easycastms_user_outline($course, $user, $mod, $easycastms_media) {
     global $DB;
 
@@ -111,7 +111,7 @@ function easycastms_user_outline($course, $user, $mod, $easycastms_media) {
     return NULL;
 }
 
-// Return use complete
+// Displays last time seen by user
 function easycastms_user_complete($course, $user, $mod, $easycastms_media) {
     global $CFG, $DB;
 
@@ -129,4 +129,3 @@ function easycastms_user_complete($course, $user, $mod, $easycastms_media) {
         print_string('neverseen', 'easycastms');
     }
 }
-

@@ -38,6 +38,10 @@ $string['settings_url'] = 'URL du MediaServer';
 $string['settings_url_helptext'] = 'Entrez l\'URL du MediaServer. L\'URL ne doit pas finir par un "/". Par exemple: "http://mediaserver.ubicast.tv".';
 $string['settings_apikey'] = 'Clé d\'API du MediaServer';
 $string['settings_apikey_helptext'] = 'Entrez la clé d\'API du MediaServer. Une clé d\'API valide ressemble à "bku5t-N7P4n-rJs17-fkAsB-38Mqv".';
+$string['settings_ltikey'] = 'Clé LTI MediaServer';
+$string['settings_ltikey_helptext'] = 'Entrez la clé LTI MediaServer. Une clé valide ressemble à "xmz9GgcutbUvwDFNBzHMryMmzyX7wy".';
+$string['settings_ltisecret'] = 'Secret LTI MediaServer';
+$string['settings_ltisecret_helptext'] = 'Entrez le secret LTI MediaServer. Un secret valide ressemble à  "4fCQKsxQwFSxCCvdd4Dq9cxNbhZK4afPBpY312wq1mASGkAgC9qy8n9QEPq8".';
 
 // other
 $string['edit_link'] = 'Éditer ce média';
@@ -46,4 +50,3 @@ $string['language_code'] = 'fr';
 $string['medias'] = 'Médias';
 $string['neverseen'] = 'Jamais visionné';
 $string['view_link'] = 'Voir le média';
-
