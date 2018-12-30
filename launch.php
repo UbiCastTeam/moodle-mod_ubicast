@@ -53,7 +53,7 @@ require_once($CFG->dirroot.'/mod/easycastms/locallib.php');
 $id = required_param('id', PARAM_INT); // Course Module ID.
 $mediaId = required_param('mediaId', PARAM_ALPHANUM); // Easycast Media ID.
 
-$cm = get_coursemodule_from_id('easycastms', $id, 0, false, MUST_EXIST);
+$cm = get_coursemodule_from_id(null, $id, 0, false, MUST_EXIST);
 
 $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 
