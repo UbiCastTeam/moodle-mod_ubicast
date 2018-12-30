@@ -31,11 +31,13 @@ Once installed, go to the plugin settings in Moodle (usually, Plugins > Activity
 
 Set the url of the MediaServer and the API key to use in the plugin settings:
 
-![Plugin settings](http://www.ubicast.eu/medias/downloads/techdocs/lms-integration/moodle/settings2.png)
+![Plugin settings](../assets/plugin-settings.png)
 
-You can find these in the Mediaserver authentication settings:
+You can find these in the Mediaserver authentication settings & LTI Tabs:
 
-![MS settings](http://www.ubicast.eu/medias/downloads/techdocs/lms-integration/moodle/settings3.png)
+![MS settings](../assets/media-server-settings.png)
+
+![LTI Settings](../assets/lti-settings.png)
 
 Usage:
 ------
@@ -54,7 +56,13 @@ When clicking on "Select a media" the user gets to choose easily from the media 
 
 That's it, content is now integrated in the Moodle course:
 
-![Use 4](http://www.ubicast.eu/medias/downloads/techdocs/lms-integration/moodle/use4.png)
+* Professor view
+
+![Professor view](../assets/professor-view.png)
+
+* Student view
+
+![Student view](../assets/student-view.png)
 
 Development environment
 -----------------------
