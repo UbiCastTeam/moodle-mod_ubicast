@@ -140,7 +140,7 @@ function easycastms_display_media($easycastms_media, $cm, $course) {
     $key = $config->easycastms_ltikey;
     $secret = $config->easycastms_ltisecret;
 
-    $iframe_url = 'launch.php?id='.$course->id.'&mediaId='.$easycastms_media->mediaid;
+    $iframe_url = 'launch.php?id='.$cm->id.'&mediaId='.$easycastms_media->mediaid;
 
     if (empty($key) || empty($secret)) {
       $prefix = easycastms_get_url_prefix($easycastms_media);
