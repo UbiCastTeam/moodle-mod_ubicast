@@ -12,7 +12,6 @@ require_once('../../config.php');
 require_once('lib.php');
 require_once("$CFG->dirroot/mod/easycastms/locallib.php");
 
-
 // check access right
 header('Content-type: application/json'); // set response mime type
 if (!isloggedin()) {
@@ -89,13 +88,14 @@ catch (Exception $e) {
 http_response_code($http_status);
 try {
     $response = json_decode($response_body);
-    if ($response != null)
+
+    if ($response != null) {
         echo $response_body;
-    else
+    } else {
         echo json_encode(array('success' => false, 'error' => get_string('proxy_parsing_error', 'easycastms').' Code: '.json_last_error().'. Reponse: \''.$response_body.'\''));
+    }
 }
 catch (Exception $e) {
     echo json_encode(array('success' => false, 'error' => get_string('proxy_parsing_error', 'easycastms').' '.$e.' Response: \''.$response_body.'\''));
 }
 die;
-

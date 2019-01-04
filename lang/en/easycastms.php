@@ -38,6 +38,10 @@ $string['settings_url'] = 'MediaServer base URL';
 $string['settings_url_helptext'] = 'Enter the MediaServer base URL. Be sure that the URL does not ends with a "/". Example: "http://mediaserver.ubicast.tv".';
 $string['settings_apikey'] = 'MediaServer API key';
 $string['settings_apikey_helptext'] = 'Enter the MediaServer API key. An API key looks like "bku5t-N7P4n-rJs17-fkAsB-38Mqv".';
+$string['settings_ltikey'] = 'MediaServer LTI key';
+$string['settings_ltikey_helptext'] = 'Enter the MediaServer LTI key. An LTI key looks like "xmz9GgcutbUvwDFNBzHMryMmzyX7wy".';
+$string['settings_ltisecret'] = 'MediaServer LTI secret';
+$string['settings_ltisecret_helptext'] = 'Enter the MediaServer LTI secret. An LTI secret looks like "4fCQKsxQwFSxCCvdd4Dq9cxNbhZK4afPBpY312wq1mASGkAgC9qy8n9QEPq8".';
 
 // other
 $string['edit_link'] = 'Edit media';
@@ -46,4 +50,3 @@ $string['language_code'] = 'en';
 $string['medias'] = 'Medias';
 $string['neverseen'] = 'Never seen';
 $string['view_link'] = 'See media';
-
