@@ -16,9 +16,6 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configtext('easycastms/easycastms_url', get_string('settings_url', 'easycastms'),
         get_string('settings_url_helptext', 'easycastms'), ''));
 
-    $settings->add(new admin_setting_configpasswordunmask('easycastms/easycastms_apikey', get_string('settings_apikey', 'easycastms'),
-        get_string('settings_apikey_helptext', 'easycastms'), ''));
-
     $settings->add(new admin_setting_configtext('easycastms/easycastms_ltikey', get_string('settings_ltikey', 'easycastms'),
         get_string('settings_ltikey_helptext', 'easycastms'), ''));
 

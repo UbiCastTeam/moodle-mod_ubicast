@@ -35,55 +35,32 @@ class mod_easycastms_mod_form extends moodleform_mod {
         $mform->addElement('header', 'content', get_string('form_media_header', 'easycastms'));
         $mform->addElement('text', 'mediaid', get_string('form_media_id', 'easycastms'), array('size'=>'20'));
         $mform->addRule('mediaid', null, 'required', null, 'client');
-        $trans_script = '';
-        if (get_string('language_code', 'easycastms') == 'fr')
-            $trans_script = '<script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/ms-js/ms-trans-fr.js?_=3"></script>';
+
+        $config = get_config('easycastms');
+        $tool_base_URL = $config->easycastms_url;
+
         $mform->addElement('html', '
             <div class="fitem">
                 <div class="felement">
                     <div id="mod_ms_browser_preview">
-                        <img src="'.$CFG->wwwroot.'/mod/easycastms/statics/images/media.png"/>
-                        <div></div>
-                        <button type="button" onclick="javascript: ms_browser.open();">'.get_string('form_pick_media', 'easycastms').'</button>
+                        <iframe style="width: 260px; height: 200px; margin: 0;" src="'.$CFG->wwwroot.'/mod/easycastms/statics/media.png" frameborder="0"></iframe>
+                        <button type="button" onclick="javascript: media_selector.open();">'.get_string('form_pick_media', 'easycastms').'</button>
                     </div>
                 </div>
             </div>
-            
-            <link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.'/mod/easycastms/statics/fonts/fa/font-awesome.min.css?_=3"/>
-            <link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.'/mod/easycastms/statics/odm/odm.css?_=3"/>
-            <link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.'/mod/easycastms/statics/ms-js/css/ms-browser.css?_=3"/>
-            <link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.'/mod/easycastms/statics/stylesheets/form.css?_=3"/>
 
-            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/javascripts/jquery.min.js?_=3"></script>
-            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/javascripts/utils.js?_=3"></script>
-            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/odm/odm.js?_=3"></script>
-            '.$trans_script.'
-            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/ms-js/ms-api.js?_=3"></script>
-            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/ms-js/ms-tree.js?_=3"></script>
-            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/ms-js/ms-browser.js?_=3"></script>
-            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/ms-js/ms-browser-display.js?_=3"></script>
-            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/ms-js/ms-browser-channels.js?_=3"></script>
-            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/ms-js/ms-browser-search.js?_=3"></script>
-            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/ms-js/ms-browser-latest.js?_=3"></script>
+            <link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.'/mod/easycastms/statics/odm/odm.css?_=4"/>
+            <link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.'/mod/easycastms/statics/form.css?_=4"/>
+
+            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/jquery.min.js?_=4"></script>
+            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/utils.js?_=4"></script>
+            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/odm/odm.js?_=4"></script>
+            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/media_selector.js?_=4"></script>
             <script type="text/javascript">
-                utils.use_lang("'.get_string('language_code', 'easycastms').'");
-                var ms_browser = new MSBrowser({
-                    // MSAPI settings
-                    base_url: "'.$CFG->wwwroot.'/mod/easycastms/proxy.php",
-                    use_proxy: true,
-                    extra_data: { course_id: "'.$COURSE->id.'" },
-                    // MSBrowser settings
-                    title: "'.get_string('form_pick_media', 'easycastms').'",
-                    on_pick: function (media) {
-                        $("#id_mediaid").val(media.oid);
-                        $("#mod_ms_browser_preview img").attr("src", media.thumb);
-                        $("#mod_ms_browser_preview div").html(media.title);
-                    }
-                });
-                $(document).ready(function () {
-                    var initial_oid = $("#id_mediaid").val();
-                    if (initial_oid)
-                        ms_browser.pick(initial_oid);
+                var media_selector = new MediaSelector({
+                    moodleURL: "'.$CFG->wwwroot.'/mod/easycastms/lti.php?id='.$COURSE->id.'",
+                    mediaserverURL: "'.$tool_base_URL.'",
+                    title: "'.get_string('form_pick_media', 'easycastms').'"
                 });
             </script>');
         

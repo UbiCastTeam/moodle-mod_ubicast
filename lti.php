@@ -50,16 +50,14 @@ require_once("../../config.php");
 require_once($CFG->dirroot.'/mod/easycastms/lib.php');
 require_once($CFG->dirroot.'/mod/easycastms/locallib.php');
 
-$id = required_param('id', PARAM_INT); // Course Module ID.
-$mediaId = required_param('mediaId', PARAM_ALPHANUM); // MediaServer media object ID.
+$cid = required_param('id', PARAM_INT); // Course ID.
+$next = required_param('next', PARAM_URL); // Redirection target after LTI login.
 
-$cm = get_coursemodule_from_id('easycastms', $id, 0, false, MUST_EXIST);
+$course = $DB->get_record('course', array('id' => $cid), '*', MUST_EXIST);
 
-$course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
+$context = context_course::instance($cid);
 
-$context = context_module::instance($cm->id);
-
-require_login($course, true, $cm);
+require_login($course, true);
 require_capability('mod/easycastms:view', $context);
 
-easycastms_launch_tool($course, $cm, $mediaId.'/');
+easycastms_launch_tool($course, null, 'login/?next='.urlencode($next));
