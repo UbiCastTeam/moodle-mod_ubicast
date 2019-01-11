@@ -1,3 +1,0 @@
-[submodule "statics/ms-js"]
-	path = statics/ms-js
-	url = https://github.com/UbiCastTeam/mediaserver-js.git
