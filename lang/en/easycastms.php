@@ -4,8 +4,8 @@
  *
  * @package    mod
  * @subpackage easycastms
- * @copyright  2013 UbiCast {@link http://ubicast.eu}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2013 UbiCast {@link https://www.ubicast.eu}
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 // moodle required strings
@@ -35,7 +35,7 @@ $string['proxy_parsing_error'] = 'Response from MediaServer cannot be parsed.';
 
 // settings page
 $string['settings_url'] = 'MediaServer base URL';
-$string['settings_url_helptext'] = 'Enter the MediaServer base URL. Example: "http://mediaserver.ubicast.tv".';
+$string['settings_url_helptext'] = 'Enter the MediaServer base URL. Example: "https://mediaserver.ubicast.tv".';
 $string['settings_ltikey'] = 'MediaServer LTI key';
 $string['settings_ltikey_helptext'] = 'Enter the MediaServer LTI key. An LTI key looks like "xmz9GgcutbUvwDFNBzHMryMmzyX7wy".';
 $string['settings_ltisecret'] = 'MediaServer LTI secret';

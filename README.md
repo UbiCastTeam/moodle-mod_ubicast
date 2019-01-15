@@ -1,8 +1,8 @@
 Easycast MediaServer Moodle activity plugin
 ===========================================
 
-Copyright: UbiCast (http://www.ubicast.eu)
-License: http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+Copyright: UbiCast (https://www.ubicast.eu)
+License: https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 
 Description:
 ------------
