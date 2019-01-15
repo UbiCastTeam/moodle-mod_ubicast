@@ -50,7 +50,7 @@ class mod_easycastms_mod_form extends moodleform_mod {
             </div>
 
             <link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.'/mod/easycastms/statics/odm/odm.css?_=4"/>
-            <link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.'/mod/easycastms/statics/form.css?_=4"/>
+            <link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.'/mod/easycastms/statics/overlay.css?_=4"/>
 
             <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/jquery.min.js?_=4"></script>
             <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/utils.js?_=4"></script>

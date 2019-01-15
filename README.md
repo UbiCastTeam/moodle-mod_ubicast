@@ -6,12 +6,16 @@ License: http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 
 Description:
 ------------
+
 This Moodle activity module allows users to add media from an EasyCast MediaServer in their courses.
+
 
 Dependencies:
 -------------
+
 This plugin requires the PHP CURL library,
-Moodle >= *2.7* and MediaServer >= *6.6*.
+Moodle >= *3.0* and MediaServer >= *7.9*.
+
 
 Installation:
 -------------
@@ -39,6 +43,7 @@ You can find these in the Mediaserver authentication settings & LTI Tabs:
 
 ![LTI Settings](../assets/lti-settings.png)
 
+
 Usage:
 ------
 
@@ -64,6 +69,15 @@ That's it, content is now integrated in the Moodle course:
 
 ![Student view](../assets/student-view.png)
 
+
+About rights management
+-----------------------
+
+The permissions on embedded media are customizable in MediaServer in the LTI settings page. By default, the `student` role has the permission to access media and the `teacher` role has the permission to access and edit media.
+
+The media selection shows media for which the user is set as the speaker.
+
+
 Development environment
 -----------------------
 
@@ -79,18 +93,14 @@ After that, follow the steps above for installation.
 
 In moodle, the plugin will be copied to `mod/easycastms`, so to work on it, you can do it right away in there.
 
+
 How does the LTI Video integration work?
------------------
+----------------------------------------
 
 This is highly inspired from the way `moodle` does it in the external tool.
 
 We integrate an `iframe` in our course, which points to the `launch.php` file of the plugin.
 
-That page is returning a "self submitting" `form` (transforming therefore a `GET` request into a `POST`) towards the EasyCast Media Server LTI url of the Media (ex: `https://yourname.ubicast.tv/lti/v125acedf1dfedeojhk0/`) with all the needed parameters (`oauth`, `roles`, etc.)
+That page is returning a "self submitting" `form` (transforming therefore a `GET` request into a `POST`) towards the MediaServer LTI url of the Media (ex: `https://yourname.ubicast.tv/lti/v125acedf1dfedeojhk0/`) with all the needed parameters (`oauth`, `roles`, etc...).
 
-This allows Media Server to know the identity of the moodle user, and give the corresponding access on the media (`student`, `teacher`, etc.)
-
-About rights management
------------------------
-
-Keep in mind that the rights management is currently based on comparing the usernames in Moodle and Mediaserver (in which case we recommend using LDAP as common authentication backend); if the user has the appropriate rights defined in MediaServer, he can also edit directly from within Moodle or watch the statistics.
+This allows MediaServer to know the identity of the moodle user, and give the corresponding access on the media (`student`, `teacher`, etc...).

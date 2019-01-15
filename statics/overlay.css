@@ -1,0 +1,2 @@
+/* to show overlay over title and dock bar */
+.odm-main { z-index: 15000; }
