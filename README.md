@@ -13,33 +13,30 @@ This Moodle activity module allows users to add media from an EasyCast MediaServ
 Dependencies:
 -------------
 
-This plugin requires the PHP CURL library,
-Moodle >= *3.0* and MediaServer >= *7.9*.
+This plugin requires Moodle >= *3.0* and MediaServer >= *7.9*.
 
 
 Installation:
 -------------
 
-If you clone this repository, do not forget to initialise the git submodule:
+Follow [the standard moodle procedure](https://docs.moodle.org/28/en/Installing_plugins) to install the module. You can install it from [the official Moodle plugins repository](https://moodle.org/plugins/view.php?plugin=mod_easycastms) or using this git repository.
+
+To use the repository, clone it in your mod dir:
 
 ```bash
-git clone --recursive https://github.com/UbiCastTeam/moodle-mod_easycastms
-cd moodle-mod_easycastms
+cd "moodle/mod"
+git clone "https://github.com/UbiCastTeam/moodle-mod_easycastms" easycastms
 ```
-
-Follow [the standard moodle procedure](https://docs.moodle.org/28/en/Installing_plugins) to install the module. You can install it from [the official Moodle plugins repository](https://moodle.org/plugins/view.php?plugin=mod_easycastms) or using this git repository (zipped with `zip -r plugin.zip moodle-mod_easycastms -x "*.git*"` to avoid zipping all the git artifacts).
 
 Once installed, go to the plugin settings in Moodle (usually, Plugins > Activity modules > EasyCast MediaServer plugin):
 
-![Plugin settings location](http://www.ubicast.eu/medias/downloads/techdocs/lms-integration/moodle/settings1.png)
+![Plugin settings location](../assets/plugin-location.png)
 
-Set the url of the MediaServer and the API key to use in the plugin settings:
+Set the MediaServer URL, LTI key and LTI secret to use in the plugin settings:
 
 ![Plugin settings](../assets/plugin-settings.png)
 
-You can find these in the Mediaserver authentication settings & LTI Tabs:
-
-![MS settings](../assets/media-server-settings.png)
+You can find these in the Mediaserver LTI settings (in the authentication settings section):
 
 ![LTI Settings](../assets/lti-settings.png)
 
@@ -49,25 +46,25 @@ Usage:
 
 Once configured, a new activity type is now available in Moodle:
 
-![Use 1](http://www.ubicast.eu/medias/downloads/techdocs/lms-integration/moodle/use1.png)
+![Use 1](../assets/use1.png)
 
 This allows the user to import media he has access to in MediaServer:
 
-![Use 2](http://www.ubicast.eu/medias/downloads/techdocs/lms-integration/moodle/use2.png)
+![Use 2](../assets/use2.png)
 
 When clicking on "Select a media" the user gets to choose easily from the media he has access to:
 
-![Use 3](http://www.ubicast.eu/medias/downloads/techdocs/lms-integration/moodle/use3.png)
+![Use 3](../assets/use3.png)
 
 That's it, content is now integrated in the Moodle course:
 
 * Professor view
 
-![Professor view](../assets/professor-view.png)
+![Professor view](../assets/professor-view.jpg)
 
 * Student view
 
-![Student view](../assets/student-view.png)
+![Student view](../assets/student-view.jpg)
 
 
 About rights management
