@@ -17,9 +17,9 @@ class mod_easycastms_mod_form extends moodleform_mod {
     function definition() {
         global $CFG, $DB, $COURSE;
         $mform = $this->_form;
-        
+
         $config = get_config('easycastms');
-        
+
         //-------------------------------------------------------
         $mform->addElement('header', 'general', get_string('general', 'form'));
         $mform->addElement('text', 'name', get_string('name'), array('size'=>'64'));
@@ -29,7 +29,7 @@ class mod_easycastms_mod_form extends moodleform_mod {
             $mform->setType('name', PARAM_CLEANHTML);
         }
         $mform->addRule('name', null, 'required', null, 'client');
-        $this->add_intro_editor(false);
+        $this->standard_intro_elements();
 
         //-------------------------------------------------------
         $mform->addElement('header', 'content', get_string('form_media_header', 'easycastms'));
@@ -63,7 +63,7 @@ class mod_easycastms_mod_form extends moodleform_mod {
                     title: "'.get_string('form_pick_media', 'easycastms').'"
                 });
             </script>');
-        
+
         //-------------------------------------------------------
         $this->standard_coursemodule_elements();
 
@@ -71,4 +71,3 @@ class mod_easycastms_mod_form extends moodleform_mod {
         $this->add_action_buttons();
     }
 }
-
