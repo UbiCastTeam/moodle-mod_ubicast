@@ -8,43 +8,28 @@
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['language_code'] = 'fr';
+
 // moodle required strings
-$string['modulename'] = 'Média du MediaServer';
-$string['modulename_help'] = 'Le module UbiCast MediaServer permet aux professeurs d\'ajouter des médias issus d\'une web TV MediaServer en tant que ressources d\'un cours.';
+$string['modulename'] = 'Ressource du MediaServer';
+$string['modulename_help'] = 'Le module UbiCast MediaServer permet aux professeurs d\'ajouter des chaînes et des médias issus d\'une web TV MediaServer en tant que ressources d\'un cours.';
 $string['modulename_link'] = 'mod/easycastms/view';
-$string['modulenameplural'] = 'Médias du MediaServer';
+$string['modulenameplural'] = 'Ressources du MediaServer';
 $string['pluginadministration'] = 'Administration du module UbiCast MediaServer';
 $string['pluginname'] = 'Connecteur UbiCast MediaServer';
-$string['easycastms:addinstance'] = 'Ajouter un média du MediaServer';
-$string['easycastms:view'] = 'Voir les média du MediaServer';
+$string['easycastms:addinstance'] = 'Ajouter une ressource du MediaServer';
+$string['easycastms:view'] = 'Voir la ressource du MediaServer';
 
 // forms
-$string['form_media_header'] = 'Média';
-$string['form_media_id'] = 'ID du média';
-$string['form_media_id_helptext'] = 'Entrez un identifiant de média. Par exemple: "v124cbdfb0e5c9e28a30".';
-$string['form_pick_media'] = 'Sélectionner un média';
-$string['form_no_media'] = 'Pas de média sélectionné';
-
-// proxy messages
-$string['proxy_login_required'] = 'Vous devez être authentifié pour accéder à cette URL. Veuillez vous authentifier puis réessayez.';
-$string['proxy_permission_required'] = 'Vous ne disposez pas de la permission d\'accès à cette URL.';
-$string['proxy_curl_missing'] = 'Le module CURL n\'est pas disponible dans votre serveur. Ce module est nécessaire au fonctionnement du plugin MediaServer.';
-$string['proxy_action_missing'] = 'Le paramètre action est manquant.';
-$string['proxy_request_error'] = 'Erreur lors de la requête sur MediaServer. Erreur:';
-$string['proxy_parsing_error'] = 'La réponse de MediaServer ne peut pas être lue.';
+$string['form_resource_header'] = 'Ressource';
+$string['form_resource'] = 'ID de la ressource';
+$string['form_resource_help'] = 'Entrez un identifiant de ressource. Par exemple: "v124cbdfb0e5c9e28a30".';
+$string['form_resource_pick'] = 'Sélectionner une ressource';
 
 // settings page
 $string['settings_url'] = 'URL du MediaServer';
-$string['settings_url_helptext'] = 'Entrez l\'URL du MediaServer. Par exemple: "https://mediaserver.ubicast.tv".';
+$string['settings_url_help'] = 'Entrez l\'URL du MediaServer. Par exemple: "https://mediaserver.ubicast.tv".';
 $string['settings_ltikey'] = 'Clé LTI du MediaServer';
-$string['settings_ltikey_helptext'] = 'Entrez la clé LTI du MediaServer. Une clé valide ressemble à "xmz9GgcutbUvwDFNBzHMryMmzyX7wy".';
+$string['settings_ltikey_help'] = 'Entrez la clé LTI du MediaServer. Une clé valide ressemble à "xmz9GgcutbUvwDFNBzHMryMmzyX7wy".';
 $string['settings_ltisecret'] = 'Secret LTI du MediaServer';
-$string['settings_ltisecret_helptext'] = 'Entrez le secret LTI du MediaServer. Un secret valide ressemble à  "4fCQKsxQwFSxCCvdd4Dq9cxNbhZK4afPBpY312wq1mASGkAgC9qy8n9QEPq8".';
-
-// other
-$string['edit_link'] = 'Éditer ce média';
-$string['fullscreen'] = 'Activer / désactiver le mode plein écran';
-$string['language_code'] = 'fr';
-$string['medias'] = 'Médias';
-$string['neverseen'] = 'Jamais visionné';
-$string['view_link'] = 'Voir le média';
+$string['settings_ltisecret_help'] = 'Entrez le secret LTI du MediaServer. Un secret valide ressemble à  "4fCQKsxQwFSxCCvdd4Dq9cxNbhZK4afPBpY312wq1mASGkAgC9qy8n9QEPq8".';

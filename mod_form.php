@@ -32,8 +32,9 @@ class mod_easycastms_mod_form extends moodleform_mod {
         $this->standard_intro_elements();
 
         //-------------------------------------------------------
-        $mform->addElement('header', 'content', get_string('form_media_header', 'easycastms'));
-        $mform->addElement('text', 'mediaid', get_string('form_media_id', 'easycastms'), array('size'=>'20'));
+        $mform->addElement('header', 'content', get_string('form_resource_header', 'easycastms'));
+        $mform->addElement('text', 'mediaid', get_string('form_resource', 'easycastms'), array('size'=>'20'));
+        $mform->addHelpButton('mediaid', 'form_resource', 'easycastms');
         $mform->addRule('mediaid', null, 'required', null, 'client');
 
         $config = get_config('easycastms');
@@ -44,7 +45,7 @@ class mod_easycastms_mod_form extends moodleform_mod {
                 <div class="felement">
                     <div id="mod_ms_browser_preview">
                         <iframe style="width: 260px; height: 200px; margin: 0;" src="'.$CFG->wwwroot.'/mod/easycastms/statics/media.png" frameborder="0"></iframe>
-                        <button type="button" onclick="javascript: media_selector.open();">'.get_string('form_pick_media', 'easycastms').'</button>
+                        <button type="button" onclick="javascript: media_selector.open();">'.get_string('form_resource_pick', 'easycastms').'</button>
                     </div>
                 </div>
             </div>
@@ -60,7 +61,7 @@ class mod_easycastms_mod_form extends moodleform_mod {
                 var media_selector = new MediaSelector({
                     moodleURL: "'.$CFG->wwwroot.'/mod/easycastms/lti.php?id='.$COURSE->id.'",
                     mediaserverURL: "'.$tool_base_URL.'",
-                    title: "'.get_string('form_pick_media', 'easycastms').'"
+                    title: "'.get_string('form_resource_pick', 'easycastms').'"
                 });
             </script>');
 

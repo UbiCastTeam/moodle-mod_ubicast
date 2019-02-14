@@ -14,11 +14,11 @@ if ($ADMIN->fulltree) {
     require_once("$CFG->libdir/resourcelib.php");
 
     $settings->add(new admin_setting_configtext('easycastms/easycastms_url', get_string('settings_url', 'easycastms'),
-        get_string('settings_url_helptext', 'easycastms'), ''));
+        get_string('settings_url_help', 'easycastms'), ''));
 
     $settings->add(new admin_setting_configtext('easycastms/easycastms_ltikey', get_string('settings_ltikey', 'easycastms'),
-        get_string('settings_ltikey_helptext', 'easycastms'), ''));
+        get_string('settings_ltikey_help', 'easycastms'), ''));
 
     $settings->add(new admin_setting_configpasswordunmask('easycastms/easycastms_ltisecret', get_string('settings_ltisecret', 'easycastms'),
-        get_string('settings_ltisecret_helptext', 'easycastms'), ''));
+        get_string('settings_ltisecret_help', 'easycastms'), ''));
 }
