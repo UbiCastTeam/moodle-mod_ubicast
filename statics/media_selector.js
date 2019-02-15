@@ -43,7 +43,7 @@ MediaSelector.prototype.open = function () {
         });
     }
     var initialOID = $("#id_mediaid").val();
-    var url = this.moodleURL + "&next=" + window.encodeURIComponent("/latest/?iframe&mine&pick=cvlp" + (initialOID ? "&initial=" + initialOID : ""));
+    var url = this.moodleURL + "&next=" + window.encodeURIComponent("/latest/?iframe&pick=cvlp" + (initialOID ? "&initial=" + initialOID : ""));
     this.overlay.show({
         mode: "iframe",
         title: this.title,
