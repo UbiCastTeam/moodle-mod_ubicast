@@ -50,13 +50,13 @@ class mod_easycastms_mod_form extends moodleform_mod {
                 </div>
             </div>
 
-            <link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.'/mod/easycastms/statics/odm/odm.css?_=4"/>
-            <link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.'/mod/easycastms/statics/overlay.css?_=4"/>
+            <link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.'/mod/easycastms/statics/odm/odm.css?_=5"/>
+            <link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.'/mod/easycastms/statics/overlay.css?_=5"/>
 
-            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/jquery.min.js?_=4"></script>
-            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/utils.js?_=4"></script>
-            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/odm/odm.js?_=4"></script>
-            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/media_selector.js?_=4"></script>
+            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/jquery.min.js?_=5"></script>
+            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/utils.js?_=5"></script>
+            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/odm/odm.js?_=5"></script>
+            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/media_selector.js?_=5"></script>
             <script type="text/javascript">
                 var media_selector = new MediaSelector({
                     moodleURL: "'.$CFG->wwwroot.'/mod/easycastms/lti.php?id='.$COURSE->id.'",

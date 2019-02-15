@@ -286,11 +286,11 @@ utils._get_browser_info = function () {
 };
 utils._get_browser_info();
 
-utils.webgl_available = function (canvas) {
+utils.webgl_available = function (canvas, options) {
     var webglAvailable = !! window.WebGLRenderingContext;
     if (webglAvailable) {
         try {
-            var webglContext = webglAvailable && (canvas.getContext("webgl2") || canvas.getContext("webgl") || canvas.getContext("experimental-webgl"));
+            var webglContext = webglAvailable && (canvas.getContext("webgl2", options) || canvas.getContext("webgl", options) || canvas.getContext("experimental-webgl", options));
             if (!webglContext) {
                 console.log("Impossible to initialize WebGL context. Your browser does not support Webgl context");
                 return null;
@@ -492,4 +492,25 @@ utils.compute_md5 = function (file, callback, progress_callback) {
         fileReader.readAsArrayBuffer(blobSlice.call(file, start, end));
     }
     loadNext();
+};
+
+utils.focus_first_descendant = function (element) {
+    for (var i = 0; i < element.childNodes.length; i++) {
+        var child = element.childNodes[i];
+        if (utils.attempt_focus(child)) {
+            return true;
+        } else if (utils.focus_first_descendant(child)) {
+            return true;
+        }
+    }
+    return false;
+};
+
+utils.attempt_focus = function (element) {
+    try {
+        element.focus();
+    }
+    catch (e) {
+    }
+    return (document.activeElement === element);
 };

@@ -5,6 +5,8 @@
 * https://creativecommons.org/licenses/by-sa/3.0/ *
 * Requires: jQuery                                *
 **************************************************/
+"use strict";
+
 
 function OverlayDisplayManager(options) {
     // params
@@ -15,7 +17,7 @@ function OverlayDisplayManager(options) {
     this.bottom_bar_height = 40;
     this.default_buttons_class = "";
     this.hide_on_escape = true;
-    
+
     // vars
     this.pending_show_params = null;
     this.messages = {};
@@ -34,9 +36,10 @@ function OverlayDisplayManager(options) {
     this.current_resource = null;
     this.locked = false;
     this.no_fixed = false;
-    
+    this.element_first_focused = null;
+
     if (window.utils && window.utils._current_lang)
-        this.language = utils._current_lang;
+        this.language = window.utils._current_lang;
     if (options) {
         for (var attr in options)
             this[attr] = options[attr];
@@ -73,14 +76,16 @@ OverlayDisplayManager.prototype._init = function () {
         this.no_fixed = true;
         extra_class = "no-fixed";
     }
+    var nb_odm_opened = $(".odm-main").length;
     var html = "";
     html += "<div class=\"odm-main "+extra_class+"\">";
     html +=     "<div class=\"odm-layer\">";
     html +=         "<table class=\"odm-table\"><tr class=\"odm-table\"><td class=\"odm-table\">";
-    html +=             "<div class=\"odm-block\">";
+    html +=             "<div role=\"dialog\" aria-labelledby=\"odm_title_" + nb_odm_opened + "\" aria-modal=\"true\" class=\"odm-block\">";
+    html +=                 "<button type=\"button\" class=\"odm-close\" title=\""+this.messages.close+"\" aria-label=\""+this.messages.close+"\"><i aria-hidden=\"true\">X</i></button>";
     html +=                 "<div class=\"odm-top-bar\">";
     html +=                     "<div class=\"odm-resources\"></div>";
-    html +=                     "<div class=\"odm-title\"></div>";
+    html +=                     "<div id=\"odm_title_" + nb_odm_opened + "\" class=\"odm-title\"></div>";
     html +=                 "</div>";
     html +=                 "<div class=\"odm-element-place\">";
     html +=                     "<div class=\"odm-element-content\">";
@@ -95,7 +100,6 @@ OverlayDisplayManager.prototype._init = function () {
     html +=                     "<div class=\"odm-btn-icon\">"+this.messages.previous+"</div></div></div>";
     html +=                 "<div class=\"odm-next\"><div class=\"odm-btn-bg\">";
     html +=                     "<div class=\"odm-btn-icon\">"+this.messages.next+"</div></div></div>";
-    html +=                 "<div class=\"odm-close\"><div></div></div>";
     html +=             "</div>";
     html +=         "</td></tr></table>";
     html +=     "</div>";
@@ -103,7 +107,7 @@ OverlayDisplayManager.prototype._init = function () {
     html += "</div>";
     this.$widget = $(html);
     $("body").append(this.$widget);
-    
+
     // bind events
     $(".odm-previous", this.$widget).click({ obj: this }, function (event) {
         event.data.obj.previous();
@@ -127,11 +131,30 @@ OverlayDisplayManager.prototype._init = function () {
     if (this.pending_show_params)
         this.show(this.pending_show_params);
 };
-
+OverlayDisplayManager.prototype.focus_first_descendant = function (element) {
+    for (var i = 0; i < element.childNodes.length; i++) {
+        var child = element.childNodes[i];
+        if (this.attempt_focus(child)) {
+            return true;
+        } else if (this.focus_first_descendant(child)) {
+            return true;
+        }
+    }
+    return false;
+};
+OverlayDisplayManager.prototype.attempt_focus = function (element) {
+    try {
+        element.focus();
+    }
+    catch (e) {
+    }
+    return (document.activeElement === element);
+};
 OverlayDisplayManager.prototype.set_language = function (lang) {
     if (lang == "fr") {
         this.language = "fr";
         this.messages = {
+            close: "Fermer",
             loading: "Chargement...",
             not_found: "Image introuvable",
             unknown_resource: "Type de ressource inconnu",
@@ -142,6 +165,7 @@ OverlayDisplayManager.prototype.set_language = function (lang) {
     else {
         this.language = "en";
         this.messages = {
+            close: "Close",
             loading: "Loading...",
             not_found: "Image not found",
             unknown_resource: "Unknown resource type",
@@ -151,6 +175,8 @@ OverlayDisplayManager.prototype.set_language = function (lang) {
     }
     if (this.$widget) {
         // replace messages
+        $(".odm-close", this.$widget).attr("title", this.messages.close);
+        $(".odm-close", this.$widget).attr("aria-label", this.messages.close);
         $(".odm-loading", this.$widget).html(this.messages.loading);
         $(".odm-hover-loading", this.$widget).html(this.messages.loading);
         $(".odm-previous .odm-btn-icon", this.$widget).html(this.messages.previous);
@@ -235,7 +261,7 @@ OverlayDisplayManager.prototype._add_resources = function (res) {
 OverlayDisplayManager.prototype._check_title_display = function (title) {
     if (this.title == title)
         return;
-    
+
     $(".odm-title", this.$widget).html(title);
     this.title = title;
     var should_display = title || this.resources.length > 1;
@@ -283,9 +309,10 @@ OverlayDisplayManager.prototype._check_buttons_display = function (resource) {
             this.bottom_bar_displayed = true;
             this.on_resize();
         }
-        // focus first button
-        if (this.displayed && !resource.no_button_focus)
-            this._focus_button();
+        if (!this.focus_first_descendant($(".odm-element-content", this.$widget)[0])) {
+            // if no focusable element is in content, try to focus any button in the top block
+            this.focus_first_descendant($(".odm-block", this.$widget)[0]);
+        }
     }
     else if (this.bottom_bar_displayed) {
         // hide bottom bar and clear buttons
@@ -294,14 +321,6 @@ OverlayDisplayManager.prototype._check_buttons_display = function (resource) {
         $(".odm-buttons", this.$widget).html("");
         this.on_resize();
     }
-};
-
-OverlayDisplayManager.prototype._focus_button = function () {
-    if ($(".odm-bottom-bar button", this.$widget).length < 1)
-        return;
-    // focus first button (this can crash on IE)
-    try { $(".odm-bottom-bar button:first", this.$widget).focus(); }
-    catch (e) { }
 };
 
 OverlayDisplayManager.prototype._set_locked = function (locked) {
@@ -330,9 +349,9 @@ OverlayDisplayManager.prototype._load_resource = function (resource) {
     this._check_title_display(resource.title ? resource.title : "");
     this._check_buttons_display(resource);
     this._set_locked(resource.locked ? true : false);
-    
+
     var obj = this;
-    var callback = function (success) {
+    var callback = function () {
         obj._hide_loading();
     };
     this.current_resource = resource;
@@ -355,7 +374,7 @@ OverlayDisplayManager.prototype._load_resource = function (resource) {
 OverlayDisplayManager.prototype.change = function (params) {
     if (!this.$widget || !params)
         return;
-    
+
     var resource = this._set_resources(params);
     if (this.displayed)
         this._load_resource(resource);
@@ -368,7 +387,8 @@ OverlayDisplayManager.prototype.show = function (params) {
     this.pending_show_params = null;
     if (this.displayed)
         return this.change(params);
-    
+
+    this.element_first_focused = document.activeElement;
     var resource;
     if (params)
         resource = this._set_resources(params);
@@ -384,8 +404,10 @@ OverlayDisplayManager.prototype.show = function (params) {
     var obj = this;
     this.$widget.addClass("odm-no-transition").stop(true, false).fadeIn(250, function () {
         $(this).removeClass("odm-no-transition");
-        if (obj.current_resource && !obj.current_resource.no_button_focus)
-            obj._focus_button();
+        if (!obj.focus_first_descendant($(".odm-element-content", obj.$widget)[0])) {
+            // if no focusable element is in content, try to focus any button in the top block
+            obj.focus_first_descendant($(".odm-block", obj.$widget)[0]);
+        }
     });
 };
 OverlayDisplayManager.prototype.hide = function () {
@@ -393,11 +415,13 @@ OverlayDisplayManager.prototype.hide = function () {
         this.pending_show_params = null;
     if (!this.displayed)
         return;
-    
+
     this.displayed = false;
     var obj = this;
     this.$widget.addClass("odm-no-transition").stop(true, false).fadeOut(250, function () {
         $(this).removeClass("odm-no-transition");
+        if (obj.element_first_focused)
+            obj.attempt_focus(obj.element_first_focused);
         obj._on_resource_hide();
     });
 };
@@ -406,7 +430,7 @@ OverlayDisplayManager.prototype.hide = function () {
 OverlayDisplayManager.prototype.go_to_index = function (index) {
     if (index >= this.resources.length || index < 0)
         return;
-    
+
     $(".odm-resources", this.$widget).html((index+1)+" / "+this.resources.length);
     if (index > 0)
         $(".odm-previous", this.$widget).css("display", "block");
@@ -488,12 +512,12 @@ OverlayDisplayManager.prototype._load_image = function (resource, callback) {
         callback(this.image.loading_failed ? false : true);
         return;
     }
-    
+
     this.image = new Image();
     this.image.odm = this;
     this.image.odm_callback = callback;
     this.image.onload = function () {
-        var $img = $("<img class=\"odm-element\" src=\""+this.src+"\" style=\"max-width: "+this.odm.max_width+"px; max-height: "+this.odm.max_height+"px;\"/>");
+        var $img = $("<img class=\"odm-element\" alt=\"\" src=\""+this.src+"\" style=\"max-width: "+this.odm.max_width+"px; max-height: "+this.odm.max_height+"px;\"/>");
         this.odm._display_element($img);
         this.odm_callback(true);
     };
