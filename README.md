@@ -1,5 +1,5 @@
-Easycast MediaServer Moodle activity plugin
-===========================================
+UbiCast MediaServer Moodle activity plugin
+==========================================
 
 Copyright: UbiCast (https://www.ubicast.eu)
 License: https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -7,28 +7,28 @@ License: https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 Description:
 ------------
 
-This Moodle activity module allows users to add media from an EasyCast MediaServer in their courses.
+This Moodle activity module allows users to add media or channels from a UbiCast MediaServer in their courses.
 
 
 Dependencies:
 -------------
 
-This plugin requires Moodle >= *3.0* and MediaServer >= *7.9*.
+This plugin requires Moodle >= *3.0* and MediaServer >= *8.0*.
 
 
 Installation:
 -------------
 
-Follow [the standard moodle procedure](https://docs.moodle.org/28/en/Installing_plugins) to install the module. You can install it from [the official Moodle plugins repository](https://moodle.org/plugins/view.php?plugin=mod_easycastms) or using this git repository.
+Follow [the standard moodle procedure](https://docs.moodle.org/30/en/Installing_plugins) to install the module. You can install it from [the official Moodle plugins repository](https://moodle.org/plugins/view.php?plugin=mod_easycastms) or using this git repository.
 
-To use the repository, clone it in your mod dir:
+To use the git repository, clone it in your mod dir:
 
 ```bash
 cd "moodle/mod"
 git clone "https://github.com/UbiCastTeam/moodle-mod_easycastms" easycastms
 ```
 
-Once installed, go to the plugin settings in Moodle (usually, Plugins > Activity modules > EasyCast MediaServer plugin):
+Once installed, go to the plugin settings in Moodle (usually, Plugins > Activity modules > UbiCast MediaServer plugin):
 
 ![Plugin settings location](../assets/plugin-location.png)
 
