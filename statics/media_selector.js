@@ -37,6 +37,9 @@ MediaSelector.prototype.open = function () {
                 return;
             var data = oriEvent.data ? oriEvent.data : null;
             console.log("Received message from MediaServer frame:", data);
+            if (data.state && data.state == "IDLE"){
+                return;
+            }
             if (!data.element || !data.element.oid)
                 throw "No oid in message from MediaServer page.";
             event.data.obj.onPick(data.element.oid, data.initial_pick);
