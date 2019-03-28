@@ -10,7 +10,10 @@
 
 if (!defined('MOODLE_INTERNAL')) { die('Direct access to this script is forbidden.'); }
 
-require_once('../../config.php');
+global $CFG;
+if (!isset($CFG)){
+    require_once('../../config.php');
+}
 require_once("$CFG->libdir/filelib.php");
 require_once("$CFG->libdir/resourcelib.php");
 // Needed to get `lti_sign_parameters` and `lti_post_launch_html`
@@ -123,7 +126,7 @@ function easycastms_display_media($easycastms_media, $cm, $course) {
     echo $code;
 
     // page intro
-    if (!$ignoresettings) {
+    if (!isset($ignoresettings)) {
         if (trim(strip_tags($easycastms_media->intro))) {
             echo $OUTPUT->box_start('mod_introbox', 'easycastmsintro');
             echo format_module_intro('easycastms', $easycastms_media, $cm->id);
