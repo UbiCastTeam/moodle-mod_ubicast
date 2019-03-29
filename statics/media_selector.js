@@ -13,7 +13,7 @@ function MediaSelector(options) {
     if (!options.mediaserverURL)
         throw "mediaserverURL argument is mandatory.";
     this.moodleURL = options.moodleURL;
-    // moodleURL must be something like /mod/easycastms/lti.php?id=1
+    // moodleURL must be something like /mod/ubicast/lti.php?id=1
     this.mediaserverURL = options.mediaserverURL;
     if (this.mediaserverURL[this.mediaserverURL.length - 1] == "/")
         this.mediaserverURL = this.mediaserverURL.slice(0, -1);

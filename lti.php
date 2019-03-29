@@ -47,8 +47,8 @@
  */
 
 require_once("../../config.php");
-require_once($CFG->dirroot.'/mod/easycastms/lib.php');
-require_once($CFG->dirroot.'/mod/easycastms/locallib.php');
+require_once($CFG->dirroot.'/mod/ubicast/lib.php');
+require_once($CFG->dirroot.'/mod/ubicast/locallib.php');
 
 $cid = required_param('id', PARAM_INT); // Course ID.
 $next = required_param('next', PARAM_URL); // Redirection target after LTI login.
@@ -58,6 +58,6 @@ $course = $DB->get_record('course', array('id' => $cid), '*', MUST_EXIST);
 $context = context_course::instance($cid);
 
 require_login($course, true);
-require_capability('mod/easycastms:view', $context);
+require_capability('mod/ubicast:view', $context);
 
-easycastms_launch_tool($course, null, 'login/?next='.urlencode($next));
+ubicast_launch_tool($course, null, 'login/?next='.urlencode($next));

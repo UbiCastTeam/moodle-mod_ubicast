@@ -9,6 +9,8 @@ Description:
 
 This Moodle activity module allows users to add media or channels from a UbiCast MediaServer in their courses.
 
+This Moodle plugin is required for other UbiCast plugins (Atto button and Block plugin).
+
 
 Dependencies:
 -------------
@@ -19,13 +21,13 @@ This plugin requires Moodle >= *3.0* and MediaServer >= *8.0*.
 Installation:
 -------------
 
-Follow [the standard moodle procedure](https://docs.moodle.org/30/en/Installing_plugins) to install the module. You can install it from [the official Moodle plugins repository](https://moodle.org/plugins/view.php?plugin=mod_easycastms) or using this git repository.
+Follow [the standard moodle procedure](https://docs.moodle.org/30/en/Installing_plugins) to install the module. You can install it from [the official Moodle plugins repository](https://moodle.org/plugins/view.php?plugin=mod_ubicast) or using this git repository.
 
 To use the git repository, clone it in your mod dir:
 
 ```bash
 cd "moodle/mod"
-git clone "https://github.com/UbiCastTeam/moodle-mod_easycastms" easycastms
+git clone "https://github.com/UbiCastTeam/moodle-mod_ubicast" ubicast
 ```
 
 Once installed, go to the plugin settings in Moodle (usually, Plugins > Activity modules > UbiCast MediaServer plugin):
@@ -81,14 +83,14 @@ Development environment
 Clone the following repositories in a folder:
 
 * https://github.com/moodlehq/moodle-docker
-* https://github.com/UbiCastTeam/moodle-mod_easycastms
+* https://github.com/UbiCastTeam/moodle-mod_ubicast
 * Get latest version of the moodle source code at: https://download.moodle.org/ or clone https://github.com/moodle/moodle
 
 Then follow the steps given into `moodle-docker`'s readme.
 
 After that, follow the steps above for installation.
 
-In moodle, the plugin will be copied to `mod/easycastms`, so to work on it, you can do it right away in there.
+In moodle, the plugin will be copied to `mod/ubicast`, so to work on it, you can do it right away in there.
 
 
 How does the LTI Video integration work?

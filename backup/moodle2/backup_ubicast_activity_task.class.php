@@ -1,21 +1,21 @@
 <?php
 /**
- * Defines backup_easycastms_activity_task class
+ * Defines backup_ubicast_activity_task class
  *
  * @package    mod
- * @subpackage easycastms
+ * @subpackage ubicast
  * @copyright  2013 UbiCast {@link https://www.ubicast.eu}
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 if (!defined('MOODLE_INTERNAL')) { die('Direct access to this script is forbidden.'); }
 
-require_once($CFG->dirroot . '/mod/easycastms/backup/moodle2/backup_easycastms_stepslib.php');
+require_once($CFG->dirroot . '/mod/ubicast/backup/moodle2/backup_ubicast_stepslib.php');
 
 /**
  * Provides all the settings and steps to perform one complete backup of the activity
  */
-class backup_easycastms_activity_task extends backup_activity_task {
+class backup_ubicast_activity_task extends backup_activity_task {
 
     /**
      * No specific settings for this activity
@@ -24,10 +24,10 @@ class backup_easycastms_activity_task extends backup_activity_task {
     }
 
     /**
-     * Defines a backup step to store the instance data in the easycastms.xml file
+     * Defines a backup step to store the instance data in the ubicast.xml file
      */
     protected function define_my_steps() {
-        $this->add_step(new backup_easycastms_activity_structure_step('easycastms_structure', 'easycastms.xml'));
+        $this->add_step(new backup_ubicast_activity_structure_step('ubicast_structure', 'ubicast.xml'));
     }
 
     /**

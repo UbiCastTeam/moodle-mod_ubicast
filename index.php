@@ -1,9 +1,9 @@
 <?php
 /**
- * List of easycastms medias in course
+ * List of ubicast medias in course
  *
  * @package    mod
- * @subpackage easycastms
+ * @subpackage ubicast
  * @copyright  2013 UbiCast {@link https://www.ubicast.eu}
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -20,24 +20,24 @@ $PAGE->set_pagelayout('incourse');
 $params = array(
     'context' => context_course::instance($course->id)
 );
-$event = \mod_easycastms\event\course_module_instance_list_viewed::create($params);
+$event = \mod_ubicast\event\course_module_instance_list_viewed::create($params);
 $event->add_record_snapshot('course', $course);
 $event->trigger();
 
-$strurl       = get_string('modulename', 'easycastms');
-$strurls      = get_string('modulenameplural', 'easycastms');
+$strurl       = get_string('modulename', 'ubicast');
+$strurls      = get_string('modulenameplural', 'ubicast');
 $strname         = get_string('name');
 $strintro        = get_string('moduleintro');
 $strlastmodified = get_string('lastmodified');
 
-$PAGE->set_url('/mod/easycastms/index.php', array('id' => $course->id));
+$PAGE->set_url('/mod/ubicast/index.php', array('id' => $course->id));
 $PAGE->set_title($course->shortname.': '.$strurls);
 $PAGE->set_heading($course->fullname);
 $PAGE->navbar->add($strurls);
 echo $OUTPUT->header();
 echo $OUTPUT->heading($strurls);
 
-if (!$entries = get_all_instances_in_course('easycastms', $course)) {
+if (!$entries = get_all_instances_in_course('ubicast', $course)) {
     notice(get_string('thereareno', 'moodle', $strurls), "$CFG->wwwroot/course/view.php?id=$course->id");
     exit;
 }
@@ -82,13 +82,13 @@ foreach ($entries as $entry) {
     } else if ($entry->mediaid[0] == 'p') {
         $media_type = 'photos';
     }
-    $icon = '<img src="'.$OUTPUT->image_url($media_type, 'easycastms').'" class="activityicon" alt="'.$media_type.'" /> ';
+    $icon = '<img src="'.$OUTPUT->image_url($media_type, 'ubicast').'" class="activityicon" alt="'.$media_type.'" /> ';
 
     $class = $entry->visible ? '' : 'class="dimmed"'; // hidden modules are dimmed
     $table->data[] = array (
         $printsection,
         "<a $class $extra href=\"view.php?id=$cm->id\">".$icon.format_string($entry->name)."</a>",
-        format_module_intro('easycastms', $entry, $cm->id));
+        format_module_intro('ubicast', $entry, $cm->id));
 }
 
 echo html_writer::table($table);

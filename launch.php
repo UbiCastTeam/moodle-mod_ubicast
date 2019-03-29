@@ -47,19 +47,19 @@
  */
 
 require_once("../../config.php");
-require_once($CFG->dirroot.'/mod/easycastms/lib.php');
-require_once($CFG->dirroot.'/mod/easycastms/locallib.php');
+require_once($CFG->dirroot.'/mod/ubicast/lib.php');
+require_once($CFG->dirroot.'/mod/ubicast/locallib.php');
 
 $id = required_param('id', PARAM_INT); // Course Module ID.
 $mediaId = required_param('mediaId', PARAM_ALPHANUM); // MediaServer media object ID.
 
-$cm = get_coursemodule_from_id('easycastms', $id, 0, false, MUST_EXIST);
+$cm = get_coursemodule_from_id('ubicast', $id, 0, false, MUST_EXIST);
 
 $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 
 $context = context_module::instance($cm->id);
 
 require_login($course, true, $cm);
-require_capability('mod/easycastms:view', $context);
+require_capability('mod/ubicast:view', $context);
 
-easycastms_launch_tool($course, $cm, $mediaId.'/');
+ubicast_launch_tool($course, $cm, $mediaId.'/');

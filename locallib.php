@@ -1,9 +1,9 @@
 <?php
 /**
- * Private easycastms module utility functions
+ * Private ubicast module utility functions
  *
  * @package    mod
- * @subpackage easycastms
+ * @subpackage ubicast
  * @copyright  2013 UbiCast {@link https://www.ubicast.eu}
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -27,7 +27,7 @@ require_once($CFG->dirroot . '/mod/lti/locallib.php');
  * @param string $target MediaServer LTI page relative path
  * @return string The HTML code containing the javascript code for the launch
  */
-function easycastms_launch_tool($course, $cm, $target) {
+function ubicast_launch_tool($course, $cm, $target) {
     global $CFG;
 
     // Default LTI config
@@ -50,10 +50,10 @@ function easycastms_launch_tool($course, $cm, $target) {
     }
 
     // Get LTI secret and key from config
-    $config = get_config('easycastms');
-    $key = $config->easycastms_ltikey;
-    $secret = $config->easycastms_ltisecret;
-    $tool_base_URL = $config->easycastms_url;
+    $config = get_config('ubicast');
+    $key = $config->ubicast_ltikey;
+    $secret = $config->ubicast_ltisecret;
+    $tool_base_URL = $config->ubicast_url;
 
     $endpoint = "$tool_base_URL/lti/$target";
     $endpoint = trim($endpoint);
@@ -97,39 +97,39 @@ function easycastms_launch_tool($course, $cm, $target) {
     echo $content;
 }
 
-function easycastms_display_media($easycastms_media, $cm, $course) {
+function ubicast_display_media($ubicast_media, $cm, $course) {
     global $CFG, $PAGE, $OUTPUT;
 
-    $title = $easycastms_media->name;
+    $title = $ubicast_media->name;
 
     // page header
-    $PAGE->set_title($course->shortname.': '.$easycastms_media->name);
+    $PAGE->set_title($course->shortname.': '.$ubicast_media->name);
     $PAGE->set_heading($course->fullname);
-    $PAGE->set_activity_record($easycastms_media);
+    $PAGE->set_activity_record($ubicast_media);
     echo $OUTPUT->header();
 
     // page body
-    $config = get_config('easycastms');
-    $key = $config->easycastms_ltikey;
-    $secret = $config->easycastms_ltisecret;
+    $config = get_config('ubicast');
+    $key = $config->ubicast_ltikey;
+    $secret = $config->ubicast_ltisecret;
 
-    $iframe_url = $CFG->wwwroot.'/mod/easycastms/launch.php?id='.$cm->id.'&mediaId='.$easycastms_media->mediaid;
+    $iframe_url = $CFG->wwwroot.'/mod/ubicast/launch.php?id='.$cm->id.'&mediaId='.$ubicast_media->mediaid;
     if (empty($key) || empty($secret)) {
-        $iframe_url = "$config->easycastms_url/permalink/$easycastms_media->mediaid/iframe/";
+        $iframe_url = "$config->ubicast_url/permalink/$ubicast_media->mediaid/iframe/";
     }
 
     $code = '
     <iframe class="mediaserver-iframe" style="width: 100%; height: 800px;" src="'.$iframe_url.'" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen="allowfullscreen"></iframe>
-    <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/jquery.min.js?_=4"></script>
-    <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/easycastms/statics/iframe_manager.js?_=4"></script>
+    <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/ubicast/statics/jquery.min.js?_=4"></script>
+    <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/ubicast/statics/iframe_manager.js?_=4"></script>
     ';
     echo $code;
 
     // page intro
     if (!isset($ignoresettings)) {
-        if (trim(strip_tags($easycastms_media->intro))) {
-            echo $OUTPUT->box_start('mod_introbox', 'easycastmsintro');
-            echo format_module_intro('easycastms', $easycastms_media, $cm->id);
+        if (trim(strip_tags($ubicast_media->intro))) {
+            echo $OUTPUT->box_start('mod_introbox', 'ubicastintro');
+            echo format_module_intro('ubicast', $ubicast_media, $cm->id);
             echo $OUTPUT->box_end();
         }
     }

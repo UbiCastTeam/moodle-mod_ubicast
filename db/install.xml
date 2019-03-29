@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/easycastms/db" VERSION="20120122" COMMENT="XMLDB file for easycastms module"
+<XMLDB PATH="mod/ubicast/db" VERSION="20120122" COMMENT="XMLDB file for ubicast module"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
   <TABLES>
-    <TABLE NAME="easycastms" COMMENT="each record is one easycastms media resource">
+    <TABLE NAME="ubicast" COMMENT="each record is one ubicast media resource">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="course"/>
         <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="name"/>

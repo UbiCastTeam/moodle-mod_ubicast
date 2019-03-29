@@ -1,20 +1,20 @@
 <?php
 /**
  * @package    mod
- * @subpackage easycastms
+ * @subpackage ubicast
  * @copyright  2013 UbiCast {@link https://www.ubicast.eu}
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 if (!defined('MOODLE_INTERNAL')) { die('Direct access to this script is forbidden.'); }
 
-require_once($CFG->dirroot . '/mod/easycastms/backup/moodle2/restore_easycastms_stepslib.php'); // Because it exists (must)
+require_once($CFG->dirroot . '/mod/ubicast/backup/moodle2/restore_ubicast_stepslib.php'); // Because it exists (must)
 
 /**
- * easycastms restore task that provides all the settings and steps to perform one
+ * ubicast restore task that provides all the settings and steps to perform one
  * complete restore of the activity
  */
-class restore_easycastms_activity_task extends restore_activity_task {
+class restore_ubicast_activity_task extends restore_activity_task {
 
     /**
      * Define (add) particular settings this activity can have
@@ -27,8 +27,8 @@ class restore_easycastms_activity_task extends restore_activity_task {
      * Define (add) particular steps this activity can have
      */
     protected function define_my_steps() {
-        // easycastms only has one structure step
-        $this->add_step(new restore_easycastms_activity_structure_step('easycastms_structure', 'easycastms.xml'));
+        // ubicast only has one structure step
+        $this->add_step(new restore_ubicast_activity_structure_step('ubicast_structure', 'ubicast.xml'));
     }
 
     /**
@@ -38,7 +38,7 @@ class restore_easycastms_activity_task extends restore_activity_task {
     static public function define_decode_contents() {
         $contents = array();
 
-        $contents[] = new restore_decode_content('easycastms', array('intro', 'mediaid'), 'easycastms');
+        $contents[] = new restore_decode_content('ubicast', array('intro', 'mediaid'), 'ubicast');
 
         return $contents;
     }
@@ -56,15 +56,15 @@ class restore_easycastms_activity_task extends restore_activity_task {
     /**
      * Define the restore log rules that will be applied
      * by the {@link restore_logs_processor} when restoring
-     * easycastms logs. It must return one array
+     * ubicast logs. It must return one array
      * of {@link restore_log_rule} objects
      */
     static public function define_restore_log_rules() {
         $rules = array();
 
-        $rules[] = new restore_log_rule('easycastms', 'add', 'view.php?id={course_module}', '{easycastms}');
-        $rules[] = new restore_log_rule('easycastms', 'update', 'view.php?id={course_module}', '{easycastms}');
-        $rules[] = new restore_log_rule('easycastms', 'view', 'view.php?id={course_module}', '{easycastms}');
+        $rules[] = new restore_log_rule('ubicast', 'add', 'view.php?id={course_module}', '{ubicast}');
+        $rules[] = new restore_log_rule('ubicast', 'update', 'view.php?id={course_module}', '{ubicast}');
+        $rules[] = new restore_log_rule('ubicast', 'view', 'view.php?id={course_module}', '{ubicast}');
 
         return $rules;
     }
@@ -82,7 +82,7 @@ class restore_easycastms_activity_task extends restore_activity_task {
     static public function define_restore_log_rules_for_course() {
         $rules = array();
 
-        $rules[] = new restore_log_rule('easycastms', 'view all', 'index.php?id={course}', null);
+        $rules[] = new restore_log_rule('ubicast', 'view all', 'index.php?id={course}', null);
 
         return $rules;
     }

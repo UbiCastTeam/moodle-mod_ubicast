@@ -1,9 +1,9 @@
 <?php
 /**
- * Strings for component 'easycastms', language 'fr'
+ * Strings for component 'ubicast', language 'fr'
  *
  * @package    mod
- * @subpackage easycastms
+ * @subpackage ubicast
  * @copyright  2013 UbiCast {@link https://www.ubicast.eu}
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -13,12 +13,12 @@ $string['language_code'] = 'fr';
 // moodle required strings
 $string['modulename'] = 'Ressource du MediaServer';
 $string['modulename_help'] = 'Le module UbiCast MediaServer permet aux professeurs d\'ajouter des chaînes et des médias issus d\'une web TV MediaServer en tant que ressources d\'un cours.';
-$string['modulename_link'] = 'mod/easycastms/view';
+$string['modulename_link'] = 'mod/ubicast/view';
 $string['modulenameplural'] = 'Ressources du MediaServer';
 $string['pluginadministration'] = 'Administration du module UbiCast MediaServer';
 $string['pluginname'] = 'Connecteur UbiCast MediaServer';
-$string['easycastms:addinstance'] = 'Ajouter une ressource du MediaServer';
-$string['easycastms:view'] = 'Voir la ressource du MediaServer';
+$string['ubicast:addinstance'] = 'Ajouter une ressource du MediaServer';
+$string['ubicast:view'] = 'Voir la ressource du MediaServer';
 
 // forms
 $string['form_resource_header'] = 'Ressource';
