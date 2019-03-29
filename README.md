@@ -15,7 +15,7 @@ This Moodle plugin is required for other UbiCast plugins (Atto button and Block 
 Dependencies:
 -------------
 
-This plugin requires Moodle >= *3.0* and MediaServer >= *8.0*.
+This plugin requires Moodle >= *3.0* and MediaServer >= *8.1*.
 
 
 Installation:

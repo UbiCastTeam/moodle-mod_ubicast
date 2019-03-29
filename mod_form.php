@@ -50,13 +50,13 @@ class mod_ubicast_mod_form extends moodleform_mod {
                 </div>
             </div>
 
-            <link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.'/mod/ubicast/statics/odm/odm.css?_=6"/>
-            <link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.'/mod/ubicast/statics/overlay.css?_=6"/>
+            <link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.'/mod/ubicast/statics/odm/odm.css?_=7"/>
+            <link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.'/mod/ubicast/statics/overlay.css?_=7"/>
 
-            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/ubicast/statics/jquery.min.js?_=6"></script>
-            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/ubicast/statics/utils.js?_=6"></script>
-            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/ubicast/statics/odm/odm.js?_=6"></script>
-            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/ubicast/statics/media_selector.js?_=6"></script>
+            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/ubicast/statics/jquery.min.js?_=7"></script>
+            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/ubicast/statics/utils.js?_=7"></script>
+            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/ubicast/statics/odm/odm.js?_=7"></script>
+            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/ubicast/statics/media_selector.js?_=7"></script>
             <script type="text/javascript">
                 var media_selector = new MediaSelector({
                     moodleURL: "'.$CFG->wwwroot.'/mod/ubicast/lti.php?id='.$COURSE->id.'",

@@ -37,16 +37,15 @@ MediaSelector.prototype.open = function () {
                 return;
             var data = oriEvent.data ? oriEvent.data : null;
             console.log("Received message from MediaServer frame:", data);
-            if (data.state && data.state == "IDLE"){
+            if (data.state && data.state == "IDLE")
                 return;
-            }
-            if (!data.element || !data.element.oid)
+            if (!data.item || !data.item.oid)
                 throw "No oid in message from MediaServer page.";
-            event.data.obj.onPick(data.element.oid, data.initial_pick);
+            event.data.obj.onPick(data.item.oid, data.initial_pick);
         });
     }
     var initialOID = $("#id_mediaid").val();
-    var url = this.moodleURL + "&next=" + window.encodeURIComponent("/latest/?iframe&mine&pick=cvlp" + (initialOID ? "&initial=" + initialOID : ""));
+    var url = this.moodleURL + "&next=" + window.encodeURIComponent("/manager/?return=postMessageAPI" + (initialOID ? "&initial=" + initialOID : ""));
     this.overlay.show({
         mode: "iframe",
         title: this.title,
