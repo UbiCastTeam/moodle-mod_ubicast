@@ -6,7 +6,7 @@ $(document).ready(function () {
         if (height < 250)
             height = 250;
         $(".mediaserver-iframe").css("height", height+"px");
-    }
+    };
     $(window).resize(on_resize);
     on_resize();
 });
