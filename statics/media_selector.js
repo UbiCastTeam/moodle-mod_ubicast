@@ -11,11 +11,14 @@ function MediaSelector(options) {
         throw "moodleURL argument is mandatory.";
     if (!options.mediaserverURL)
         throw "mediaserverURL argument is mandatory.";
+    if (!options.target)
+        throw "target argument is mandatory.";
     this.moodleURL = options.moodleURL;
     // moodleURL must be something like /mod/ubicast/lti.php?id=1
     this.mediaserverURL = options.mediaserverURL;
     if (this.mediaserverURL[this.mediaserverURL.length - 1] == "/")
         this.mediaserverURL = this.mediaserverURL.slice(0, -1);
+    this.target = options.target;
 
     var obj = this;
     $(document).ready(function () {
@@ -24,7 +27,7 @@ function MediaSelector(options) {
 }
 
 MediaSelector.prototype.init = function () {
-    var initialOID = $("#id_mediaid").val();
+    var initialOID = $("#id_mediaid." + this.target).val();
     this.onPick(initialOID, true);
 
     $(window).on("message", { obj: this }, function (event) {
@@ -33,7 +36,7 @@ MediaSelector.prototype.init = function () {
             return;
         var data = oriEvent.data ? oriEvent.data : null;
         console.log("Received message from MediaServer frame:", data);
-        if (data.state && data.state == "IDLE")
+        if (data.state && data.state == "IDLE" || data.target !== event.data.obj.target)
             return;
         if (!data.item || !data.item.oid)
             throw "No oid in message from MediaServer page.";
@@ -42,7 +45,7 @@ MediaSelector.prototype.init = function () {
 };
 
 MediaSelector.prototype.onPick = function (oid, initial_pick) {
-    $("#id_mediaid").val(oid);
-    var url = this.moodleURL + "&next=" + window.encodeURIComponent("/manager/?popup&return=postMessageAPI" + (oid ? "&initial=" + oid : ""));
-    $("#mod_ms_browser_preview iframe").attr("src", url).css("height", (oid ? 420 : 180));
+    $("#id_mediaid." + this.target).val(oid);
+    var url = this.moodleURL + "&next=" + window.encodeURIComponent("/manager/?popup&return=postMessageAPI:" + this.target + (oid ? "&initial=" + oid : ""));
+    $("iframe." + this.target).attr("src", url).css("height", (oid ? 400 : 200));
 };

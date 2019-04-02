@@ -23,7 +23,7 @@ $string['ubicast:view'] = 'Voir la ressource du MediaServer';
 // forms
 $string['form_resource_header'] = 'Ressource';
 $string['form_resource'] = 'ID de la ressource';
-$string['form_resource_help'] = 'Entrez un identifiant de ressource. Par exemple: "v124cbdfb0e5c9e28a30".';
+$string['form_resource_help'] = 'Sélectionnez une ressource. Vous pouvez aussi copier-coller un ID de ressource (exemple: "v124cbdfb0e5c9e28a30").';
 
 // settings page
 $string['settings_url'] = 'URL du MediaServer';
