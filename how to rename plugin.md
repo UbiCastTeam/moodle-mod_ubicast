@@ -12,27 +12,21 @@ The user name, database name and password can be found in your "config.php" file
 mysqldump -u moodle -p moodle > moodle-db.sql
 ```
 
-## 2. Remove the old module files
-
-```bash
-rm -r /var/www/moodle/mod/easycastms
-```
-
-## 3. Get the new module files
+## 2. Get the new module files
 
 ```bash
 cd /var/www/moodle/mod
 git clone https://github.com/UbiCastTeam/moodle-mod_ubicast.git ubicast
 ```
 
-## 4. Apply the changes in Moodle frontend
+## 3. Apply the changes in Moodle frontend
 
 With your browsern go to:
-https://<your moodle domain>/admin/index.php
+https://[...]//admin/index.php
 
 Click on "upgrade" and fill the MediaServer url, key and secret when asked.
 
-## 5. Rename tables and in the database
+## 4. Rename tables and in the database
 
 The user name, database name and password can be found in your "config.php" file (usually in /var/www/moodle/config.php).
 
@@ -54,6 +48,12 @@ SELECT `id` FROM `mdl_modules` WHERE `name` = 'ubicast';
 UPDATE `mdl_course_modules` SET `module` = [ubicast_id] WHERE `module` = [easycastms_id];
 
 exit
+```
+
+## 5. Remove the old module files
+
+```bash
+rm -r /var/www/moodle/mod/easycastms
 ```
 
 ## 6. Remove easycastms from Moodle plugins list
