@@ -22,7 +22,7 @@ Installation:
 -------------
 
 If you have installed this plugin when it was called "mod_easycastms", please follow this procedure to keep your data:
-[rename the module to mod_ubicast](how to rename plugin.md)
+[rename the module to mod_ubicast](how%20to%20rename%20plugin.md)
 
 Follow [the standard moodle procedure](https://docs.moodle.org/30/en/Installing_plugins) to install the module. You can install it from [the official Moodle plugins repository](https://moodle.org/plugins/view.php?plugin=mod_ubicast) or using this git repository.
 
