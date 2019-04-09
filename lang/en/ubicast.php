@@ -24,7 +24,7 @@
 
 $string['language_code'] = 'en';
 
-// Moodle required strings
+// Moodle required strings.
 $string['modulename'] = 'MediaServer resource';
 $string['modulename_help'] = 'The UbiCast MediaServer module enables a teacher to provide a channel or a media from a MediaServer web TV as a course resource.';
 $string['modulename_link'] = 'mod/ubicast/view';
@@ -34,12 +34,12 @@ $string['pluginname'] = 'UbiCast MediaServer plugin';
 $string['ubicast:addinstance'] = 'Add a new MediaServer resource';
 $string['ubicast:view'] = 'View MediaServer resource';
 
-// Forms
+// Forms strings.
 $string['form_resource_header'] = 'Resource';
 $string['form_resource'] = 'Resource ID';
 $string['form_resource_help'] = 'Select resource from MediaServer. You can also copy-paste a resource ID manually (example: "v124cbdfb0e5c9e28a30").';
 
-// Settings page
+// Settings page strings.
 $string['settings_url'] = 'MediaServer base URL';
 $string['settings_url_help'] = 'Enter the MediaServer base URL. Example: "https://mediaserver.ubicast.tv".';
 $string['settings_ltikey'] = 'MediaServer LTI key';

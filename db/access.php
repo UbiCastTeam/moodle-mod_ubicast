@@ -33,7 +33,7 @@ $capabilities = array(
             'user' => CAP_ALLOW,
         )
     ),
-    
+
     'mod/ubicast:addinstance' => array(
         'riskbitmask' => RISK_XSS,
         'captype' => 'write',

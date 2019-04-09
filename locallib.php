@@ -24,13 +24,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-global $CFG;
-if (!isset($CFG)) {
-    require_once('../../config.php');
-}
 require_once($CFG->libdir.'/filelib.php');
 require_once($CFG->libdir.'/resourcelib.php');
-// Needed to get `lti_sign_parameters` and `lti_post_launch_html`
+// Needed to get `lti_sign_parameters` and `lti_post_launch_html`.
 require_once($CFG->dirroot.'/mod/lti/locallib.php');
 
 
@@ -46,10 +42,11 @@ function ubicast_launch_tool($course, $cm, $target) {
 
     // Default LTI config.
     $typeconfig = null;
-    if (!empty($cm))
+    if (!empty($cm)) {
         $typeconfig = (array) $cm;
-    else
+    } else {
         $typeconfig = (array) $course;
+    }
     $typeconfig['sendname'] = '1';
     $typeconfig['sendemailaddr'] = '1';
     $typeconfig['acceptgrades'] = '0';
@@ -126,7 +123,7 @@ function ubicast_display_media($ubicastresource, $cm, $course) {
     $key = $config->ubicast_ltikey;
     $secret = $config->ubicast_ltisecret;
 
-    $iframeurl = $CFG->wwwroot.'/mod/ubicast/launch.php?id='.$cm->id.'&mediaId='.$ubicastresource->mediaid;
+    $iframeurl = $CFG->wwwroot.'/mod/ubicast/launch.php?id='.$cm->id.'&mediaid='.$ubicastresource->mediaid;
     if (empty($key) || empty($secret)) {
         $iframeurl = $config->ubicast_url.'/permalink/'.$ubicastresource->mediaid.'/iframe/';
     }

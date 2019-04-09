@@ -142,7 +142,7 @@ function ubicast_user_outline($course, $user, $mod, $ubicastresource) {
 
         return $result;
     }
-    return NULL;
+    return null;
 }
 
 // Displays last time seen by user.

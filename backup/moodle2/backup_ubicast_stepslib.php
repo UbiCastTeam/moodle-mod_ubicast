@@ -30,24 +30,24 @@ defined('MOODLE_INTERNAL') || die();
 class backup_ubicast_activity_structure_step extends backup_activity_structure_step {
 
     protected function define_structure() {
-        // The ubicast module stores no user info
+        // The ubicast module stores no user info.
 
-        // Define each element separated
+        // Define each element separated.
         $media = new backup_nested_element('ubicast', array('id'), array('name', 'intro', 'introformat', 'mediaid', 'timemodified'));
 
-        // Build the tree
-        // Nothing here for ubicast
+        // Build the tree.
+        // Nothing here for ubicast.
 
-        // Define sources
+        // Define sources.
         $media->set_source_table('ubicast', array('id' => backup::VAR_ACTIVITYID));
 
-        // Define id annotations
-        // Module has no id annotations
+        // Define id annotations.
+        // Module has no id annotations.
 
-        // Define file annotations
-        $media->annotate_files('mod_ubicast', 'intro', null); // This file area hasn't itemid
+        // Define file annotations.
+        $media->annotate_files('mod_ubicast', 'intro', null);  // This file area hasn't itemid.
 
-        // Return the root element (media), wrapped into standard activity structure
+        // Return the root element (media), wrapped into standard activity structure.
         return $this->prepare_activity_structure($media);
     }
 }
