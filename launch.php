@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -51,8 +50,8 @@ require_once("../../config.php");
 require_once($CFG->dirroot.'/mod/ubicast/lib.php');
 require_once($CFG->dirroot.'/mod/ubicast/locallib.php');
 
-$id = required_param('id', PARAM_INT); // Course Module ID.
-$mediaId = required_param('mediaId', PARAM_ALPHANUM); // MediaServer media object ID.
+$id = required_param('id', PARAM_INT);  // Course Module ID.
+$mediaId = required_param('mediaId', PARAM_ALPHANUM);  // MediaServer media object ID.
 
 $cm = get_coursemodule_from_id('ubicast', $id, 0, false, MUST_EXIST);
 

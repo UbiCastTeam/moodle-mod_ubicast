@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -25,9 +24,9 @@
 
 require('../../config.php');
 
-$id = required_param('id', PARAM_INT); // course id
+$id = required_param('id', PARAM_INT);  // Course id.
 
-$course = $DB->get_record('course', array('id'=>$id), '*', MUST_EXIST);
+$course = $DB->get_record('course', array('id' => $id), '*', MUST_EXIST);
 
 require_course_login($course, true);
 $PAGE->set_pagelayout('incourse');
@@ -91,15 +90,15 @@ foreach ($entries as $entry) {
     }
 
     $extra = empty($cm->extra) ? '' : $cm->extra;
-    $media_type = 'video';
+    $mediatype = 'video';
     if ($entry->mediaid[0] == 'l') {
-        $media_type = 'live';
+        $mediatype = 'live';
     } else if ($entry->mediaid[0] == 'p') {
-        $media_type = 'photos';
+        $mediatype = 'photos';
     }
-    $icon = '<img src="'.$OUTPUT->image_url($media_type, 'ubicast').'" class="activityicon" alt="'.$media_type.'" /> ';
+    $icon = '<img src="'.$OUTPUT->image_url($mediatype, 'ubicast').'" class="activityicon" alt="'.$mediatype.'" /> ';
 
-    $class = $entry->visible ? '' : 'class="dimmed"'; // hidden modules are dimmed
+    $class = $entry->visible ? '' : 'class="dimmed"';  // Hidden modules are dimmed.
     $table->data[] = array (
         $printsection,
         "<a $class $extra href=\"view.php?id=$cm->id\">".$icon.format_string($entry->name)."</a>",

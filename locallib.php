@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -26,13 +25,13 @@
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
-if (!isset($CFG)){
+if (!isset($CFG)) {
     require_once('../../config.php');
 }
-require_once("$CFG->libdir/filelib.php");
-require_once("$CFG->libdir/resourcelib.php");
+require_once($CFG->libdir.'/filelib.php');
+require_once($CFG->libdir.'/resourcelib.php');
 // Needed to get `lti_sign_parameters` and `lti_post_launch_html`
-require_once($CFG->dirroot . '/mod/lti/locallib.php');
+require_once($CFG->dirroot.'/mod/lti/locallib.php');
 
 
 /**
@@ -45,7 +44,7 @@ require_once($CFG->dirroot . '/mod/lti/locallib.php');
 function ubicast_launch_tool($course, $cm, $target) {
     global $CFG;
 
-    // Default LTI config
+    // Default LTI config.
     $typeconfig = null;
     if (!empty($cm))
         $typeconfig = (array) $cm;
@@ -64,13 +63,12 @@ function ubicast_launch_tool($course, $cm, $target) {
         $typeconfig['organizationid'] = $urlparts['host'];
     }
 
-    // Get LTI secret and key from config
+    // Get LTI secret and key from config.
     $config = get_config('ubicast');
     $key = $config->ubicast_ltikey;
     $secret = $config->ubicast_ltisecret;
-    $tool_base_URL = $config->ubicast_url;
 
-    $endpoint = "$tool_base_URL/lti/$target";
+    $endpoint = $config->ubicast_url.'/lti/'.$target;
     $endpoint = trim($endpoint);
 
     $orgid = $typeconfig['organizationid'];
@@ -112,44 +110,45 @@ function ubicast_launch_tool($course, $cm, $target) {
     echo $content;
 }
 
-function ubicast_display_media($ubicast_media, $cm, $course) {
+function ubicast_display_media($ubicastresource, $cm, $course) {
     global $CFG, $PAGE, $OUTPUT;
 
-    $title = $ubicast_media->name;
+    $title = $ubicastresource->name;
 
-    // page header
-    $PAGE->set_title($course->shortname.': '.$ubicast_media->name);
+    // Page header.
+    $PAGE->set_title($course->shortname.': '.$ubicastresource->name);
     $PAGE->set_heading($course->fullname);
-    $PAGE->set_activity_record($ubicast_media);
+    $PAGE->set_activity_record($ubicastresource);
     echo $OUTPUT->header();
 
-    // page body
+    // Page body.
     $config = get_config('ubicast');
     $key = $config->ubicast_ltikey;
     $secret = $config->ubicast_ltisecret;
 
-    $iframe_url = $CFG->wwwroot.'/mod/ubicast/launch.php?id='.$cm->id.'&mediaId='.$ubicast_media->mediaid;
+    $iframeurl = $CFG->wwwroot.'/mod/ubicast/launch.php?id='.$cm->id.'&mediaId='.$ubicastresource->mediaid;
     if (empty($key) || empty($secret)) {
-        $iframe_url = "$config->ubicast_url/permalink/$ubicast_media->mediaid/iframe/";
+        $iframeurl = $config->ubicast_url.'/permalink/'.$ubicastresource->mediaid.'/iframe/';
     }
 
     $code = '
-    <iframe class="mediaserver-iframe" style="width: 100%; height: 800px;" src="'.$iframe_url.'" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen="allowfullscreen"></iframe>
+    <iframe class="mediaserver-iframe" style="width: 100%; height: 800px;" src="'.$iframeurl.'" frameborder="0"
+        allow="autoplay; encrypted-media" allowfullscreen="allowfullscreen"></iframe>
     <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/ubicast/statics/jquery.min.js?_=4"></script>
     <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/ubicast/statics/iframe_manager.js?_=4"></script>
     ';
     echo $code;
 
-    // page intro
+    // Page intro.
     if (!isset($ignoresettings)) {
-        if (trim(strip_tags($ubicast_media->intro))) {
+        if (trim(strip_tags($ubicastresource->intro))) {
             echo $OUTPUT->box_start('mod_introbox', 'ubicastintro');
-            echo format_module_intro('ubicast', $ubicast_media, $cm->id);
+            echo format_module_intro('ubicast', $ubicastresource, $cm->id);
             echo $OUTPUT->box_end();
         }
     }
 
-    // page footer
+    // Page footer.
     echo $OUTPUT->footer();
     die;
 }

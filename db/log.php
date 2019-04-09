@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -26,8 +25,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 $logs = array(
-    array('module'=>'ubicast', 'action'=>'view', 'mtable'=>'ubicast', 'field'=>'name'),
-    array('module'=>'ubicast', 'action'=>'view all', 'mtable'=>'ubicast', 'field'=>'name'),
-    array('module'=>'ubicast', 'action'=>'update', 'mtable'=>'ubicast', 'field'=>'name'),
-    array('module'=>'ubicast', 'action'=>'add', 'mtable'=>'ubicast', 'field'=>'name'),
+    array('module' => 'ubicast', 'action' => 'view', 'mtable' => 'ubicast', 'field' => 'name'),
+    array('module' => 'ubicast', 'action' => 'view all', 'mtable' => 'ubicast', 'field' => 'name'),
+    array('module' => 'ubicast', 'action' => 'update', 'mtable' => 'ubicast', 'field' => 'name'),
+    array('module' => 'ubicast', 'action' => 'add', 'mtable' => 'ubicast', 'field' => 'name'),
 );

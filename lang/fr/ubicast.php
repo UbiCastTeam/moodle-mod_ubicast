@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -25,7 +24,7 @@
 
 $string['language_code'] = 'fr';
 
-// moodle required strings
+// Moodle required strings
 $string['modulename'] = 'Ressource du MediaServer';
 $string['modulename_help'] = 'Le module UbiCast MediaServer permet aux professeurs d\'ajouter des chaînes et des médias issus d\'une web TV MediaServer en tant que ressources d\'un cours.';
 $string['modulename_link'] = 'mod/ubicast/view';
@@ -35,12 +34,12 @@ $string['pluginname'] = 'Connecteur UbiCast MediaServer';
 $string['ubicast:addinstance'] = 'Ajouter une ressource du MediaServer';
 $string['ubicast:view'] = 'Voir la ressource du MediaServer';
 
-// forms
+// Forms
 $string['form_resource_header'] = 'Ressource';
 $string['form_resource'] = 'ID de la ressource';
 $string['form_resource_help'] = 'Sélectionnez une ressource. Vous pouvez aussi copier-coller un ID de ressource (exemple: "v124cbdfb0e5c9e28a30").';
 
-// settings page
+// Settings page
 $string['settings_url'] = 'URL du MediaServer';
 $string['settings_url_help'] = 'Entrez l\'URL du MediaServer. Par exemple: "https://mediaserver.ubicast.tv".';
 $string['settings_ltikey'] = 'Clé LTI du MediaServer';

@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -51,8 +50,8 @@ require_once("../../config.php");
 require_once($CFG->dirroot.'/mod/ubicast/lib.php');
 require_once($CFG->dirroot.'/mod/ubicast/locallib.php');
 
-$cid = required_param('id', PARAM_INT); // Course ID.
-$next = required_param('next', PARAM_URL); // Redirection target after LTI login.
+$cid = required_param('id', PARAM_INT);  // Course ID.
+$next = required_param('next', PARAM_URL);  // Redirection target after LTI login.
 
 $course = $DB->get_record('course', array('id' => $cid), '*', MUST_EXIST);
 

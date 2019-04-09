@@ -1,4 +1,9 @@
-/* Tiny script to manage iframe height */
+/*******************************************
+* Tiny script to manage iframe height      *
+* Author: Stephane Diemer                  *
+*******************************************/
+/* global $ */
+"use strict";
 
 $(document).ready(function () {
     var on_resize = function () {

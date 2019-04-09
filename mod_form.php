@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -29,26 +28,23 @@ require_once($CFG->dirroot.'/course/moodleform_mod.php');
 require_once($CFG->dirroot.'/config.php');
 
 class mod_ubicast_mod_form extends moodleform_mod {
-    function definition() {
+    public function definition() {
         global $CFG, $DB, $COURSE;
         $mform = $this->_form;
 
         $config = get_config('ubicast');
 
-        //-------------------------------------------------------
+        // Adding the "general" fieldset, where all the common settings are shown.
         $mform->addElement('header', 'general', get_string('general', 'form'));
-        $mform->addElement('text', 'name', get_string('name'), array('size'=>'64'));
-        if (!empty($CFG->formatstringstriptags)) {
-            $mform->setType('name', PARAM_TEXT);
-        } else {
-            $mform->setType('name', PARAM_CLEANHTML);
-        }
+        // Adding the standard "name" field.
+        $mform->addElement('text', 'name', get_string('name'), array('size' => '64'));
+        $mform->setType('name', PARAM_TEXT);
         $mform->addRule('name', null, 'required', null, 'client');
+        // Adding the optional "intro" and "introformat" pair of fields.
         $this->standard_intro_elements();
 
-        //-------------------------------------------------------
+        // Adding the "content" fieldset, where all the ubicast related settings are shown.
         $config = get_config('ubicast');
-        $tool_base_URL = $config->ubicast_url;
         $mform->addElement('header', 'content', get_string('form_resource_header', 'ubicast'));
         $mform->addElement('html', '
             <div class="fitem">
@@ -61,7 +57,7 @@ class mod_ubicast_mod_form extends moodleform_mod {
             <script type="text/javascript">
                 var media_selector = new MediaSelector({
                     moodleURL: "'.$CFG->wwwroot.'/mod/ubicast/lti.php?id='.$COURSE->id.'",
-                    mediaserverURL: "'.$tool_base_URL.'",
+                    mediaserverURL: "'.$config->ubicast_url.'",
                     target: "mod-ubicast"
                 });
             </script>');
@@ -70,10 +66,10 @@ class mod_ubicast_mod_form extends moodleform_mod {
         $mform->setType('mediaid', PARAM_TEXT);
         $mform->addRule('mediaid', null, 'required', null, 'client');
 
-        //-------------------------------------------------------
+        // Add standard elements, common to all modules.
         $this->standard_coursemodule_elements();
 
-        //-------------------------------------------------------
+        // Add standard buttons, common to all modules.
         $this->add_action_buttons();
     }
 }

@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -25,25 +24,45 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-// List of features supported in ubicast module
+// List of features supported in ubicast module.
 function ubicast_supports($feature) {
-    switch($feature) {
-        case FEATURE_MOD_ARCHETYPE:           return MOD_ARCHETYPE_RESOURCE;
-        case FEATURE_GROUPS:                  return false;
-        case FEATURE_GROUPINGS:               return false;
-        case FEATURE_GROUPMEMBERSONLY:        return true;
-        case FEATURE_MOD_INTRO:               return true;
-        case FEATURE_COMPLETION_TRACKS_VIEWS: return true;
-        case FEATURE_GRADE_HAS_GRADE:         return false;
-        case FEATURE_GRADE_OUTCOMES:          return false;
-        case FEATURE_BACKUP_MOODLE2:          return true;
-        case FEATURE_SHOW_DESCRIPTION:        return true;
+    switch ($feature) {
+        case FEATURE_MOD_ARCHETYPE:
+            return MOD_ARCHETYPE_RESOURCE;
 
-        default: return null;
+        case FEATURE_GROUPS:
+            return false;
+
+        case FEATURE_GROUPINGS:
+            return false;
+
+        case FEATURE_GROUPMEMBERSONLY:
+            return true;
+
+        case FEATURE_MOD_INTRO:
+            return true;
+
+        case FEATURE_COMPLETION_TRACKS_VIEWS:
+            return true;
+
+        case FEATURE_GRADE_HAS_GRADE:
+            return false;
+
+        case FEATURE_GRADE_OUTCOMES:
+            return false;
+
+        case FEATURE_BACKUP_MOODLE2:
+            return true;
+
+        case FEATURE_SHOW_DESCRIPTION:
+            return true;
+
+        default:
+            return null;
     }
 }
 
-// Returns all other caps used in module
+// Returns all other caps used in module.
 function ubicast_get_extra_capabilities() {
     return array('moodle/site:accessallgroups');
 }
@@ -53,12 +72,12 @@ function ubicast_reset_userdata($data) {
     return array();
 }
 
-// List of view style log actions
+// List of view style log actions.
 function ubicast_get_view_actions() {
     return array('view', 'view all');
 }
 
-// List of update style log actions
+// List of update style log actions.
 function ubicast_get_post_actions() {
     return array('update', 'add');
 }
@@ -95,24 +114,24 @@ function ubicast_update_instance($data, $mform) {
 function ubicast_delete_instance($id) {
     global $DB;
 
-    $ubicast_media = $DB->get_record('ubicast', array('id'=>$id));
-    if (!$ubicast_media) {
+    $ubicastresource = $DB->get_record('ubicast', array('id' => $id));
+    if (!$ubicastresource) {
         return false;
     }
 
-    // note: all context files are deleted automatically
+    // Note: all context files are deleted automatically.
 
-    $DB->delete_records('ubicast', array('id'=>$ubicast_media->id));
+    $DB->delete_records('ubicast', array('id' => $ubicastresource->id));
 
     return true;
 }
 
-// Return user outline
-function ubicast_user_outline($course, $user, $mod, $ubicast_media) {
+// Return user outline.
+function ubicast_user_outline($course, $user, $mod, $ubicastresource) {
     global $DB;
 
-    if ($logs = $DB->get_records('log', array('userid'=>$user->id, 'module'=>'ubicast',
-                                              'action'=>'view', 'info'=>$ubicast_media->id), 'time ASC')) {
+    if ($logs = $DB->get_records('log', array('userid' => $user->id, 'module' => 'ubicast',
+                                              'action' => 'view', 'info' => $ubicastresource->id), 'time ASC')) {
 
         $numviews = count($logs);
         $lastlog = array_pop($logs);
@@ -126,12 +145,12 @@ function ubicast_user_outline($course, $user, $mod, $ubicast_media) {
     return NULL;
 }
 
-// Displays last time seen by user
-function ubicast_user_complete($course, $user, $mod, $ubicast_media) {
+// Displays last time seen by user.
+function ubicast_user_complete($course, $user, $mod, $ubicastresource) {
     global $CFG, $DB;
 
-    if ($logs = $DB->get_records('log', array('userid'=>$user->id, 'module'=>'ubicast',
-                                              'action'=>'view', 'info'=>$ubicast_media->id), 'time ASC')) {
+    if ($logs = $DB->get_records('log', array('userid' => $user->id, 'module' => 'ubicast',
+                                              'action' => 'view', 'info' => $ubicastresource->id), 'time ASC')) {
         $numviews = count($logs);
         $lastlog = array_pop($logs);
 

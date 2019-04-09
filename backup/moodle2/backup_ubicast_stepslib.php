@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -25,26 +24,25 @@
 
 defined('MOODLE_INTERNAL') || die();
 
- /**
+/**
  * Define the complete ubicast structure for backup, with file and id annotations
  */
 class backup_ubicast_activity_structure_step extends backup_activity_structure_step {
 
     protected function define_structure() {
-        //the ubicast module stores no user info
+        // The ubicast module stores no user info
 
         // Define each element separated
         $media = new backup_nested_element('ubicast', array('id'), array('name', 'intro', 'introformat', 'mediaid', 'timemodified'));
 
-
         // Build the tree
-        //nothing here for ubicast
+        // Nothing here for ubicast
 
         // Define sources
         $media->set_source_table('ubicast', array('id' => backup::VAR_ACTIVITYID));
 
         // Define id annotations
-        //module has no id annotations
+        // Module has no id annotations
 
         // Define file annotations
         $media->annotate_files('mod_ubicast', 'intro', null); // This file area hasn't itemid
