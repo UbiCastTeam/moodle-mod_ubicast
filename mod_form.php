@@ -45,23 +45,23 @@ class mod_ubicast_mod_form extends moodleform_mod {
 
         // Adding the "content" fieldset, where all the ubicast related settings are shown.
         $config = get_config('ubicast');
-        $mform->addElement('header', 'content', get_string('form_resource_header', 'ubicast'));
+        $mform->addElement('header', 'resource_mod_ubicast', get_string('form_resource_header', 'ubicast'));
         $mform->addElement('html', '
             <div class="fitem">
                 <div class="felement" style="margin: 0;">
-                    <iframe class="mod-ubicast" style="margin: 0; width: 450px; height: 10px;" src="" frameborder="0"></iframe>
+                    <iframe class="ubicast-iframe" style="margin: 0; width: 450px; height: 10px;" src="" frameborder="0"></iframe>
                 </div>
             </div>
-            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/ubicast/statics/jquery.min.js?_=10"></script>
-            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/ubicast/statics/media_selector.js?_=10"></script>
+            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/ubicast/statics/jquery.min.js?_=11"></script>
+            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/ubicast/statics/media_selector.js?_=11"></script>
             <script type="text/javascript">
-                var media_selector = new MediaSelector({
+                var media_selector = new window.MediaSelector({
                     moodleURL: "'.$CFG->wwwroot.'/mod/ubicast/lti.php?id='.$COURSE->id.'",
                     mediaserverURL: "'.$config->ubicast_url.'",
-                    target: "mod-ubicast"
+                    target: "id_resource_mod_ubicast"
                 });
             </script>');
-        $mform->addElement('text', 'mediaid', get_string('form_resource', 'ubicast'), ['size' => '20', 'class' => 'mod-ubicast']);
+        $mform->addElement('text', 'mediaid', get_string('form_resource', 'ubicast'), ['size' => '20']);
         $mform->addHelpButton('mediaid', 'form_resource', 'ubicast');
         $mform->setType('mediaid', PARAM_TEXT);
         $mform->addRule('mediaid', null, 'required', null, 'client');

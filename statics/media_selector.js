@@ -8,7 +8,7 @@
 /* global $ */
 "use strict";
 
-function MediaSelector(options) {
+window.MediaSelector = function(options) {
     if (!options) {
         options = {};
     }
@@ -33,10 +33,10 @@ function MediaSelector(options) {
     $(document).ready(function() {
         obj.init();
     });
-}
+};
 
-MediaSelector.prototype.init = function() {
-    var initialOID = $("#id_mediaid." + this.target).val();
+window.MediaSelector.prototype.init = function() {
+    var initialOID = $("#" + this.target + " #id_mediaid").val();
     this.onPick(initialOID, true);
 
     $(window).on("message", {obj: this}, function(event) {
@@ -45,7 +45,7 @@ MediaSelector.prototype.init = function() {
             return;
         }
         var data = oriEvent.data ? oriEvent.data : null;
-        console.log("Received message from MediaServer frame:", data);  // NOQA.
+        console.log("Received message from MediaServer frame:", data);
         if (data.state && data.state == "IDLE" || data.target !== event.data.obj.target) {
             return;
         }
@@ -56,9 +56,9 @@ MediaSelector.prototype.init = function() {
     });
 };
 
-MediaSelector.prototype.onPick = function(oid) {
-    $("#id_mediaid." + this.target).val(oid);
+window.MediaSelector.prototype.onPick = function(oid) {
+    $("#" + this.target + " #id_mediaid").val(oid);
     var nextUrl = "/manager/?popup&return=postMessageAPI:" + this.target + (oid ? "&initial=" + oid : "");
     var url = this.moodleURL + "&next=" + window.encodeURIComponent(nextUrl);
-    $("iframe." + this.target).attr("src", url).css("height", (oid ? 400 : 200));
+    $("#" + this.target + " iframe.ubicast-iframe").attr("src", url).css("height", (oid ? 400 : 200));
 };
