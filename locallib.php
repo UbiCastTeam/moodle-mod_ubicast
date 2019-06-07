@@ -73,6 +73,7 @@ function ubicast_launch_tool($course, $cm, $target) {
     $instance = $cm;
     if (empty($cm)) {
         $instance = new stdClass();
+        $instance->id = 0;
         $instance->course = $course->id;
         $instance->resource_link_id = $course->id.'-admin';
     }
