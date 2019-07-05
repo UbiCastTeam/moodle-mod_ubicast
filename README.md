@@ -35,15 +35,15 @@ git clone "https://github.com/UbiCastTeam/moodle-mod_ubicast" ubicast
 
 Once installed, go to the plugin settings in Moodle (usually, Plugins > Activity modules > UbiCast MediaServer plugin):
 
-![Plugin settings location](../assets/plugin-location.png)
+![Plugin settings location](../assets/plugin-location.png?_=1)
 
 Set the MediaServer URL, LTI key and LTI secret to use in the plugin settings:
 
-![Plugin settings](../assets/plugin-settings.png)
+![Plugin settings](../assets/plugin-settings.png?_=1)
 
 You can find these in the Mediaserver LTI settings (in the authentication settings section):
 
-![LTI Settings](../assets/lti-settings.png)
+![LTI Settings](../assets/lti-settings.png?_=1)
 
 
 Usage:
@@ -51,25 +51,25 @@ Usage:
 
 Once configured, a new activity type is now available in Moodle:
 
-![Use 1](../assets/use1.png)
+![Add menu](../assets/add-menu.png?_=1)
 
 This allows the user to import media he has access to in MediaServer:
 
-![Use 2](../assets/use2.png)
+![Add item](../assets/add-item.png?_=1)
 
 When clicking on "Select a media" the user gets to choose easily from the media he has access to:
 
-![Use 3](../assets/use3.png)
+![Select media](../assets/select-media.png?_=1)
 
 That's it, content is now integrated in the Moodle course:
 
 * Professor view
 
-![Professor view](../assets/professor-view.jpg)
+![Professor view](../assets/professor-view.jpg?_=1)
 
 * Student view
 
-![Student view](../assets/student-view.jpg)
+![Student view](../assets/student-view.jpg?_=1)
 
 
 About rights management
