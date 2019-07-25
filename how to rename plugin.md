@@ -22,7 +22,7 @@ git clone https://github.com/UbiCastTeam/moodle-mod_ubicast.git ubicast
 ## 3. Apply the changes in Moodle frontend
 
 With your browser go to:
-https://<your moodle>//admin/index.php
+https://[your-moodle]//admin/index.php
 
 Click on "upgrade" and fill the MediaServer url, key and secret when asked.
 
@@ -59,6 +59,6 @@ rm -r /var/www/moodle/mod/easycastms
 ## 6. Remove easycastms from Moodle plugins list
 
 With your browser, go to:
-https://<your moodle>/admin/plugins.php
+https://[your-moodle]/admin/plugins.php
 
 Click on "Uninstall" next to "easycastms".
