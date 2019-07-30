@@ -35,4 +35,7 @@ if ($ADMIN->fulltree) {
 
     $settings->add(new admin_setting_configpasswordunmask('ubicast/ubicast_ltisecret', get_string('settings_ltisecret', 'ubicast'),
         get_string('settings_ltisecret_help', 'ubicast'), ''));
+
+    $settings->add(new admin_setting_configcheckbox('ubicast/ubicast_speakerfilter', get_string('settings_speakerfilter', 'ubicast'),
+        get_string('settings_speakerfilter_help', 'ubicast'), 1));
 }

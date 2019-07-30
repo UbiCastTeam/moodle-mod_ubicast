@@ -6,7 +6,6 @@
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 /* global $ */
-"use strict";
 
 window.MediaSelector = function(options) {
     if (!options) {
@@ -27,6 +26,7 @@ window.MediaSelector = function(options) {
     if (this.mediaserverURL[this.mediaserverURL.length - 1] == "/") {
         this.mediaserverURL = this.mediaserverURL.slice(0, -1);
     }
+    this.filterBySpeaker = options.filterBySpeaker ? true : false;
     this.target = options.target;
 
     var obj = this;
@@ -58,7 +58,7 @@ window.MediaSelector.prototype.init = function() {
 
 window.MediaSelector.prototype.onPick = function(oid) {
     $("#" + this.target + " #id_mediaid").val(oid);
-    var nextUrl = "/manager/?popup&return=postMessageAPI:" + this.target + (oid ? "&initial=" + oid : "");
+    var nextUrl = "/manager/?popup" + (this.filterBySpeaker ? "" : "&all") + "&return=postMessageAPI:" + this.target + (oid ? "&initial=" + oid : "");
     var url = this.moodleURL + "&next=" + window.encodeURIComponent(nextUrl);
     $("#" + this.target + " iframe.ubicast-iframe").attr("src", url).css("height", (oid ? 400 : 200));
 };

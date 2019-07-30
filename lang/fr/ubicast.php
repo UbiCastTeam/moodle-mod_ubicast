@@ -46,3 +46,5 @@ $string['settings_ltikey'] = 'Clé LTI du MediaServer';
 $string['settings_ltikey_help'] = 'Entrez la clé LTI du MediaServer. Une clé valide ressemble à "xmz9GgcutbUvwDFNBzHMryMmzyX7wy".';
 $string['settings_ltisecret'] = 'Secret LTI du MediaServer';
 $string['settings_ltisecret_help'] = 'Entrez le secret LTI du MediaServer. Un secret valide ressemble à  "4fCQKsxQwFSxCCvdd4Dq9cxNbhZK4afPBpY312wq1mASGkAgC9qy8n9QEPq8".';
+$string['settings_speakerfilter'] = 'Afficher uniquement les médias de l\'utilisateur dans la sélection';
+$string['settings_speakerfilter_help'] = 'Lors de la sélection d\'un média, n\'afficher que les médias pour lesquels l\'utilisateur est l\'intervenant. Ce paramètre est ignoré si MediaServer est dans une version inférieure ou égale à 8.3.0.';
