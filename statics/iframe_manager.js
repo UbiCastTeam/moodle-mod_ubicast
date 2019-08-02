@@ -6,7 +6,6 @@
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 /* global $ */
-"use strict";
 
 $(document).ready(function() {
     var onResize = function() {

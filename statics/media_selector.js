@@ -45,7 +45,7 @@ window.MediaSelector.prototype.init = function() {
             return;
         }
         var data = oriEvent.data ? oriEvent.data : null;
-        console.log("Received message from MediaServer frame:", data);
+        // console.log("Received message from MediaServer frame:", data);
         if (data.state && data.state == "IDLE" || data.target !== event.data.obj.target) {
             return;
         }
