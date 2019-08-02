@@ -4,6 +4,7 @@ UbiCast MediaServer Moodle activity plugin
 Copyright: UbiCast (https://www.ubicast.eu)
 License: https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 
+
 Description:
 ------------
 
@@ -15,7 +16,7 @@ This Moodle plugin is required for other UbiCast plugins (Atto button and Block 
 Dependencies:
 -------------
 
-This plugin requires Moodle >= *3.0* and MediaServer >= *8.1*.
+This plugin requires `Moodle` >= *3.0* with `mod_lti` (`external tool`) enabled and `MediaServer` >= *8.1*.
 
 
 Installation:
