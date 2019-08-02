@@ -31,6 +31,7 @@ $string['modulename_link'] = 'mod/ubicast/view';
 $string['modulenameplural'] = 'Ressources du MediaServer';
 $string['pluginadministration'] = 'Administration du module UbiCast MediaServer';
 $string['pluginname'] = 'Connecteur UbiCast MediaServer';
+$string['privacy:metadata'] = 'Le module UbiCast MediaServer ne stocke que des liens vers les médias de MediaServer.';
 $string['ubicast:addinstance'] = 'Ajouter une ressource du MediaServer';
 $string['ubicast:view'] = 'Voir la ressource du MediaServer';
 
