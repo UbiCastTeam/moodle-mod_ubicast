@@ -23,7 +23,7 @@
  */
 
 namespace mod_ubicast\privacy;
- 
+
 class provider implements
     // This plugin does not store any personal user data.
     \core_privacy\local\metadata\null_provider {

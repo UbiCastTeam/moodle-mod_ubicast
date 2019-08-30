@@ -27,15 +27,19 @@ defined('MOODLE_INTERNAL') || die();
 if ($ADMIN->fulltree) {
     require_once("$CFG->libdir/resourcelib.php");
 
-    $settings->add(new admin_setting_configtext('ubicast/ubicast_url', get_string('settings_url', 'ubicast'),
+    $settings->add(new admin_setting_configtext('ubicast/ubicast_url',
+        get_string('settings_url', 'ubicast'),
         get_string('settings_url_help', 'ubicast'), ''));
 
-    $settings->add(new admin_setting_configtext('ubicast/ubicast_ltikey', get_string('settings_ltikey', 'ubicast'),
+    $settings->add(new admin_setting_configtext('ubicast/ubicast_ltikey',
+        get_string('settings_ltikey', 'ubicast'),
         get_string('settings_ltikey_help', 'ubicast'), ''));
 
-    $settings->add(new admin_setting_configpasswordunmask('ubicast/ubicast_ltisecret', get_string('settings_ltisecret', 'ubicast'),
+    $settings->add(new admin_setting_configpasswordunmask('ubicast/ubicast_ltisecret',
+        get_string('settings_ltisecret', 'ubicast'),
         get_string('settings_ltisecret_help', 'ubicast'), ''));
 
-    $settings->add(new admin_setting_configcheckbox('ubicast/ubicast_speakerfilter', get_string('settings_speakerfilter', 'ubicast'),
+    $settings->add(new admin_setting_configcheckbox('ubicast/ubicast_speakerfilter',
+        get_string('settings_speakerfilter', 'ubicast'),
         get_string('settings_speakerfilter_help', 'ubicast'), 1));
 }

@@ -51,7 +51,6 @@ window.MediaSelector.prototype.init = function() {
             return;
         }
         var data = event.data ? event.data : null;
-        // console.log('Received message from MediaServer frame:', data);
         if (data.state && data.state == 'IDLE' || data.target !== obj.target) {
             return;
         }
@@ -65,7 +64,8 @@ window.MediaSelector.prototype.init = function() {
 window.MediaSelector.prototype.onPick = function(oid) {
     var input = document.querySelector('#' + this.target + ' #id_mediaid');
     input.value = oid;
-    var nextUrl = '/manager/?popup' + (this.filterBySpeaker ? '' : '&all') + '&return=postMessageAPI:' + this.target + (oid ? '&initial=' + oid : '');
+    var nextUrl = '/manager/?popup' + (this.filterBySpeaker ? '' : '&all');
+    nextUrl += '&return=postMessageAPI:' + this.target + (oid ? '&initial=' + oid : '');
     var url = this.moodleURL + '&next=' + window.encodeURIComponent(nextUrl);
     var iframe = document.querySelector('#' + this.target + ' .ubicast-iframe');
     iframe.src = url;

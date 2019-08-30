@@ -12,7 +12,7 @@ var onResize = function() {
         height = 300;
     }
     var iframes = document.getElementsByClassName('mediaserver-iframe');
-    for (var i=0; i < iframes.length; i ++) {
+    for (var i = 0; i < iframes.length; i++) {
         iframes[i].style.height = height + 'px';
     }
 };
