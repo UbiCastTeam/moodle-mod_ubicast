@@ -132,8 +132,7 @@ function ubicast_display_media($ubicastresource, $cm, $course) {
     $code = '
     <iframe class="mediaserver-iframe" style="width: 100%; height: 800px;" src="'.$iframeurl.'" frameborder="0"
         allow="autoplay; encrypted-media" allowfullscreen="allowfullscreen"></iframe>
-    <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/ubicast/statics/jquery.min.js?_=4"></script>
-    <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/ubicast/statics/iframe_manager.js?_=4"></script>
+    <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/ubicast/statics/iframe_manager.js?_=5"></script>
     ';
     echo $code;
 
