@@ -29,8 +29,18 @@ function xmldb_ubicast_upgrade($oldversion) {
 
     $dbman = $DB->get_manager();
 
-    // Moodle v2.3.0 release upgrade line.
-    // Put any upgrade step following this.
+    if ($oldversion < 2020020703) {
+
+        // Changing precision of field name on table ubicast to (255).
+        $table = new xmldb_table('ubicast');
+        $field = new xmldb_field('name', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, 'course');
+
+        // Launch change of precision for field name.
+        $dbman->change_field_precision($table, $field);
+
+        // Ubicast savepoint reached.
+        upgrade_mod_savepoint(true, 2020020703, 'ubicast');
+    }
 
     return true;
 }
