@@ -47,11 +47,11 @@ function ubicast_launch_tool($course, $cm, $target) {
     } else {
         $typeconfig = (array) $course;
     }
-    $typeconfig['sendname'] = '1';
-    $typeconfig['sendemailaddr'] = '1';
-    $typeconfig['acceptgrades'] = '0';
+    $typeconfig['acceptgrades'] = '1';
     $typeconfig['allowroster'] = '0';
     $typeconfig['forcessl'] = '0';
+    $typeconfig['sendemailaddr'] = '1';
+    $typeconfig['sendname'] = '1';
 
     // Default the organizationid if not specified.
     if (empty($typeconfig['organizationid'])) {
