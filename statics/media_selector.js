@@ -57,13 +57,17 @@ window.MediaSelector.prototype.init = function() {
         if (!data.item || !data.item.oid) {
             throw new Error('No oid in message from MediaServer page.');
         }
-        obj.onPick(data.item.oid, data.initial_pick);
+        obj.onPick(data.item.oid, data.item.thumb, data.initial_pick);
     }, false);
 };
 
-window.MediaSelector.prototype.onPick = function(oid) {
+window.MediaSelector.prototype.onPick = function(oid, thumburl) {
     var input = document.querySelector('#' + this.target + ' #id_mediaid');
     input.value = oid;
+    var input_thumb = document.querySelector('#' + this.target + ' input[name=mediaimg]');
+    if (input_thumb) {
+        input_thumb.value = thumburl;
+    }
     var nextUrl = '/manager/?popup' + (this.filterBySpeaker ? '' : '&all');
     nextUrl += '&return=postMessageAPI:' + this.target + (oid ? '&initial=' + oid : '');
     var url = this.moodleURL + '&next=' + window.encodeURIComponent(nextUrl);
