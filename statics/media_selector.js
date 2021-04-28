@@ -66,7 +66,7 @@ window.MediaSelector.prototype.onPick = function(oid, thumburl) {
     input.value = oid;
     var input_thumb = document.querySelector('#' + this.target + ' input[name=mediaimg]');
     if (input_thumb) {
-        input_thumb.value = thumburl;
+        input_thumb.value = thumburl ? thumburl : '/static/mediaserver/images/video.png';
     }
     var nextUrl = '/manager/?popup' + (this.filterBySpeaker ? '' : '&all');
     nextUrl += '&return=postMessageAPI:' + this.target + (oid ? '&initial=' + oid : '');
