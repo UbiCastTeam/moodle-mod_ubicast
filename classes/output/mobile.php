@@ -22,7 +22,7 @@ class mobile {
         $key = $config->ubicast_ltikey;
         $secret = $config->ubicast_ltisecret;
 
-            $iframeurl = $config->ubicast_url.'/permalink/'.$ubicastresource->mediaid.'/iframe/?login=no';
+        $iframeurl = $config->ubicast_url.'/permalink/'.$ubicastresource->mediaid.'/iframe/?login=no';
         $data=['iframeurl' => $iframeurl];
         return [
             'templates' => [
