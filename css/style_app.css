@@ -17,14 +17,12 @@
 }
 
 @media screen and (orientation:portrait) {
-/* Portrait styles */
     .video-container {
         padding-bottom: 76.25%;
     }
 }
-/* Landscape */
+
 @media screen and (orientation:landscape) {
-/* Landscape styles */
     .video-container {
         padding-bottom: 35.25%;
     }
