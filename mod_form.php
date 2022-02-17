@@ -52,11 +52,11 @@ class mod_ubicast_mod_form extends moodleform_mod {
                     <iframe class="ubicast-iframe" style="margin: 0; width: 450px; height: 10px;" src="" frameborder="0"></iframe>
                 </div>
             </div>
-            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/ubicast/statics/media_selector.js?_=m3"></script>
+            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/ubicast/statics/media_selector.js?_=m4"></script>
             <script type="text/javascript">
                 var mainMediaSelector = new window.MediaSelector({
                     moodleURL: "'.$CFG->wwwroot.'/mod/ubicast/lti.php?id='.$COURSE->id.'",
-                    mediaserverURL: "'.$config->ubicast_url.'",
+                    nudgisURL: "'.$config->ubicast_url.'",
                     filterBySpeaker: '.$config->ubicast_speakerfilter.',
                     target: "id_resource_mod_ubicast"
                 });

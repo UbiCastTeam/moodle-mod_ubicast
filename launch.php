@@ -27,7 +27,7 @@ require_once($CFG->dirroot.'/mod/ubicast/lib.php');
 require_once($CFG->dirroot.'/mod/ubicast/locallib.php');
 
 $id = required_param('id', PARAM_INT);  // Course Module ID.
-$mediaid = required_param('mediaid', PARAM_ALPHANUM);  // MediaServer media object ID.
+$mediaid = required_param('mediaid', PARAM_ALPHANUM);  // Nudgis media object ID.
 
 $cm = get_coursemodule_from_id('ubicast', $id, 0, false, MUST_EXIST);
 

@@ -13,17 +13,17 @@ window.MediaSelector = function(options) {
     if (!options.moodleURL) {
         throw new Error('moodleURL argument is mandatory.');
     }
-    if (!options.mediaserverURL) {
-        throw new Error('mediaserverURL argument is mandatory.');
+    if (!options.nudgisURL) {
+        throw new Error('nudgisURL argument is mandatory.');
     }
     if (!options.target) {
         throw new Error('target argument is mandatory.');
     }
     this.moodleURL = options.moodleURL;
     // The moodleURL param must be something like '/mod/ubicast/lti.php?id=1'.
-    this.mediaserverURL = options.mediaserverURL;
-    if (this.mediaserverURL[this.mediaserverURL.length - 1] == '/') {
-        this.mediaserverURL = this.mediaserverURL.slice(0, -1);
+    this.nudgisURL = options.nudgisURL;
+    if (this.nudgisURL[this.nudgisURL.length - 1] == '/') {
+        this.nudgisURL = this.nudgisURL.slice(0, -1);
     }
     this.filterBySpeaker = options.filterBySpeaker ? true : false;
     this.target = options.target;
@@ -47,7 +47,7 @@ window.MediaSelector.prototype.init = function() {
 
     var obj = this;
     window.addEventListener('message', function(event) {
-        if (event.origin !== obj.mediaserverURL) {
+        if (event.origin !== obj.nudgisURL) {
             return;
         }
         var data = event.data ? event.data : null;
@@ -55,7 +55,7 @@ window.MediaSelector.prototype.init = function() {
             return;
         }
         if (!data.item || !data.item.oid) {
-            throw new Error('No oid in message from MediaServer page.');
+            throw new Error('No oid in message from Nudgis page.');
         }
         obj.onPick(data.item.oid, data.item.thumb, data.initial_pick);
     }, false);
@@ -66,7 +66,7 @@ window.MediaSelector.prototype.onPick = function(oid, thumburl) {
     input.value = oid;
     var input_thumb = document.querySelector('#' + this.target + ' input[name=mediaimg]');
     if (input_thumb) {
-        input_thumb.value = thumburl ? thumburl : '/static/mediaserver/images/video.png';
+        input_thumb.value = thumburl ? thumburl : '/static/nudgis/images/video.png';
     }
     var nextUrl = '/manager/?popup' + (this.filterBySpeaker ? '' : '&all');
     nextUrl += '&return=postMessageAPI:' + this.target + (oid ? '&initial=' + oid : '');

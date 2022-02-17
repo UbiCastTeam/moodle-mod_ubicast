@@ -25,15 +25,15 @@
 $string['language_code'] = 'fr';
 
 // Moodle required strings.
-$string['modulename'] = 'Ressource du MediaServer';
-$string['modulename_help'] = 'Le module UbiCast MediaServer permet aux professeurs d\'ajouter des chaînes et des médias issus d\'une web TV MediaServer en tant que ressources d\'un cours.';
+$string['modulename'] = 'Ressource du Nudgis';
+$string['modulename_help'] = 'Le module UbiCast Nudgis permet aux professeurs d\'ajouter des chaînes et des médias issus d\'une web TV Nudgis en tant que ressources d\'un cours.';
 $string['modulename_link'] = 'mod/ubicast/view';
-$string['modulenameplural'] = 'Ressources du MediaServer';
-$string['pluginadministration'] = 'Administration du module UbiCast MediaServer';
-$string['pluginname'] = 'Connecteur UbiCast MediaServer';
-$string['privacy:metadata'] = 'Le module UbiCast MediaServer ne stocke que des liens vers les médias de MediaServer.';
-$string['ubicast:addinstance'] = 'Ajouter une ressource du MediaServer';
-$string['ubicast:view'] = 'Voir la ressource du MediaServer';
+$string['modulenameplural'] = 'Ressources du Nudgis';
+$string['pluginadministration'] = 'Administration du module UbiCast Nudgis';
+$string['pluginname'] = 'Connecteur UbiCast Nudgis';
+$string['privacy:metadata'] = 'Le module UbiCast Nudgis ne stocke que des liens vers les médias de Nudgis.';
+$string['ubicast:addinstance'] = 'Ajouter une ressource du Nudgis';
+$string['ubicast:view'] = 'Voir la ressource du Nudgis';
 
 // Forms strings.
 $string['form_resource_header'] = 'Ressource';
@@ -41,11 +41,11 @@ $string['form_resource'] = 'ID de la ressource';
 $string['form_resource_help'] = 'Sélectionnez une ressource. Vous pouvez aussi copier-coller un ID de ressource (exemple: "v124cbdfb0e5c9e28a30").';
 
 // Settings page strings.
-$string['settings_url'] = 'URL du MediaServer';
-$string['settings_url_help'] = 'Entrez l\'URL du MediaServer. Par exemple: "https://mediaserver.ubicast.tv".';
-$string['settings_ltikey'] = 'Clé LTI du MediaServer';
-$string['settings_ltikey_help'] = 'Entrez la clé LTI du MediaServer. Une clé valide ressemble à "xmz9GgcutbUvwDFNBzHMryMmzyX7wy".';
-$string['settings_ltisecret'] = 'Secret LTI du MediaServer';
-$string['settings_ltisecret_help'] = 'Entrez le secret LTI du MediaServer. Un secret valide ressemble à  "4fCQKsxQwFSxCCvdd4Dq9cxNbhZK4afPBpY312wq1mASGkAgC9qy8n9QEPq8".';
+$string['settings_url'] = 'URL du Nudgis';
+$string['settings_url_help'] = 'Entrez l\'URL du Nudgis. Par exemple: "https://nudgis.ubicast.tv".';
+$string['settings_ltikey'] = 'Clé LTI du Nudgis';
+$string['settings_ltikey_help'] = 'Entrez la clé LTI du Nudgis. Une clé valide ressemble à "xmz9GgcutbUvwDFNBzHMryMmzyX7wy".';
+$string['settings_ltisecret'] = 'Secret LTI du Nudgis';
+$string['settings_ltisecret_help'] = 'Entrez le secret LTI du Nudgis. Un secret valide ressemble à  "4fCQKsxQwFSxCCvdd4Dq9cxNbhZK4afPBpY312wq1mASGkAgC9qy8n9QEPq8".';
 $string['settings_speakerfilter'] = 'Afficher uniquement les médias de l\'utilisateur dans la sélection';
-$string['settings_speakerfilter_help'] = 'Lors de la sélection d\'un média, n\'afficher que les médias pour lesquels l\'utilisateur est l\'intervenant. Ce paramètre est ignoré si MediaServer est dans une version inférieure ou égale à 8.3.0.';
+$string['settings_speakerfilter_help'] = 'Lors de la sélection d\'un média, n\'afficher que les médias pour lesquels l\'utilisateur est l\'intervenant. Ce paramètre est ignoré si Nudgis est dans une version inférieure ou égale à 8.3.0.';

@@ -24,7 +24,7 @@ git clone https://github.com/UbiCastTeam/moodle-mod_ubicast.git ubicast
 With your browser go to:
 https://[your-moodle]//admin/index.php
 
-Click on "upgrade" and fill the MediaServer url, key and secret when asked.
+Click on "upgrade" and fill the Nudgis url, key and secret when asked.
 
 ## 4. Rename tables and in the database
 

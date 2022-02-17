@@ -11,7 +11,7 @@ var onResize = function() {
     if (height < 300) {
         height = 300;
     }
-    var iframes = document.getElementsByClassName('mediaserver-iframe');
+    var iframes = document.getElementsByClassName('nudgis-iframe');
     for (var i = 0; i < iframes.length; i++) {
         iframes[i].style.height = height + 'px';
     }
