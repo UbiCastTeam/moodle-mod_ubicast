@@ -33,7 +33,11 @@ class backup_ubicast_activity_structure_step extends backup_activity_structure_s
         // The ubicast module stores no user info.
 
         // Define each element separated.
-        $media = new backup_nested_element('ubicast', array('id'), array('name', 'intro', 'introformat', 'mediaid', 'timemodified'));
+        $media = new backup_nested_element(
+            'ubicast',
+            array('id'),
+            array('name', 'intro', 'introformat', 'mediaid', 'timemodified')
+        );
 
         // Build the tree.
         // Nothing here for ubicast.
