@@ -64,14 +64,14 @@ window.MediaSelector.prototype.init = function() {
 window.MediaSelector.prototype.onPick = function(oid, thumburl) {
     var input = document.querySelector('#' + this.target + ' #id_mediaid');
     input.value = oid;
-    var input_thumb = document.querySelector('#' + this.target + ' input[name=mediaimg]');
-    if (input_thumb) {
-        input_thumb.value = thumburl ? thumburl : '/static/nudgis/images/video.png';
+    var inputThumb = document.querySelector('#' + this.target + ' input[name=mediaimg]');
+    if (inputThumb) {
+        inputThumb.value = thumburl ? thumburl : '/static/nudgis/images/video.png';
     }
     var nextUrl = '/manager/?popup' + (this.filterBySpeaker ? '' : '&all');
     nextUrl += '&return=postMessageAPI:' + this.target + (oid ? '&initial=' + oid : '');
     var url = this.moodleURL + '&next=' + window.encodeURIComponent(nextUrl);
     var iframe = document.querySelector('#' + this.target + ' .ubicast-iframe');
     iframe.src = url;
-    iframe.style.height = (oid ? 430 : 230) + 'px';
+    iframe.style.height = (oid ? 470 : 270) + 'px';
 };
