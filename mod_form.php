@@ -37,7 +37,8 @@ class mod_ubicast_mod_form extends moodleform_mod {
         // Adding the "general" fieldset, where all the common settings are shown.
         $mform->addElement('header', 'general', get_string('general', 'form'));
         // Adding the standard "name" field.
-        $mform->addElement('text', 'name', get_string('name'), array('size' => '255'));
+        $mform->addElement('text', 'name', get_string('name'),
+            ['size' => '255']);
         $mform->setType('name', PARAM_TEXT);
         $mform->addRule('name', null, 'required', null, 'client');
         // Adding the optional "intro" and "introformat" pair of fields.
@@ -61,7 +62,8 @@ class mod_ubicast_mod_form extends moodleform_mod {
                     target: "id_resource_mod_ubicast"
                 });
             </script>');
-        $mform->addElement('text', 'mediaid', get_string('form_resource', 'ubicast'), ['size' => '20']);
+        $mform->addElement('text', 'mediaid', get_string('form_resource', 'ubicast'),
+            ['size' => '20', 'onchange' => "javascript: this.value = ((new RegExp('(?:^|/)([cvlp][a-z0-9]{19})($:^|/)').exec(this.value)) || [null, this.value])[1]"]);
         $mform->addHelpButton('mediaid', 'form_resource', 'ubicast');
         $mform->setType('mediaid', PARAM_TEXT);
         $mform->addRule('mediaid', null, 'required', null, 'client');
