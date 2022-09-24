@@ -63,6 +63,9 @@ class restore_ubicast_activity_task extends restore_activity_task {
     public static function define_decode_rules() {
         $rules = array();
 
+        $rules[] = new restore_decode_rule('UBICASTVIEWBYID',
+                    '/mod/ubicast/view.php?id=$1', 'course_module');
+
         return $rules;
     }
 
