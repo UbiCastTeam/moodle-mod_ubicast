@@ -43,7 +43,7 @@ window.MediaSelector = function(options) {
 window.MediaSelector.prototype.init = function() {
     var input = document.querySelector('#' + this.target + ' #id_mediaid');
     var initialOID = input.value;
-    this.onPick(initialOID, true);
+    this.onPick(initialOID, null);
 
     var obj = this;
     window.addEventListener('message', function(event) {
@@ -57,21 +57,21 @@ window.MediaSelector.prototype.init = function() {
         if (!data.item || !data.item.oid) {
             throw new Error('No oid in message from Nudgis page.');
         }
-        obj.onPick(data.item.oid, data.item.thumb, data.initial_pick);
+        obj.onPick(data.item.oid, data.item.thumb);
     }, false);
 };
 
-window.MediaSelector.prototype.onPick = function(oid, thumburl) {
+window.MediaSelector.prototype.onPick = function(oid, thumbURL) {
     var input = document.querySelector('#' + this.target + ' #id_mediaid');
     input.value = oid;
     var inputThumb = document.querySelector('#' + this.target + ' input[name=mediaimg]');
     if (inputThumb) {
-        inputThumb.value = thumburl ? thumburl : '/static/nudgis/images/video.png';
+        inputThumb.value = thumbURL ? thumbURL : '/static/mediaserver/images/video.svg';
     }
     var nextUrl = '/manager/?popup' + (this.filterBySpeaker ? '' : '&all');
     nextUrl += '&return=postMessageAPI:' + this.target + (oid ? '&initial=' + oid : '');
     var url = this.moodleURL + '&next=' + window.encodeURIComponent(nextUrl);
     var iframe = document.querySelector('#' + this.target + ' .ubicast-iframe');
     iframe.src = url;
-    iframe.style.height = (oid ? 470 : 270) + 'px';
+    iframe.style.height = (oid ? 600 : 370) + 'px';
 };

@@ -24,10 +24,10 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2022092701;          // The current module version (Date: YYYYMMDDXX).
+$plugin->version   = 2024021600;          // The current module version (Date: YYYYMMDDXX).
 $plugin->requires  = 2022041200;  // 4.0  // Requires this Moodle version.
 $plugin->component = 'mod_ubicast';       // Full name of the plugin (used for diagnostics).
-$plugin->release   = '4.4.1';             // Human-readable version name.
+$plugin->release   = '4.5';             // Human-readable version name.
 $plugin->maturity  = MATURITY_STABLE;     // Maturity of module.
 $plugin->cron      = 0;
 
