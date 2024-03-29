@@ -136,15 +136,6 @@ function ubicast_display_media($ubicastresource, $cm, $course) {
     ';
     echo $code;
 
-    // Page intro.
-    if (!isset($ignoresettings)) {
-        if (trim(strip_tags($ubicastresource->intro))) {
-            echo $OUTPUT->box_start('mod_introbox', 'ubicastintro');
-            echo format_module_intro('ubicast', $ubicastresource, $cm->id);
-            echo $OUTPUT->box_end();
-        }
-    }
-
     // Page footer.
     echo $OUTPUT->footer();
     die;
