@@ -30,6 +30,13 @@ To avoid Nudgis cookies to be considered as third party cookies, we recommend to
 It is also possible to allow third party cookies usage in the browser settings.
 
 
+Note about playback grades:
+---------------------------
+
+The reporting of playback progressions as grades is not handled by this plugin and any of its extension.
+If you need playback progressions as grades, you will have to use the built-in integration of LTI for Moodle (`mod_lti`).
+
+
 Installation:
 -------------
 
