@@ -42,7 +42,7 @@ require_course_login($course, true, $cm);
 $context = context_system::instance();
 require_capability('mod/ubicast:view', $context);
 
-// Logs moodle 2.7.
+// Add event log.
 $event = \mod_ubicast\event\course_module_viewed::create(array(
     'objectid' => $PAGE->cm->instance,
     'context' => $PAGE->context,

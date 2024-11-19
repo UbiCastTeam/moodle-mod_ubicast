@@ -44,20 +44,4 @@ class course_module_viewed extends \core\event\course_module_viewed {
         $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
         $this->data['objecttable'] = 'ubicast';
     }
-
-    /**
-     * Replace add_to_log() statement.
-     *
-     * @return array of parameters to be passed to legacy add_to_log() function.
-     */
-    protected function get_legacy_logdata() {
-        return array(
-            $this->courseid,
-            'ubicast',
-            'view',
-            'view.php?id='.$this->contextinstanceid,
-            $this->objectid,
-            $this->contextinstanceid
-        );
-    }
 }
