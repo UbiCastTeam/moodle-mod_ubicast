@@ -24,13 +24,12 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2024112100;          // The current module version (Date: YYYYMMDDXX).
+$plugin->version   = 2025020400;          // The current module version (Date: YYYYMMDDXX).
 $plugin->requires  = 2023042400;  // 4.2  // Requires this Moodle version.
 $plugin->component = 'mod_ubicast';       // Full name of the plugin (used for diagnostics).
-$plugin->release   = '4.7';               // Human-readable version name.
+$plugin->release   = '4.8';               // Human-readable version name.
 $plugin->maturity  = MATURITY_STABLE;     // Maturity of module.
 $plugin->cron      = 0;
-
 $plugin->dependencies = [
     'mod_lti' => 2023042400,
 ];

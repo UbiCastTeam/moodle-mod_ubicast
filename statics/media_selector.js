@@ -30,10 +30,7 @@ window.MediaSelector = function(options) {
 
     if (document.readyState === 'loading') {
         // The loading hasn't finished yet.
-        var obj = this;
-        document.addEventListener('DOMContentLoaded', function() {
-            obj.init();
-        });
+        document.addEventListener('DOMContentLoaded', this.init.bind(this));
     } else {
         // The `DOMContentLoaded` event has already fired.
         this.init();
@@ -41,37 +38,34 @@ window.MediaSelector = function(options) {
 };
 
 window.MediaSelector.prototype.init = function() {
-    var input = document.querySelector('#' + this.target + ' #id_mediaid');
-    var initialOID = input.value;
-    this.onPick(initialOID, null);
+    const input = document.querySelector('#' + this.target + ' input[name=mediaid]');
+    this.onPick(input.value, null);
 
-    var obj = this;
-    window.addEventListener('message', function(event) {
-        if (event.origin !== obj.nudgisURL) {
+    window.addEventListener('message', (event) => {
+        if (event.origin !== this.nudgisURL) {
             return;
         }
-        var data = event.data ? event.data : null;
-        if (data.state && data.state == 'IDLE' || data.target !== obj.target) {
+        const data = event.data ? event.data : null;
+        if (data.state && data.state == 'IDLE' || data.target !== this.target) {
             return;
         }
         if (!data.item || !data.item.oid) {
             throw new Error('No oid in message from Nudgis page.');
         }
-        obj.onPick(data.item.oid, data.item.thumb);
+        this.onPick(data.item.oid, data.item.thumb);
     }, false);
 };
 
 window.MediaSelector.prototype.onPick = function(oid, thumbURL) {
-    var input = document.querySelector('#' + this.target + ' #id_mediaid');
+    const input = document.querySelector('#' + this.target + ' input[name=mediaid]');
     input.value = oid;
-    var inputThumb = document.querySelector('#' + this.target + ' input[name=mediaimg]');
+    const inputThumb = document.querySelector('#' + this.target + ' input[name=mediaimg]');
     if (inputThumb) {
         inputThumb.value = thumbURL ? thumbURL : '/static/mediaserver/images/video.svg';
     }
-    var nextUrl = '/manager/?popup' + (this.filterBySpeaker ? '' : '&all');
-    nextUrl += '&return=postMessageAPI:' + this.target + (oid ? '&initial=' + oid : '');
-    var url = this.moodleURL + '&next=' + window.encodeURIComponent(nextUrl);
-    var iframe = document.querySelector('#' + this.target + ' .ubicast-iframe');
-    iframe.src = url;
-    iframe.style.height = (oid ? 600 : 370) + 'px';
+    const nextUrl = '/manager/?popup' + (this.filterBySpeaker ? '' : '&all') +
+        '&return=postMessageAPI:' + this.target + (oid ? '&initial=' + oid : '');
+    const iframe = document.querySelector('#' + this.target + ' .ubicast-iframe');
+    iframe.src = this.moodleURL + '&next=' + window.encodeURIComponent(nextUrl);
+    iframe.style.height = (oid ? 560 : 350) + 'px';
 };
