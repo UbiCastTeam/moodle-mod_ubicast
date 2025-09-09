@@ -26,7 +26,8 @@ window.MediaSelector = function(options) {
         this.nudgisURL = this.nudgisURL.slice(0, -1);
     }
     this.filterBySpeaker = options.filterBySpeaker ? true : false;
-    this.target = options.target;
+    this.target = CSS.escape(options.target);
+    this.targetSafe = this.target.replace(/[^A-Za-z0-9_-]/g, '');
 
     if (document.readyState === 'loading') {
         // The loading hasn't finished yet.
@@ -46,7 +47,7 @@ window.MediaSelector.prototype.init = function() {
             return;
         }
         const data = event.data ? event.data : null;
-        if (data.state && data.state == 'IDLE' || data.target !== this.target) {
+        if (data.state && data.state == 'IDLE' || data.target !== this.targetSafe) {
             return;
         }
         if (!data.item || !data.item.oid) {
@@ -64,7 +65,7 @@ window.MediaSelector.prototype.onPick = function(oid, thumbURL) {
         inputThumb.value = thumbURL ? thumbURL : '/static/mediaserver/images/video.svg';
     }
     const nextUrl = '/manager/?popup' + (this.filterBySpeaker ? '' : '&all') +
-        '&return=postMessageAPI:' + this.target + (oid ? '&initial=' + oid : '');
+        '&return=postMessageAPI:' + this.targetSafe + (oid ? '&initial=' + oid : '');
     const iframe = document.querySelector('#' + this.target + ' .ubicast-iframe');
     iframe.src = this.moodleURL + '&next=' + window.encodeURIComponent(nextUrl);
     iframe.style.height = (oid ? 560 : 350) + 'px';
