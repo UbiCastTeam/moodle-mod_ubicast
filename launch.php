@@ -22,9 +22,9 @@
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once("../../config.php");
-require_once($CFG->dirroot.'/mod/ubicast/lib.php');
-require_once($CFG->dirroot.'/mod/ubicast/locallib.php');
+require_once('../../config.php');
+require_once($CFG->dirroot . '/mod/ubicast/lib.php');
+require_once($CFG->dirroot . '/mod/ubicast/locallib.php');
 
 $id = required_param('id', PARAM_INT);  // Course Module ID.
 $mediaid = required_param('mediaid', PARAM_ALPHANUM);  // Nudgis media object ID.
@@ -38,4 +38,4 @@ $context = context_module::instance($cm->id);
 require_login($course, true, $cm);
 require_capability('mod/ubicast:view', $context);
 
-ubicast_launch_tool($course, $cm, $mediaid.'/');
+ubicast_launch_tool($course, $cm, $mediaid . '/');

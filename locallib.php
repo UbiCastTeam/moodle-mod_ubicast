@@ -22,17 +22,18 @@
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+defined('MOODLE_INTERNAL') || die;
 
-require_once($CFG->libdir.'/filelib.php');
-require_once($CFG->libdir.'/resourcelib.php');
+require_once($CFG->libdir . '/filelib.php');
+require_once($CFG->libdir . '/resourcelib.php');
 // Needed to get `lti_sign_parameters` and `lti_post_launch_html`.
-require_once($CFG->dirroot.'/mod/lti/locallib.php');
+require_once($CFG->dirroot . '/mod/lti/locallib.php');
 
 
 /**
  * Launch an external tool activity.
  *
+ * @param stdClass $course The course data
  * @param array $cm Course Module instance
  * @param string $target Nudgis LTI page relative path
  * @return string The HTML code containing the javascript code for the launch
@@ -65,7 +66,7 @@ function ubicast_launch_tool($course, $cm, $target) {
     $key = $config->ubicast_ltikey;
     $secret = $config->ubicast_ltisecret;
 
-    $endpoint = $config->ubicast_url.'/lti/'.$target;
+    $endpoint = $config->ubicast_url . '/lti/' . $target;
     $endpoint = trim($endpoint);
 
     $orgid = $typeconfig['organizationid'];
@@ -114,7 +115,7 @@ function ubicast_display_media($ubicastresource, $cm, $course) {
     $title = $ubicastresource->name;
 
     // Page header.
-    $PAGE->set_title($course->shortname.': '.$ubicastresource->name);
+    $PAGE->set_title($course->shortname . ': ' . $ubicastresource->name);
     $PAGE->set_heading($course->fullname);
     $PAGE->set_activity_record($ubicastresource);
     echo $OUTPUT->header();
@@ -124,15 +125,15 @@ function ubicast_display_media($ubicastresource, $cm, $course) {
     $key = $config->ubicast_ltikey;
     $secret = $config->ubicast_ltisecret;
 
-    $iframeurl = $CFG->wwwroot.'/mod/ubicast/launch.php?id='.$cm->id.'&mediaid='.$ubicastresource->mediaid;
+    $iframeurl = $CFG->wwwroot . '/mod/ubicast/launch.php?id=' . $cm->id . '&mediaid=' . $ubicastresource->mediaid;
     if (empty($key) || empty($secret)) {
-        $iframeurl = $config->ubicast_url.'/permalink/'.$ubicastresource->mediaid.'/iframe/';
+        $iframeurl = $config->ubicast_url . '/permalink/' . $ubicastresource->mediaid . '/iframe/';
     }
 
     $code = '
-    <iframe class="nudgis-iframe" style="width: 100%; height: 800px;" src="'.$iframeurl.'" frameborder="0"
+    <iframe class="nudgis-iframe" style="width: 100%; height: 800px;" src="' . $iframeurl . '" frameborder="0"
         allow="autoplay; encrypted-media" allowfullscreen="allowfullscreen"></iframe>
-    <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/ubicast/statics/iframe_manager.js?_=6"></script>
+    <script type="text/javascript" src="' . $CFG->wwwroot . '/mod/ubicast/statics/iframe_manager.js?_=6"></script>
     ';
     echo $code;
 

@@ -38,14 +38,14 @@ $event = \mod_ubicast\event\course_module_instance_list_viewed::create($params);
 $event->add_record_snapshot('course', $course);
 $event->trigger();
 
-$strurl       = get_string('modulename', 'ubicast');
-$strurls      = get_string('modulenameplural', 'ubicast');
-$strname         = get_string('name');
-$strintro        = get_string('moduleintro');
+$strurl = get_string('modulename', 'ubicast');
+$strurls = get_string('modulenameplural', 'ubicast');
+$strname = get_string('name');
+$strintro = get_string('moduleintro');
 $strlastmodified = get_string('lastmodified');
 
 $PAGE->set_url('/mod/ubicast/index.php', array('id' => $course->id));
-$PAGE->set_title($course->shortname.': '.$strurls);
+$PAGE->set_title($course->shortname . ': ' . $strurls);
 $PAGE->set_heading($course->fullname);
 $PAGE->navbar->add($strurls);
 echo $OUTPUT->header();
@@ -96,12 +96,12 @@ foreach ($entries as $entry) {
     } else if ($entry->mediaid[0] == 'p') {
         $mediatype = 'photos';
     }
-    $icon = '<img src="'.$OUTPUT->image_url($mediatype, 'ubicast').'" class="activityicon" alt="'.$mediatype.'" /> ';
+    $icon = '<img src="' . $OUTPUT->image_url($mediatype, 'ubicast') . '" class="activityicon" alt="' . $mediatype . '" /> ';
 
     $class = $entry->visible ? '' : 'class="dimmed"';  // Hidden modules are dimmed.
     $table->data[] = array (
         $printsection,
-        "<a $class $extra href=\"view.php?id=$cm->id\">".$icon.format_string($entry->name)."</a>",
+        "<a $class $extra href=\"view.php?id=$cm->id\">" . $icon.format_string($entry->name) . "</a>",
         format_module_intro('ubicast', $entry, $cm->id));
 }
 

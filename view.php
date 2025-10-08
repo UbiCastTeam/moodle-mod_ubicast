@@ -24,18 +24,18 @@
 
 require_once('../../config.php');
 require_once('lib.php');
-require_once("$CFG->dirroot/mod/ubicast/locallib.php");
+require_once($CFG->dirroot . '/mod/ubicast/locallib.php');
 
 $id = required_param('id', PARAM_INT);  // Course Module ID.
 
 if (!$cm = get_coursemodule_from_id('ubicast', $id)) {
-    print_error('Course Module ID was incorrect');
+    throw new moodle_exception('Course Module ID was incorrect');
 }
 if (!$course = $DB->get_record('course', array('id' => $cm->course))) {
-    print_error('course is misconfigured');
+    throw new moodle_exception('course is misconfigured');
 }
 if (!$ubicastresource = $DB->get_record('ubicast', array('id' => $cm->instance))) {
-    print_error('course module is incorrect');
+    throw new moodle_exception('course module is incorrect');
 }
 
 require_course_login($course, true, $cm);
