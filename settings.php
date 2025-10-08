@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 if ($ADMIN->fulltree) {
-    require_once("$CFG->libdir/resourcelib.php");
+    require_once($CFG->libdir . '/resourcelib.php');
 
     $settings->add(new admin_setting_configtext('ubicast/ubicast_url',
         get_string('settings_url', 'ubicast'),

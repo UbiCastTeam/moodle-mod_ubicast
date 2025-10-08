@@ -17,7 +17,9 @@
 /**
  * Mobile app definition for ubicast
  *
- * @package   mod_ubicast
+ * @package    mod_ubicast
+ * @copyright  2013 UbiCast {@link https://www.ubicast.eu}
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die;

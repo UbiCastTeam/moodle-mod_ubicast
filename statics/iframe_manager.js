@@ -14,7 +14,7 @@ function onResize() {
     for (const iframe of document.getElementsByClassName('nudgis-iframe')) {
         iframe.style.height = height + 'px';
     }
-};
+}
 window.addEventListener('resize', onResize);
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', onResize);

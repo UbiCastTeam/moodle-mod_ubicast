@@ -22,13 +22,17 @@
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+defined('MOODLE_INTERNAL') || die;
 
 /**
  * Define the complete ubicast structure for backup, with file and id annotations
  */
 class backup_ubicast_activity_structure_step extends backup_activity_structure_step {
 
+    /**
+     * Defines structure of activity backup
+     * @return backup_nested_element
+     */
     protected function define_structure() {
         // The ubicast module stores no user info.
 

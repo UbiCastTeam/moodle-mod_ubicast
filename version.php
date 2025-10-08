@@ -22,12 +22,12 @@
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+defined('MOODLE_INTERNAL') || die;
 
-$plugin->version   = 2025090900;          // The current module version (Date: YYYYMMDDXX).
+$plugin->version   = 2025100800;          // The current module version (Date: YYYYMMDDXX).
 $plugin->requires  = 2023042400;  // 4.2  // Requires this Moodle version.
 $plugin->component = 'mod_ubicast';       // Full name of the plugin (used for diagnostics).
-$plugin->release   = '4.9';               // Human-readable version name.
+$plugin->release   = '4.10';              // Human-readable version name.
 $plugin->maturity  = MATURITY_STABLE;     // Maturity of module.
 $plugin->cron      = 0;
 $plugin->dependencies = [

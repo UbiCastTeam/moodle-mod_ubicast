@@ -22,10 +22,10 @@
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+defined('MOODLE_INTERNAL') || die;
 
-require_once($CFG->dirroot.'/course/moodleform_mod.php');
-require_once($CFG->dirroot.'/config.php');
+require_once($CFG->dirroot . '/course/moodleform_mod.php');
+require_once($CFG->dirroot . '/config.php');
 
 class mod_ubicast_mod_form extends moodleform_mod {
     public function definition() {
@@ -53,17 +53,19 @@ class mod_ubicast_mod_form extends moodleform_mod {
                     <iframe class="ubicast-iframe" style="margin: 0; width: 450px; height: 10px;" src="" frameborder="0"></iframe>
                 </div>
             </div>
-            <script type="text/javascript" src="'.$CFG->wwwroot.'/mod/ubicast/statics/media_selector.js?_=m8"></script>
+            <script type="text/javascript" src="' . $CFG->wwwroot . '/mod/ubicast/statics/media_selector.js?_=m8"></script>
             <script type="text/javascript">
                 var mainMediaSelector = new window.MediaSelector({
-                    moodleURL: "'.$CFG->wwwroot.'/mod/ubicast/lti.php?id='.$COURSE->id.'",
-                    nudgisURL: "'.$config->ubicast_url.'",
-                    filterBySpeaker: '.$config->ubicast_speakerfilter.',
+                    moodleURL: "' . $CFG->wwwroot . '/mod/ubicast/lti.php?id=' . $COURSE->id . '",
+                    nudgisURL: "' . $config->ubicast_url . '",
+                    filterBySpeaker: ' . $config->ubicast_speakerfilter . ',
                     target: "id_resource_mod_ubicast"
                 });
             </script>');
-        $mform->addElement('text', 'mediaid', get_string('form_resource', 'ubicast'),
-            ['size' => '20', 'onchange' => "javascript: this.value = ((new RegExp('(?:^|/)([cvlp][a-z0-9]{19})($:^|/)').exec(this.value)) || [null, this.value])[1]"]);
+        $mform->addElement('text', 'mediaid', get_string('form_resource', 'ubicast'), [
+            'size' => '20',
+            'onchange' => "javascript: this.value = ((new RegExp('(?:^|/)([cvlp][a-z0-9]{19})($:^|/)').exec(this.value)) || [null, this.value])[1]"
+        ]);
         $mform->addHelpButton('mediaid', 'form_resource', 'ubicast');
         $mform->setType('mediaid', PARAM_TEXT);
         $mform->addRule('mediaid', null, 'required', null, 'client');
