@@ -53,7 +53,7 @@ class mod_ubicast_mod_form extends moodleform_mod {
                     <iframe class="ubicast-iframe" style="margin: 0; width: 450px; height: 10px;" src="" frameborder="0"></iframe>
                 </div>
             </div>
-            <script type="text/javascript" src="' . $CFG->wwwroot . '/mod/ubicast/statics/media_selector.js?_=m8"></script>
+            <script type="text/javascript" src="' . $CFG->wwwroot . '/mod/ubicast/statics/media_selector.js?_=m9"></script>
             <script type="text/javascript">
                 var mainMediaSelector = new window.MediaSelector({
                     moodleURL: "' . $CFG->wwwroot . '/mod/ubicast/lti.php?id=' . $COURSE->id . '",

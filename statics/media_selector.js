@@ -40,7 +40,7 @@ window.MediaSelector = function(options) {
 
 window.MediaSelector.prototype.init = function() {
     const input = document.querySelector('#' + this.target + ' input[name=mediaid]');
-    this.onPick(input.value, null);
+    this.onPick(input.value, null, null);
 
     window.addEventListener('message', (event) => {
         if (event.origin !== this.nudgisURL) {
@@ -53,16 +53,20 @@ window.MediaSelector.prototype.init = function() {
         if (!data.item || !data.item.oid) {
             throw new Error('No oid in message from Nudgis page.');
         }
-        this.onPick(data.item.oid, data.item.thumb);
+        this.onPick(data.item.oid, data.item.thumb, data.item.title);
     }, false);
 };
 
-window.MediaSelector.prototype.onPick = function(oid, thumbURL) {
+window.MediaSelector.prototype.onPick = function(oid, thumbURL, title) {
     const input = document.querySelector('#' + this.target + ' input[name=mediaid]');
     input.value = oid;
     const inputThumb = document.querySelector('#' + this.target + ' input[name=mediaimg]');
     if (inputThumb) {
         inputThumb.value = thumbURL ? thumbURL : '/static/mediaserver/images/video.svg';
+    }
+    const inputTitle = document.querySelector('#' + this.target + ' input[name=mediatitle]');
+    if (inputTitle) {
+        inputTitle.value = title ? title : 'Nudgis content';
     }
     const nextUrl = '/manager/?popup' + (this.filterBySpeaker ? '' : '&all') +
         '&return=postMessageAPI:' + this.targetSafe + (oid ? '&initial=' + oid : '');
