@@ -24,7 +24,12 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-// List of features supported in ubicast module.
+/**
+ * Return the list if Moodle features this module supports
+ *
+ * @param string $feature FEATURE_xx constant for requested feature
+ * @return mixed True if module supports feature, false if not, null otherwise.
+ */
 function ubicast_supports($feature) {
     switch ($feature) {
         case FEATURE_MOD_ARCHETYPE:
@@ -65,28 +70,63 @@ function ubicast_supports($feature) {
     }
 }
 
-// Returns all other caps used in module.
+/**
+ * Returns all other capabilities used by this module.
+ * @return array Array of capability strings
+ */
 function ubicast_get_extra_capabilities() {
     return array('moodle/site:accessallgroups');
 }
 
-// This function is used by the reset_course_userdata function in moodlelib.
+/**
+ * This function is used by the reset_course_userdata function in moodlelib.
+ * This function will remove all assignment submissions and feedbacks in the database
+ * and clean up any related data.
+ *
+ * @param stdClass $data the data submitted from the reset course.
+ * @return array
+ */
 function ubicast_reset_userdata($data) {
     return array();
 }
 
-// List of view style log actions.
+/**
+ * List the actions that correspond to a view of this module.
+ * This is used by the participation report.
+ *
+ * Note: This is not used by new logging system. Event with
+ *       crud = 'r' and edulevel = LEVEL_PARTICIPATING will
+ *       be considered as view action.
+ *
+ * @return array
+ */
 function ubicast_get_view_actions() {
     return array('view', 'view all');
 }
 
-// List of update style log actions.
+/**
+ * List the actions that correspond to a post of this module.
+ * This is used by the participation report.
+ *
+ * Note: This is not used by new logging system. Event with
+ *       crud = ('c' || 'u' || 'd') and edulevel = LEVEL_PARTICIPATING
+ *       will be considered as post action.
+ *
+ * @return array
+ */
 function ubicast_get_post_actions() {
     return array('update', 'add');
 }
 
-// Add ubicast media.
-function ubicast_add_instance($data, $mform) {
+/**
+ * Adds a mod_ubicast instance
+ *
+ * This is done by calling the add_instance() method of the assignment type class
+ * @param stdClass $data
+ * @param mod_ubicast_mod_form $mform
+ * @return int The instance id of the new mod_ubicast
+ */
+function ubicast_add_instance($data, $mform): int {
     global $CFG, $DB;
 
     $data->name = $data->name;
@@ -95,11 +135,23 @@ function ubicast_add_instance($data, $mform) {
     $data->timemodified = time();
     $data->id = $DB->insert_record('ubicast', $data);
 
+    $completiontime = empty($data->completionexpected) ? null : $data->completionexpected;
+    \core_completion\api::update_completion_date_event(
+        $cmid, 'ubicast', $data->id, $completiontime
+    );
+
     return $data->id;
 }
 
-// Update url instance.
-function ubicast_update_instance($data, $mform) {
+/**
+ * Update a mod_ubicast instance
+ *
+ * This is done by calling the update_record() method of the assignment type class
+ * @param stdClass $data
+ * @param stdClass $mform - unused
+ * @return bool
+ */
+function ubicast_update_instance($data, $mform): bool {
     global $CFG, $DB;
 
     $data->name = $data->name;
@@ -108,13 +160,22 @@ function ubicast_update_instance($data, $mform) {
     $data->timemodified = time();
     $data->id = $data->instance;
 
-    $DB->update_record('ubicast', $data);
+    $ok = $DB->update_record('ubicast', $data);
 
-    return true;
+    $completiontime = empty($data->completionexpected) ? null : $data->completionexpected;
+    \core_completion\api::update_completion_date_event(
+        $data->coursemodule, 'ubicast', $data->id, $completiontime
+    );
+
+    return $ok;
 }
 
-// Delete ubicast instance.
-function ubicast_delete_instance($id) {
+/**
+ * delete a mod_ubicast instance
+ * @param int $id
+ * @return bool
+ */
+function ubicast_delete_instance($id): bool {
     global $DB;
 
     $ubicastresource = $DB->get_record('ubicast', array('id' => $id));
@@ -127,4 +188,106 @@ function ubicast_delete_instance($id) {
     $DB->delete_records('ubicast', array('id' => $ubicastresource->id));
 
     return true;
+}
+
+
+/**
+ * This standard function will check all instances of this module
+ * and make sure there are up-to-date events created for each of them.
+ * If courseid = 0, then every assignment event in the site is checked, else
+ * only assignment events belonging to the course specified are checked.
+ *
+ * @param int $courseid
+ * @param int|stdClass $instance mod_ubicast instance or ID.
+ * @param int|stdClass $cm Course module object or ID (not used in this module).
+ * @return bool
+ */
+function ubicast_refresh_events($courseid = 0, $instance = null, $cm = null): bool {
+    global $DB;
+
+    // 1. Build the list of mod_ubicast records we need to process.
+    if ($instance) {
+        if (is_object($instance)) {
+            // The caller already provided the full record (duplication path).
+            $records = [$instance];
+        } else {
+            // Caller gave us just an id.
+            $records = [
+                $DB->get_record(
+                    'ubicast', ['id' => (int)$instance], '*', MUST_EXIST
+                ),
+            ];
+        }
+    } else {
+        // Refresh the whole course or whole site.
+        $records = $DB->get_records(
+            'ubicast', $courseid ? ['course' => $courseid] : []
+        );
+    }
+
+    // 2. For each activity build / update the calendar event.
+    foreach ($records as $record) {
+        if (!$record) {  // Safety.
+            continue;
+        }
+
+        $cm = get_coursemodule_from_instance(
+            'ubicast',
+            $record->id,
+            $record->course,
+            false,
+            MUST_EXIST
+        );
+
+        $completiontime = empty($record->completionexpected)
+            ? null
+            : (int)$record->completionexpected;
+
+        \core_completion\api::update_completion_date_event(
+            $cm->id, 'ubicast', $record->id, $completiontime
+        );
+    }
+    return true;
+}
+
+/**
+ * Provide the event action for calendar events.
+ *
+ * @param calendar_event $event The calendar event
+ * @param \core_calendar\action_factory $factory The factory to create the action
+ * @param int $userid Optional user id, defaults to current user
+ * @return \core_calendar\local\event\value_objects\action|null
+ */
+function mod_ubicast_core_calendar_provide_event_action(
+    calendar_event $event,
+    \core_calendar\action_factory $factory,
+    int $userid = 0
+) {
+    global $USER;
+
+    if (empty($userid)) {
+        $userid = $USER->id;
+    }
+
+    $cm = get_fast_modinfo($event->courseid, $userid)->instances['ubicast'][$event->instance];
+
+    if (!$cm->uservisible) {
+        // The module is not visible to the user for any reason.
+        return null;
+    }
+
+    $completion = new \completion_info($cm->get_course());
+
+    $completiondata = $completion->get_data($cm, false, $userid);
+
+    if ($completiondata->completionstate != COMPLETION_INCOMPLETE) {
+        return null;
+    }
+
+    return $factory->create_instance(
+        get_string('view'),
+        new \moodle_url('/mod/ubicast/view.php', ['id' => $cm->id]),
+        1,
+        true
+    );
 }
