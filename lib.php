@@ -137,7 +137,7 @@ function ubicast_add_instance($data, $mform): int {
 
     $completiontime = empty($data->completionexpected) ? null : $data->completionexpected;
     \core_completion\api::update_completion_date_event(
-        $cmid, 'ubicast', $data->id, $completiontime
+        $data->coursemodule, 'ubicast', $data->id, $completiontime
     );
 
     return $data->id;
