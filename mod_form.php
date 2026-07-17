@@ -24,12 +24,12 @@
 
 defined('MOODLE_INTERNAL') || die;
 
+require_once('../../config.php');
 require_once($CFG->dirroot . '/course/moodleform_mod.php');
-require_once($CFG->dirroot . '/config.php');
 
 class mod_ubicast_mod_form extends moodleform_mod {
     public function definition() {
-        global $CFG, $DB, $COURSE;
+        global $CFG, $COURSE;
         $mform = $this->_form;
 
         $config = get_config('ubicast');
@@ -45,7 +45,6 @@ class mod_ubicast_mod_form extends moodleform_mod {
         $this->standard_intro_elements();
 
         // Adding the "content" fieldset, where all the ubicast related settings are shown.
-        $config = get_config('ubicast');
         $mform->addElement('header', 'resource_mod_ubicast', get_string('form_resource_header', 'ubicast'));
         $mform->addElement('html', '
             <div class="fitem">
@@ -53,7 +52,7 @@ class mod_ubicast_mod_form extends moodleform_mod {
                     <iframe class="ubicast-iframe" style="margin: 0; width: 450px; height: 10px;" src="" frameborder="0"></iframe>
                 </div>
             </div>
-            <script type="text/javascript" src="' . $CFG->wwwroot . '/mod/ubicast/statics/media_selector.js?_=m9"></script>
+            <script type="text/javascript" src="' . $CFG->wwwroot . '/mod/ubicast/statics/media_selector.js?_=m10"></script>
             <script type="text/javascript">
                 var mainMediaSelector = new window.MediaSelector({
                     moodleURL: "' . $CFG->wwwroot . '/mod/ubicast/lti.php?id=' . $COURSE->id . '",

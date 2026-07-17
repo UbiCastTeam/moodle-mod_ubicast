@@ -11,13 +11,13 @@ window.MediaSelector = function(options) {
         options = {};
     }
     if (!options.moodleURL) {
-        throw new Error('moodleURL argument is mandatory.');
+        throw new Error('The "moodleURL" argument is mandatory.');
     }
     if (!options.nudgisURL) {
-        throw new Error('nudgisURL argument is mandatory.');
+        throw new Error('The "nudgisURL" argument is mandatory.');
     }
     if (!options.target) {
-        throw new Error('target argument is mandatory.');
+        throw new Error('The "target" argument is mandatory.');
     }
     this.moodleURL = options.moodleURL;
     // The moodleURL param must be something like '/mod/ubicast/lti.php?id=1'.
@@ -26,6 +26,8 @@ window.MediaSelector = function(options) {
         this.nudgisURL = this.nudgisURL.slice(0, -1);
     }
     this.filterBySpeaker = options.filterBySpeaker ? true : false;
+    // Name of the input holding the picked object ID. Defaults to 'mediaid' for backward compatibility.
+    this.inputName = options.inputName || 'mediaid';
     this.target = CSS.escape(options.target);
     this.targetSafe = this.target.replace(/[^A-Za-z0-9_-]/g, '');
 
@@ -39,7 +41,7 @@ window.MediaSelector = function(options) {
 };
 
 window.MediaSelector.prototype.init = function() {
-    const input = document.querySelector('#' + this.target + ' input[name=mediaid]');
+    const input = document.querySelector('#' + this.target + ' input[name=' + this.inputName + ']');
     this.onPick(input.value, null, null);
 
     window.addEventListener('message', (event) => {
@@ -58,7 +60,7 @@ window.MediaSelector.prototype.init = function() {
 };
 
 window.MediaSelector.prototype.onPick = function(oid, thumbURL, title) {
-    const input = document.querySelector('#' + this.target + ' input[name=mediaid]');
+    const input = document.querySelector('#' + this.target + ' input[name=' + this.inputName + ']');
     input.value = oid;
     const inputThumb = document.querySelector('#' + this.target + ' input[name=mediaimg]');
     if (inputThumb) {
