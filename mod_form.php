@@ -24,7 +24,6 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-require_once('../../config.php');
 require_once($CFG->dirroot . '/course/moodleform_mod.php');
 
 class mod_ubicast_mod_form extends moodleform_mod {
