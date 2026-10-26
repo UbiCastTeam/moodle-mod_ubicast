@@ -89,7 +89,6 @@ foreach ($entries as $entry) {
         $printsection = '<span class="smallinfo">'.userdate($entry->timemodified)."</span>";
     }
 
-    $extra = empty($cm->extra) ? '' : $cm->extra;
     $mediatype = 'video';
     if ($entry->mediaid[0] == 'l') {
         $mediatype = 'live';
@@ -101,7 +100,7 @@ foreach ($entries as $entry) {
     $class = $entry->visible ? '' : 'class="dimmed"';  // Hidden modules are dimmed.
     $table->data[] = array (
         $printsection,
-        "<a $class $extra href=\"view.php?id=$cm->id\">" . $icon.format_string($entry->name) . "</a>",
+        "<a $class href=\"view.php?id=$cm->id\">" . $icon.format_string($entry->name) . "</a>",
         format_module_intro('ubicast', $entry, $cm->id));
 }
 

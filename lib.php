@@ -41,9 +41,6 @@ function ubicast_supports($feature) {
         case FEATURE_GROUPINGS:
             return false;
 
-        case FEATURE_GROUPMEMBERSONLY:
-            return true;
-
         case FEATURE_MOD_INTRO:
             return true;
 
