@@ -45,7 +45,7 @@ class mobile {
         $cm = get_coursemodule_from_id('ubicast', $args->cmid);
 
         if (!$ubicastresource = $DB->get_record('ubicast', array('id' => $cm->instance))) {
-            throw new moodle_exception('course module is incorrect');
+            throw new \moodle_exception('course module is incorrect');
         }
 
         $config = get_config('ubicast');

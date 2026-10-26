@@ -49,3 +49,6 @@ $string['settings_ltisecret'] = 'Nudgis LTI secret';
 $string['settings_ltisecret_help'] = 'Enter the Nudgis LTI secret. An LTI secret looks like "4fCQKsxQwFSxCCvdd4Dq9cxNbhZK4afPBpY312wq1mASGkAgC9qy8n9QEPq8".';
 $string['settings_speakerfilter'] = 'Show only user\'s media in selection';
 $string['settings_speakerfilter_help'] = 'When selecting a media to embed, show only media for which the user is set as the speaker. This setting is ignored if Nudgis is using a version below or equal 8.3.0.';
+
+// Mobile app strings.
+$string['launch_activity_mobile'] = 'Open in browser';

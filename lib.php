@@ -236,9 +236,10 @@ function ubicast_refresh_events($courseid = 0, $instance = null, $cm = null): bo
             MUST_EXIST
         );
 
-        $completiontime = empty($record->completionexpected)
+        // The expected completion date is stored on the course module, not on the instance.
+        $completiontime = empty($cm->completionexpected)
             ? null
-            : (int)$record->completionexpected;
+            : (int)$cm->completionexpected;
 
         \core_completion\api::update_completion_date_event(
             $cm->id, 'ubicast', $record->id, $completiontime

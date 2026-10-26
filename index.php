@@ -89,13 +89,7 @@ foreach ($entries as $entry) {
         $printsection = '<span class="smallinfo">'.userdate($entry->timemodified)."</span>";
     }
 
-    $mediatype = 'video';
-    if ($entry->mediaid[0] == 'l') {
-        $mediatype = 'live';
-    } else if ($entry->mediaid[0] == 'p') {
-        $mediatype = 'photos';
-    }
-    $icon = '<img src="' . $OUTPUT->image_url($mediatype, 'ubicast') . '" class="activityicon" alt="' . $mediatype . '" /> ';
+    $icon = html_writer::img($cm->get_icon_url(), '', ['class' => 'activityicon']) . ' ';
 
     $class = $entry->visible ? '' : 'class="dimmed"';  // Hidden modules are dimmed.
     $table->data[] = array (

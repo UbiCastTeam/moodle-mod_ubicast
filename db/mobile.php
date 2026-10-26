@@ -30,7 +30,7 @@ $addons = array(
             'coursechoicegroup' => array(
                 'displaydata' => array(
                     'title' => 'pluginname',
-                    'icon' => $CFG->wwwroot . '/mod/ubicast/pix/icon.svg',
+                    'icon' => $CFG->wwwroot . '/mod/ubicast/pix/monologo.svg',
                     'class' => '',
                 ),
                 'delegate' => 'CoreCourseModuleDelegate',
